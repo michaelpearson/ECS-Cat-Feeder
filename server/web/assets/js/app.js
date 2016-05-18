@@ -104,6 +104,7 @@ var app = {
             duration: 1500
         });
         $('body').append(bar);
+        return app.endNavigation.bind(this, false);
     },
     endNavigation : function(final) {
         var bar = $('.loadingbar');

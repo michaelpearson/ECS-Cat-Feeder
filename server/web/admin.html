@@ -15,6 +15,7 @@
         <script src="/assets/lib/js/morris.min.js"></script>
         <script src="/assets/lib/js/morris-data.js"></script>
         <script src="/assets/js/app.js"></script>
+        <script src="/assets/js/api.js"></script>
         <script src="/assets/js/dashboard.js"></script>
         <script src="/assets/js/options.js"></script>
         <script src="/assets/js/manual.js"></script>
@@ -352,7 +353,13 @@
                 </div>
 
                 <div class="page" id="profile-page">
-                    <p>Profile page</p>
+                    <div class="form-group">
+                        <input class="form-control" type="email" name="email" />
+                        <br />
+                        <input class="form-control" type="text" name="name" />
+                        <br />
+                        <a class="btn btn-primary" id="save-profile-information">Update Information</a>
+                    </div>
                 </div>
 
                 <div class="page" id="settings-page">

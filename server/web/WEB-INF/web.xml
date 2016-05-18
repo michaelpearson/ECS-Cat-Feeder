@@ -9,6 +9,10 @@
         <servlet-name>Test</servlet-name>
         <servlet-class>catfeeder.api.TestServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProfileInfo</servlet-name>
+        <servlet-class>catfeeder.api.ProfileInfoServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>Login Servlet</servlet-name>
@@ -17,5 +21,9 @@
     <servlet-mapping>
         <servlet-name>Test</servlet-name>
         <url-pattern>/api/test</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProfileInfo</servlet-name>
+        <url-pattern>/api/profile</url-pattern>
     </servlet-mapping>
 </web-app>

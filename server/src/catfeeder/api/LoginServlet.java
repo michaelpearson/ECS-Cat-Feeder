@@ -5,6 +5,7 @@ import catfeeder.db.DatabaseClient;
 import catfeeder.util.WriteJsonResponse;
 import org.json.simple.JSONObject;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class LoginServlet extends javax.servlet.http.HttpServlet {
+    public static final String KEY_SESSION_USER_ID = "user_id";
+    public static final String KEY_SESSION_LOGGED_IN = "logged_in";
+
+
 
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         response.setHeader("content-type", "application/json");
@@ -35,8 +40,9 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
             String hash = result.getString("password");
             if(Passwords.checkPassword(password, hash)) {
                 responseData.put("success", true);
-                request.getSession().setAttribute("logged_in", true);
-                request.getSession().setAttribute("user_id", result.getInt("id"));
+                HttpSession session = request.getSession();
+                session.setAttribute(KEY_SESSION_LOGGED_IN, true);
+                session.setAttribute(KEY_SESSION_USER_ID, result.getInt("id"));
                 WriteJsonResponse.writeResponse(response, responseData);
             } else {
                 responseData.put("success", false);

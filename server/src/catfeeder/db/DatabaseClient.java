@@ -15,6 +15,8 @@ import java.sql.Statement;
 public class DatabaseClient {
     private static Server server;
 
+    private static Connection connection = null;
+
     static {
         try {
             server = Server.createTcpServer().start();
@@ -26,6 +28,14 @@ public class DatabaseClient {
 
 
     public static Connection getConnection() {
+        try {
+            if(connection != null && !connection.isClosed()) {
+                return connection;
+            }
+        } catch (SQLException ignore) {
+            connection = null;
+        }
+
         String connectionString = Configuration.getConfigurationString("database", "connection_string");
 
         JdbcDataSource ds = new JdbcDataSource();
@@ -33,12 +43,12 @@ public class DatabaseClient {
         ds.setUser("sa");
         ds.setPassword("sa");
         try {
-            Connection c = ds.getConnection();
-            ResultSet result = c.prepareStatement("show TABLES;").executeQuery();
+            connection = ds.getConnection();
+            ResultSet result = connection.prepareStatement("show TABLES;").executeQuery();
             if(!result.next()) {
-                seed(c);
+                seed(connection);
             }
-            return c;
+            return connection;
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Could not get connection");
