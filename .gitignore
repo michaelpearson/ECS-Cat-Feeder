@@ -13,8 +13,7 @@ hs_err_pid*
 
 
 jetty/
-.idea/
 out/
 
 
-!lib/*
+!lib/*.jar
