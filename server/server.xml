@@ -66,10 +66,9 @@
       <include name="src"/>
     </dirset>
   </path>
-  
 
 
-
+  <target name="all" depends="package-server"/>
   
   <target name="Clean" description="cleanup module">
     <delete dir="${server.output.dir}"/>
@@ -89,7 +88,7 @@
 
   <target name="compile.module.server.production" description="Compile module server; production classes">
     <mkdir dir="${server.output.dir}"/>
-    <javac destdir="${server.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+    <javac includeantruntime="false" destdir="${server.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
       <compilerarg line="${compiler.args.server}"/>
       <bootclasspath refid="server.module.bootclasspath"/>
       <classpath refid="server.module.production.classpath"/>
