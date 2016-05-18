@@ -321,21 +321,5 @@
       <column name="REMARKS" sqlType="VARCHAR" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
       <column name="ID" sqlType="INTEGER" precision="10" scale="0" nullable="true" jdbcType="4"/>
     </table>
-    <table name="CAT_FEEDER" schema="PUBLIC" catalog=".CAT-FEEDER-DB" type="TABLE">
-      <column name="ID" sqlType="INTEGER" precision="10" scale="0" nullable="false" jdbcType="4" def="KE5FWFQgVkFMVUUgRk9SIFBVQkxJQy5TWVNURU1fU0VRVUVOQ0VfRURCOTcyQUFfN0QxOF80Q0I1Xzg4OTNfMEQ2OTRCNTNERTA4KQ==" autoIncrement="true"/>
-      <column name="DESCRIPTION" sqlType="CLOB" precision="2147483647" scale="0" nullable="true" jdbcType="2005"/>
-      <column name="NAME" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="IP_ADDRESS" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="CONSTRAINT_C" columns="ID"/>
-    </table>
-    <table name="USERS" schema="PUBLIC" catalog=".CAT-FEEDER-DB" type="TABLE">
-      <column name="ID" sqlType="INTEGER" precision="10" scale="0" nullable="false" jdbcType="4" def="KE5FWFQgVkFMVUUgRk9SIFBVQkxJQy5TWVNURU1fU0VRVUVOQ0VfRkM3MDI5NjZfOTc3Q180RTkzX0FCNDBfOTY2M0Q1MTkxNUEwKQ==" autoIncrement="true"/>
-      <column name="EMAIL" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="PASSWORD" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="NAME" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="FEEDER_ID" sqlType="INTEGER" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <primary-key name="CONSTRAINT_4" columns="ID"/>
-      <index name="USERS_EMAIL_uindex" unique="true" columns="EMAIL"/>
-    </table>
   </data-source>
 </component>
