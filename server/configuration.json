@@ -1,5 +1,5 @@
 {
   "database" : {
-    "path" : "/home/michael/.cat-feeder-database"
+    "seed" : "/home/michael/workspace/ECS-Cat-Feeder/server/database_schema.sql"
   }
 }

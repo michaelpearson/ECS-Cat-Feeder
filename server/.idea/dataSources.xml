@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="160689801">
-    <data-source source="LOCAL" name="H2 - .cat-feeder-database" uuid="46708e08-dcd6-4eb4-9533-568280cb0daf">
+  <component name="DataSourceManagerImpl" format="xml" hash="3213739942">
+    <data-source source="LOCAL" name="H2 - cat-feeder-db" uuid="94ba58ff-2980-4604-b573-bf4d4be25cea">
       <driver-ref>h2.unified</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>org.h2.Driver</jdbc-driver>
-      <jdbc-url>jdbc:h2:file:$USER_HOME$/.cat-feeder-database</jdbc-url>
+      <jdbc-url>jdbc:h2:~/cat-feeder-db;AUTO_SERVER=TRUE</jdbc-url>
     </data-source>
   </component>
 </project>

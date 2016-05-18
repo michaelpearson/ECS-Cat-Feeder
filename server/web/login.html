@@ -21,9 +21,9 @@
                     },
                     success : function (response) {
                         if(response.success) {
-                            console.log("Yup");
+                            window.location.href = "/admin.html"
                         } else {
-                            console.log("Nope");
+                            $('.error').show();
                         }
                     }
                 });
@@ -36,6 +36,11 @@
         <div class="form-signin">
             <input type="email" id="email" class="form-control" placeholder="Email address" required autofocus>
             <input type="password" id="password" class="form-control" placeholder="Password" required>
+            <div class="error alert alert-danger" style="display: none;" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Invalid username or password
+            </div>
             <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in" />
         </div>
     </div>
