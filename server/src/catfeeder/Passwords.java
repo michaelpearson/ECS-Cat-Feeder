@@ -41,7 +41,7 @@ public class Passwords {
         return bytes;
     }
 
-    private static String generateStorngPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         int iterations = 1000;
         char[] chars = password.toCharArray();
         byte[] salt = getSalt();
@@ -80,9 +80,13 @@ public class Passwords {
 
     public static String getHash(String password) {
         try {
-            return generateStorngPasswordHash(password);
+            return generateStrongPasswordHash(password);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException("Error generating password");
         }
+    }
+
+    public static void main(String argv[]) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        System.out.println(generateStrongPasswordHash("password"));
     }
 }
