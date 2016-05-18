@@ -2,10 +2,10 @@ package catfeeder.db;
 
 import catfeeder.Configuration;
 import org.h2.jdbcx.JdbcDataSource;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseClient {
     public static Connection getConnection() {
@@ -27,7 +27,7 @@ public class DatabaseClient {
             throw new RuntimeException("Could not get connection");
         }
     }
-    private static void seed(Connection connection) {
-        
+    private static void seed(Connection connection) throws SQLException {
+        Statement s = connection.prepareStatement("create table users");
     }
 }
