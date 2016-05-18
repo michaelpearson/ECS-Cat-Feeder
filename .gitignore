@@ -4,7 +4,6 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -16,6 +15,5 @@ jetty/
 out/
 
 
-!lib/*.jar
 
 workspace.xml
