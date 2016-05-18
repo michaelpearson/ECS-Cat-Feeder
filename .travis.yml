@@ -1,3 +1,4 @@
-language: java script: ant -f server/server.xml 
+language: java 
+script: ant -f server/server.xml 
 jdk:
 - oraclejdk8
