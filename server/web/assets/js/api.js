@@ -1,4 +1,4 @@
-function getProfileInformation(successCallback, failCallback) {
+function getProfileInformation(successCallback, failCallback, finallyCallback) {
     $.ajax('/api/profile', {
         method : 'get',
         data : {},
@@ -8,10 +8,11 @@ function getProfileInformation(successCallback, failCallback) {
             } else {
                 failCallback(response);
             }
-        }
+        },
+        complete : finallyCallback
     });
 }
-function updateProfileInformation(name, email, successCallback, failCallback) {
+function updateProfileInformation(name, email, successCallback, failCallback, finallyCallback) {
     $.ajax('/api/profile', {
         method : 'post',
         data : {
@@ -24,6 +25,7 @@ function updateProfileInformation(name, email, successCallback, failCallback) {
             } else {
                 failCallback(response);
             }
-        }
+        },
+        complete : finallyCallback
     });
 }

@@ -21,6 +21,11 @@ pages.profile = {
             me.nameElement.val(response.name);
         }, function (response) {
             console.error("There was an error getting profile information; " + response.message);
+        }, function () {
+            if(me.renderCompleteCallback != null) {
+                me.renderCompleteCallback();
+                me.renderCompleteCallback = null;
+            }
         });
     },
     initControls : function () {
