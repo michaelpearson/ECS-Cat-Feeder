@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="H2 - .cat-feeder-database" uuid="46708e08-dcd6-4eb4-9533-568280cb0daf">
+      <secret-storage>master_key</secret-storage>
+      <user-name>sa</user-name>
+    </data-source>
+  </component>
+</project>
