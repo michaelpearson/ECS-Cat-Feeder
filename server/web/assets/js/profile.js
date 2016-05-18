@@ -43,6 +43,7 @@ pages.profile = {
         me.renderCompleteCallback = app.beginNavigation();
         updateProfileInformation(name, email, function (response) {
             me.renderCompleteCallback();
+            $('#user-name').text(name);
         }, function (response) {
             console.error("Could not update profile information; " + response.message);
             me.renderCompleteCallback();
