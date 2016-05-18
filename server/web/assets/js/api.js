@@ -4,12 +4,16 @@ function getProfileInformation(successCallback, failCallback, finallyCallback) {
         data : {},
         success : function (response) {
             if(response.success) {
-                successCallback(response);
+                if(successCallback) {
+                    successCallback(response);
+                }
             } else {
-                failCallback(response);
+                if(failCallback) {
+                    failCallback(response);
+                }
             }
         },
-        complete : finallyCallback
+        complete : finallyCallback || function () {}
     });
 }
 function updateProfileInformation(name, email, successCallback, failCallback, finallyCallback) {
@@ -21,11 +25,15 @@ function updateProfileInformation(name, email, successCallback, failCallback, fi
         },
         success : function (response) {
             if(response.success) {
-                successCallback(response);
+                if(successCallback) {
+                    successCallback(response);
+                }
             } else {
-                failCallback(response);
+                if(failCallback) {
+                    failCallback(response);
+                }
             }
         },
-        complete : finallyCallback
+        complete : finallyCallback || function () {}
     });
 }

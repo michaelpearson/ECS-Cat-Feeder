@@ -8,6 +8,8 @@ pages.dashboard = {
     renderPage : function (pageArguments, renderCompleteCallback) {
         var me = pages.dashboard;
         me.renderCompleteCallback = renderCompleteCallback;
+        renderCompleteCallback();
+        me.renderCompleteCallback = null;
         $('#dashboard-page.page').css({
             display : 'block'
         });

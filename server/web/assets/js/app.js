@@ -7,6 +7,11 @@ $(function () {
             pages[app.currentPage].resize();
         }
     });
+    getProfileInformation(function (response) {
+        $('#user-name').text(response.name);
+    }, function () {
+        window.location.href = "/";
+    });
 });
 // Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function(from, to) {
