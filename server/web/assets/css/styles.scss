@@ -36,3 +36,14 @@ body.login {
     }
   }
 }
+
+
+.loadingbar {
+  height: 2px;
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  width: 5%;
+  background-color: #0097ff;
+}

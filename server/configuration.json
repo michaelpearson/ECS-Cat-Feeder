@@ -1,5 +1,6 @@
 {
   "database" : {
-    "seed" : "/home/michael/workspace/ECS-Cat-Feeder/server/database_schema.sql"
+    "seed" : "/home/michael/workspace/ECS-Cat-Feeder/server/database_schema.sql",
+    "connection_string" : "jdbc:h2:~/workspace/.cat-feeder-db;AUTO_SERVER=TRUE"
   }
 }
