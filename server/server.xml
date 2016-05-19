@@ -15,6 +15,7 @@
         <unzip dest="${basedir}/out/classes">
             <fileset dir="${basedir}/lib/">
                 <include name="**/*.jar" />
+                <exclude name="webapp-runner-8.0.18.0-M1.jar" />
             </fileset>
         </unzip>
     </target>
@@ -30,7 +31,13 @@
         <delete dir="${basedir}/out" />
     </target>
 
-    <target name="install" depends="war">
+    <target name="install" depends="war" />
 
+    <target name="run">
+        <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true" spawn="true">
+            <sysproperty key="config-file" value="${basedir}/configuration.json" />
+            <arg value="--expand-war" />
+            <arg value="${basedir}/out/dist.war" />
+        </java>
     </target>
 </project>
