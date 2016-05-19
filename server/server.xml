@@ -34,7 +34,7 @@
     <target name="install" depends="war" />
 
     <target name="run">
-        <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true" spawn="true">
+        <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true">
             <sysproperty key="config-file" value="${basedir}/configuration.json" />
             <arg value="--expand-war" />
             <arg value="${basedir}/out/dist.war" />

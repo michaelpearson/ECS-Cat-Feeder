@@ -20,3 +20,4 @@ workspace.xml
 watcherTasks.xml
 configuration.json
 dictionaries/*
+target/
