@@ -1,6 +1,6 @@
 {
   "database" : {
-    "seed" : "server/database_schema.sql",
+    "seed" : "database_schema.sql",
     "connection_string" : "jdbc:h2:.cat-feeder-db"
   }
 }
