@@ -1,5 +1,6 @@
 package catfeeder.api;
 
+import catfeeder.Configuration;
 import catfeeder.Passwords;
 import catfeeder.db.DatabaseClient;
 import catfeeder.util.WriteJsonResponse;
@@ -50,7 +51,7 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
                 WriteJsonResponse.writeResponse(response, responseData);
             }
         } catch (SQLException e) {
-            System.err.println("Could not execute query; " + e.getMessage());
+            System.err.println("Could not execute query; " + e.getMessage() + "; " + Configuration.getConfigurationString("database", "connection_string"));
             responseData.put("success", false);
             responseData.put("message", "Error executing query; " + e.getMessage());
             response.setStatus(503);
