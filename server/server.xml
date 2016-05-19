@@ -45,4 +45,11 @@
             <arg value="${port}" />
         </java>
     </target>
+
+    <target name="seed" depends="compile">
+        <java classname="catfeeder.db.DatabaseClient">
+            <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />
+            <classpath path="${basedir}/out/classes" />
+        </java>
+    </target>
 </project>

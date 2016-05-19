@@ -20,7 +20,6 @@ public class DatabaseClient {
     static {
         try {
             server = Server.createTcpServer().start();
-            System.out.println(server.getURL());
         } catch (SQLException e) {
             throw new RuntimeException("Could not start database; " + e.getMessage());
         }
@@ -62,5 +61,9 @@ public class DatabaseClient {
         } catch (IOException e) {
             throw new RuntimeException("Could not seed database; " + e.getMessage());
         }
+    }
+
+    public static void main(String argv[]) throws SQLException {
+        seed(getConnection());
     }
 }
