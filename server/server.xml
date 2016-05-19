@@ -31,9 +31,12 @@
         <delete dir="${basedir}/out" />
     </target>
 
-    <target name="install" depends="war" />
+    <target name="install" depends="war" >
+        <echo message="Installing" />
+    </target>
 
-    <target name="run">
+    <target name="run" depends="install">
+        <echo message="Running" />
         <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true">
             <sysproperty key="config-file" value="${basedir}/configuration.json" />
             <arg value="--expand-war" />
