@@ -29,4 +29,8 @@
     <target name="clean">
         <delete dir="${basedir}/out" />
     </target>
+
+    <target name="install" depends="war">
+
+    </target>
 </project>
