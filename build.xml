@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<project name="ECS-Cat-Feeder" basedir="server/" default="war">
+  <import file="${basedir}/server.xml"/>
+</project>
