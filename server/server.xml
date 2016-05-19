@@ -35,7 +35,7 @@
         <echo message="Installing" />
     </target>
 
-    <target name="run" depends="install">
+    <target name="run" depends="install, seed">
         <echo message="Running" />
         <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true">
             <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />

@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseClient {
-    private static Server server;
+    private static final Server server;
 
     private static Connection connection = null;
 
@@ -59,7 +59,8 @@ public class DatabaseClient {
         try {
             scriptRunner.runScript(new FileReader(Configuration.getConfigurationString("database", "seed")));
         } catch (IOException e) {
-            throw new RuntimeException("Could not seed database; " + e.getMessage());
+            //throw new RuntimeException("Could not seed database; " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
