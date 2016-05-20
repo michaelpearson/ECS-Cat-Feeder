@@ -1,13 +1,25 @@
 <?xml version="1.0" ?>
 <project name="Build Server" default="war">
+
+    <property environment="env"/>
+
     <path id="compile.classpath">
         <fileset dir="${basedir}/lib/">
             <include name="*.jar"/>
         </fileset>
     </path>
-    <target name="init">
-        <mkdir dir="${basedir}/out/classes"/>
+
+    <target name="clean">
+        <delete dir="${basedir}/out" />
     </target>
+
+    <target name="init" depends="clean">
+        <mkdir dir="${basedir}/out/classes"/>
+        <condition property="port" value="${env.PORT}" else="8080">
+            <isset property="env.PORT" />
+        </condition>
+    </target>
+
     <target name="compile" depends="init" >
         <javac destdir="${basedir}/out/classes/" debug="true" includeantruntime="0" srcdir="${basedir}/src/">
             <classpath refid="compile.classpath"/>
@@ -19,6 +31,7 @@
             </fileset>
         </unzip>
     </target>
+
     <target name="war" depends="compile">
         <war destfile="out/dist.war" webxml="${basedir}/web/WEB-INF/web.xml">
             <fileset dir="${basedir}/web/"/>
@@ -27,15 +40,9 @@
         <delete dir="${basedir}/out/classes" />
     </target>
 
-    <target name="clean">
-        <delete dir="${basedir}/out" />
-    </target>
+    <target name="install"/>
 
-    <target name="install" depends="war" >
-        <echo message="Installing" />
-    </target>
-
-    <target name="run">
+    <target name="run" depends="war, seed">
         <echo message="Running" />
         <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true">
             <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />
@@ -52,4 +59,6 @@
             <classpath path="${basedir}/out/classes" />
         </java>
     </target>
+
+
 </project>

@@ -22,5 +22,4 @@ configuration.json
 dictionaries/*
 target/
 *.db
-dataSource.ids
-dataSource.xml
+server/.idea/dataSources*

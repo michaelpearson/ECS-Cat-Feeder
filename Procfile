@@ -1,1 +1,1 @@
-web: ant run -Dport=$PORT
+web: ant run
