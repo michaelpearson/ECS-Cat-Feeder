@@ -13,7 +13,6 @@
         <servlet-name>ProfileInfo</servlet-name>
         <servlet-class>catfeeder.api.ProfileInfoServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>Login Servlet</servlet-name>
         <url-pattern>/api/login</url-pattern>

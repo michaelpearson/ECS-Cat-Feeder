@@ -1,3 +1,9 @@
+<%
+    String forwardedFor = request.getHeader("x-forwarded-proto");
+    if(forwardedFor != null && !forwardedFor.equals("https")) {
+        response.setHeader("Location", "https://" + request.getHeader("host"));
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>

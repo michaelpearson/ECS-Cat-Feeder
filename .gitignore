@@ -21,3 +21,6 @@ watcherTasks.xml
 configuration.json
 dictionaries/*
 target/
+*.db
+dataSource.ids
+dataSource.xml
