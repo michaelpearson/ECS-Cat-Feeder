@@ -26,3 +26,9 @@ INSERT INTO users VALUES (null,
                           '1000:8f1cb1c59d098559fd7e84ff75d7bf84:fd80db905f7960a3fe258b53acfa639ab55f6c3eff94f9c1b63d6efeae6f285baa63d30defd4adba7eec7cc7ff612d427ab60618a1232edbd35345ca45962981',
                           'Michael Pearson',
                           1);
+
+INSERT INTO users VALUES (null,
+                          'test@test.com',
+                          '1000:e87c47727dc5a3a64552c7b5238c4f57:2a76704823b9a0beadabb453455fb3a34d300b2a10651c3b1f3f1da43a80470486a03ba150cac9edd8aa8efb8217f0b98c135e8590bcbbfe59e79a41db6f9ff6',
+                          'Test User',
+                          1);

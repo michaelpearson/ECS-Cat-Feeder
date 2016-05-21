@@ -60,5 +60,10 @@
         </java>
     </target>
 
-
+    <target name="make-password" depends="compile">
+        <java classname="catfeeder.Passwords">
+            <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />
+            <classpath path="${basedir}/out/classes" />
+        </java>
+    </target>
 </project>
