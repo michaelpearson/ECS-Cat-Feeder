@@ -25,4 +25,14 @@
         <servlet-name>ProfileInfo</servlet-name>
         <url-pattern>/api/profile</url-pattern>
     </servlet-mapping>
+
+    <listener>
+        <display-name>name</display-name>
+        <listener-class>catfeeder.feeder.SocketManager</listener-class>
+    </listener>
+    
+    <post-construct>
+        <lifecycle-callback-method>name</lifecycle-callback-method>
+    </post-construct>
+
 </web-app>

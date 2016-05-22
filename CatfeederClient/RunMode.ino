@@ -1,3 +1,9 @@
+#define SERVER_CONNECTION "192.168.0.23"
+#define SERVER_PORT 6969
+
+WiFiClient client;
+int32_t number = 0;
+
 void runModeSetup() {
   Serial.println("Starting in configured mode");
   Serial.print("WiFi network SSID: ");
@@ -21,11 +27,26 @@ void runModeSetup() {
   Serial.println();
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
+
+  connectClient();
+  write32(&client, ESP.getChipId());
   Serial.println("Ready");
 }
 
+void connectClient() {
+  if (!client.connect(SERVER_CONNECTION, SERVER_PORT)) {
+    Serial.println("connection failed");
+    ESP.restart();
+  }
+}
+
 void runModeLoop() {
-  Serial.println("Here");
-  delay(500);
+  if(!client.connected()) {
+    connectClient();
+  } else {
+    write32(&client, number++);
+  }
+  
+  delay(50);
 }
 
