@@ -1,0 +1,213 @@
+<html>
+<head>
+    <title>ECS Cat feeder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="jquery.js"></script>
+    <script>
+        var wifiList = [];
+        $(function () {
+
+            $('.warning').hide();
+            $('input, select').attr('disabled', true);
+            $.ajax('/info', {
+                success: function (response) {
+                    $('.loading').animate({
+                        opacity: 0
+                    }, {
+                        complete : function () {
+                            $('.loading').hide();
+                        },
+                        duration: 500
+                    });
+                    wifiList = response.scan;
+                    for (var a = 0; a < wifiList.length; a++) {
+                        if ([4, 7].indexOf(wifiList[a].encryption) >= 0) {
+                            $('#wifi_list').append('<option value="' + wifiList[a].network + '">' + wifiList[a].network + ", RSSI: " + wifiList[a].RSSI + '</option>');
+                        }
+                        $('input, select').attr('disabled', false);
+                    }
+                    $('#wifi_list').change();
+                    if(response.status.configFailed) {
+                        $('.warning').show();
+                    } else {
+                        $('.warning').hide();
+                    }
+                },
+                error: function () {
+                    setTimeout(this.success.bind(this, ({status: {configFailed: true}, scan:[{network: "HI", encryption: 7, RSSI: -10},{network: "HI1", encryption: 4, RSSI: -10}]})), 1000);
+                    //alert("There was an error getting a list of networks");
+                }
+            });
+            $('#wifi_list').change(function (newValue) {
+                var network = wifiList[$('#wifi_list').prop('selectedIndex')];
+                if(!network || network.encryption == 7) {
+                    $('input[type=password]').attr('disabled', true);
+                } else {
+                    $('input[type=password]').attr('disabled', false);
+                }
+            }).change();
+        });
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        .outer {
+            display: table;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            min-width: 300px;
+        }
+
+        .middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .inner {
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+            max-width: 700px;
+            border-top: 1px solid darkgrey;
+            border-bottom: 1px solid darkgrey;
+        }
+        input[type=submit] {
+            color: #fff;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            touch-action: manipulation;
+            cursor: pointer;
+            background: #337ab7 none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            padding: 15px;
+        }
+        img {
+            width: 100%;
+        }
+        @media (max-width: 500px) {
+            .wifi-icon-outer {
+                display: none !important;
+            }
+            .submit-outer {
+                text-align: center;
+            }
+        }
+        select, input[type=password] {
+            width: 100%;
+            display: block;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background: #fff none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+        input[type=password]:disabled {
+            background-color: #eee;
+            opacity: 1;
+        }
+        .wifi-icon-outer {
+            width: 30%;
+            max-width: 250px;
+            min-width: 100px;
+        }
+        .submit-outer {
+            padding-top: 20px;
+        }
+
+        .loading {
+            position: absolute;
+            width: 100%;
+            background-color: #D5D7D9;
+            opacity: 1;
+            height: 100%;
+            border-radius: 5px;
+        }
+        .loading p {
+            color: white;
+        }
+        .loading div {
+            display: inline-block;
+            -webkit-filter: invert(1);
+            filter: invert(1);
+            max-width: 250px;
+            vertical-align: middle;
+        }
+        .helper {
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+        }
+        form {
+            position: relative;
+        }
+        .warning {
+            background-color: #f2dede;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="outer">
+    <div class="middle">
+        <div class="inner">
+            <h1>ECS Cat Feeder Wifi Setup</h1>
+            <form action="/save" method="post">
+                <div class="loading">
+                    <span class="helper"></span><div><img src="loading.gif"><p>Loading...</p></div>
+                </div>
+                <table>
+                    <tr>
+                        <td class="wifi-icon-outer" rowspan="4">
+                            <img src="wifi.png"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><label for="wifi_list">Wireless network:</label></p>
+                            <select id="wifi_list" name="ssid"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p><label for="password">Network password:</label></p>
+                            <input type="password" name="password" id="password" placeholder="Network password" />
+                            <p class="warning">Warning: Previous configuration failed</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="submit-outer">
+                            <input type="submit" value="Save Network" name="save"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
