@@ -384,21 +384,21 @@
                                         <div class="col-md-4">
                                             <h3 style="margin: 0;">Door Status</h3>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <strong>Open</strong>
                                         </div>
-                                        <div class="col-md-6">
-                                            <button class="btn btn-default" onclick="toggleDoor()">Close</button> <!--Change value depending on status-->
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="toggleDoor()">Toggle</button> <!--Change value depending on status-->
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <h3 style="margin: 0;">Last RFID Scan</h3>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <strong>#1234</strong>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-5">
                                             <button class="btn btn-default" onclick="testScan()">Test Scanner</button>
                                         </div>
                                     </div>
@@ -406,11 +406,11 @@
                                         <div class="col-md-4">
                                             <h3 style="margin: 0;">Conveyor Status</h3>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <strong>Running</strong>
                                         </div>
-                                        <div class="col-md-6">
-                                            <button class="btn btn-default" onclick="toggleBelt()">Stop</button>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="toggleBelt()">Toggle</button>
                                         </div>
                                     </div>
                                 </div>
@@ -426,10 +426,13 @@
                                             <h3 style="margin: 0;">Food Type 1</h3>
                                         </div>
                                         <div class="col-md-3">
-                                            <div class="input-group">
+                                            <div class="input-group" style="width: 80%">
                                                 <input class="form-control" type="number" step="1.00" placeholder="0.00"/>
                                                 <span class="input-group-addon">grams</span>
                                             </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="deliverFood(1)">Deliver</button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -437,10 +440,13 @@
                                             <h3 style="margin: 0;">Food Type 2</h3>
                                         </div>
                                         <div class="col-md-3">
-                                            <div class="input-group">
+                                            <div class="input-group" style="width: 80%">
                                                 <input class="form-control" type="number" step="1.00" placeholder="0.00"/>
                                                 <span class="input-group-addon">grams</span>
                                             </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="deliverFood(2)">Deliver</button>
                                         </div>
                                     </div>
                                 </div>
