@@ -14,7 +14,7 @@ void setup() {
 
   delay(1000);
 
-  if (isConfigured() && isConfigValid()) {
+  if (digitalRead(0) == 1 && isConfigured() && isConfigValid()) {
     configMode = false;
     runModeSetup();
   } else {
