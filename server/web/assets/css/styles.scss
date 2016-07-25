@@ -37,6 +37,10 @@ body.login {
   }
 }
 
+.panel-body > .row{
+  margin-bottom: 20px;
+}
+
 
 .loadingbar {
   height: 2px;
@@ -46,4 +50,25 @@ body.login {
   left: 0;
   width: 5%;
   background-color: #0097ff;
+}
+
+.learning-disabled{
+  width: 100%;
+  text-align: center;
+}
+
+.learning-enabled{
+  padding-top: 20px;
+  .learning-add-container{
+
+  }
+  .learning-progressbar{
+    width: calc(80% - 15px);
+    margin-right: 15px;
+    float: right;
+    margin-top: 30px;
+  }
+}
+
+.settings-enabled{
 }

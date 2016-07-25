@@ -6,5 +6,9 @@ pages.manual = {
         $('#manual-control-page.page').css({
             display : 'block'
         });
+    },
+    getStatus : function () {
+
+
     }
 };

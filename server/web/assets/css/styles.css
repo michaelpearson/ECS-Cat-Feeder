@@ -29,6 +29,9 @@ body.login {
     body.login .form-signin .form-control:focus {
       z-index: 2; }
 
+.panel-body > .row {
+  margin-bottom: 20px; }
+
 .loadingbar {
   height: 2px;
   position: fixed;
@@ -37,5 +40,17 @@ body.login {
   left: 0;
   width: 5%;
   background-color: #0097ff; }
+
+.learning-disabled {
+  width: 100%;
+  text-align: center; }
+
+.learning-enabled {
+  padding-top: 20px; }
+  .learning-enabled .learning-progressbar {
+    width: calc(80% - 15px);
+    margin-right: 15px;
+    float: right;
+    margin-top: 30px; }
 
 /*# sourceMappingURL=styles.css.map */

@@ -4,24 +4,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>ECS Cat feeder</title>
-        <link href="/assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
-        <link href="/assets/lib/css/font-awesome.css" rel="stylesheet">
-        <link href="/assets/lib/css/morris.css" rel="stylesheet" />
-        <link href="/assets/lib/css/sb-admin.css" rel="stylesheet" />
-        <link href="/assets/css/styles.css" rel="stylesheet">
-        <script src="/assets/lib/js/jquery-2.2.3.js"></script>
-        <script src="/assets/lib/bootstrap/js/bootstrap.js"></script>
-        <script src="/assets/lib/js/raphael.min.js"></script>
-        <script src="/assets/lib/js/morris.min.js"></script>
-        <script src="/assets/lib/js/morris-data.js"></script>
-        <script src="/assets/js/app.js"></script>
-        <script src="/assets/js/api.js"></script>
-        <script src="/assets/js/dashboard.js"></script>
-        <script src="/assets/js/options.js"></script>
-        <script src="/assets/js/manual.js"></script>
-        <script src="/assets/js/learning.js"></script>
-        <script src="/assets/js/profile.js"></script>
-        <script src="/assets/js/settings.js"></script>
+        <link href="assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <link href="assets/lib/css/font-awesome.css" rel="stylesheet">
+        <link href="assets/lib/css/morris.css" rel="stylesheet" />
+        <link href="assets/lib/css/sb-admin.css" rel="stylesheet" />
+        <link href="assets/css/styles.css" rel="stylesheet">
+        <script src="assets/lib/js/jquery-2.2.3.js"></script>
+        <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
+        <script src="assets/lib/js/raphael.min.js"></script>
+        <script src="assets/lib/js/morris.min.js"></script>
+        <script src="assets/lib/js/morris-data.js"></script>
+        <script src="assets/js/app.js"></script>
+        <script src="assets/js/api.js"></script>
+        <script src="assets/js/dashboard.js"></script>
+        <script src="assets/js/options.js"></script>
+        <script src="assets/js/manual.js"></script>
+        <script src="assets/js/learning.js"></script>
+        <script src="assets/js/profile.js"></script>
+        <script src="assets/js/settings.js"></script>
     </head>
     <body>
         <div id="wrapper">
@@ -73,50 +73,72 @@
                 </div>
             </nav>
 
-
+            <!------------------->
+            <!--DASHBOARD START-->
+            <!------------------->
 
             <div id="page-wrapper">
-
                 <div class="page" id="dashboard-page">
-                    <p>Dashboard</p>
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-12">
                                 <h1 class="page-header">
-                                    Dashboard <small>Statistics Overview</small>
+                                    Dashboard <small>Overview</small>
                                 </h1>
-                                <ol class="breadcrumb">
-                                    <li class="active">
-                                        <i class="fa fa-dashboard"></i> Dashboard
-                                    </li>
-                                </ol>
+                                <!--<ol class="breadcrumb">-->
+                                    <!--<li class="active">-->
+                                        <!--<i class="fa fa-dashboard"></i> Dashboard-->
+                                    <!--</li>-->
+                                <!--</ol>-->
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="alert alert-info alert-dismissable">
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    <i class="fa fa-info-circle"></i>  <strong>Like SB Admin?</strong> Try out <a href="http://startbootstrap.com/template-overviews/sb-admin-2" class="alert-link">SB Admin 2</a> for additional features!
-                                </div>
-                            </div>
-                        </div>
+                        <!--<div class="row">-->
+                            <!--<div class="col-lg-12">-->
+                                <!--<div class="alert alert-info alert-dismissable">-->
+                                    <!--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
+                                    <!--<i class="fa fa-info-circle"></i>  <strong>Like SB Admin?</strong> Try out <a href="http://startbootstrap.com/template-overviews/sb-admin-2" class="alert-link">SB Admin 2</a> for additional features!-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <div class="row">
                             <div class="col-lg-3 col-md-6">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-xs-3">
-                                                <i class="fa fa-comments fa-5x"></i>
+                                                <i class="fa fa-5x fa-flask"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <div class="huge">26</div>
-                                                <div>New Comments!</div>
+                                                <!--<div class="huge">26</div>-->
+                                                <div>Learning Mode</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#">
+                                    <a href="#/learning">
                                         <div class="panel-footer">
-                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-left">Go to Learning Mode</span>
+                                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-3">
+                                                <i class="fa fa-crosshairs fa-5x"></i>
+                                            </div>
+                                            <div class="col-xs-9 text-right">
+                                                <!--<div class="huge">12</div>-->
+                                                <div>Manual Mode</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="#/manual">
+                                        <div class="panel-footer" style="color: #333;">
+                                            <span class="pull-left">Go to Manual Mode</span>
                                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                             <div class="clearfix"></div>
                                         </div>
@@ -128,17 +150,17 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-xs-3">
-                                                <i class="fa fa-tasks fa-5x"></i>
+                                                <i class="fa fa-pencil fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <div class="huge">12</div>
-                                                <div>New Tasks!</div>
+                                                <!--<div class="huge">12</div>-->
+                                                <div>Options</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#">
+                                    <a href="#/options">
                                         <div class="panel-footer">
-                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-left">Go to Options</span>
                                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                             <div class="clearfix"></div>
                                         </div>
@@ -150,17 +172,17 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-xs-3">
-                                                <i class="fa fa-shopping-cart fa-5x"></i>
+                                                <i class="fa fa-cogs fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <div class="huge">124</div>
-                                                <div>New Orders!</div>
+                                                <!--<div class="huge">124</div>-->
+                                                <div>Device Settings</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#">
+                                    <a href="#/settings">
                                         <div class="panel-footer">
-                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-left">Go to Device Settings</span>
                                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                             <div class="clearfix"></div>
                                         </div>
@@ -172,17 +194,17 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-xs-3">
-                                                <i class="fa fa-support fa-5x"></i>
+                                                <i class="fa fa-user fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <div class="huge">13</div>
-                                                <div>Support Tickets!</div>
+                                                <!--<div class="huge">13</div>-->
+                                                <div>Profile</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="#">
+                                    <a href="#/profile">
                                         <div class="panel-footer">
-                                            <span class="pull-left">View Details</span>
+                                            <span class="pull-left">Go to your Profile</span>
                                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                             <div class="clearfix"></div>
                                         </div>
@@ -341,29 +363,177 @@
                 </div>
 
                 <div class="page" id="options-page">
-                    <p>Options</p>
+                    <div class="container-fluid">
+                        <div class="page-header">
+                            <h1>Options <small>Device options</small></h1>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="page" id="manual-control-page">
-                    <p>Manual Control</p>
+                    <div class="container-fluid">
+                        <div class="page-header">
+                            <h1>Manual Control <small>Control the feeder remotely</small></h1>
+                        </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Hardware</h3>
+                                </div>
+                                <div class="panel-body container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="margin: 0;">Door Status</h3>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Open</strong>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="toggleDoor()">Toggle</button> <!--Change value depending on status-->
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="margin: 0;">Last RFID Scan</h3>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>#1234</strong>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="testScan()">Test Scanner</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="margin: 0;">Conveyor Status</h3>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Running</strong>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="toggleBelt()">Toggle</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Food Delivery</h3>
+                                </div>
+                                <div class="panel-body container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="margin: 0;">Food Type 1</h3>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-group" style="width: 80%">
+                                                <input class="form-control" type="number" step="1.00" placeholder="0.00"/>
+                                                <span class="input-group-addon">grams</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="deliverFood(1)">Deliver</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h3 style="margin: 0;">Food Type 2</h3>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-group" style="width: 80%">
+                                                <input class="form-control" type="number" step="1.00" placeholder="0.00"/>
+                                                <span class="input-group-addon">grams</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-default" onclick="deliverFood(2)">Deliver</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
                 </div>
 
                 <div class="page" id="learning-page">
-                    <p>Learning</p>
+                    <div class="container-fluid">
+                        <div class="page-header">
+                            <h1>Learning Mode <small>Introduce cats to the system</small></h1>
+                        </div>
+
+                        <!--<div class="learning-disabled"> &lt;!&ndash; show if learning mode is disabled in config&ndash;&gt;-->
+                            <!--<h3>You do not currently have Learning Mode enabled.</h3>-->
+                            <!--<button class="btn btn-success">Enable Learning Mode</button>-->
+                        <!--</div>-->
+
+                        <div class="learning-enabled"> <!--To be displayed when learning mode is enabled-->
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Current Progress (for Cat's name)</h3>
+                                </div>
+                                <div class="panel-body container-fluid">
+                                    <div class="row">
+                                        <div style="float:left; width: 20%; padding-left: 15px;">
+                                            <h3 style="color: #333;">Stage 1</h3>
+                                            <p style="color: #777;">Device door always open</p>
+                                        </div>
+                                        <div class="progress learning-progressbar">
+                                            <div class="progress-bar" role="progressbar" style="width: 10%;">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--<div class="learning-add-container">-->
+                                <!--<button style="margin-top: -6px; float: right; margin-left: 10px;" class="btn btn-success">Change Current Cat</button>-->
+                            <!--</div>-->
+                        </div>
+                    </div>
                 </div>
 
                 <div class="page" id="profile-page">
-                    <div class="form-group">
-                        <input class="form-control" type="email" name="email" />
-                        <br />
-                        <input class="form-control" type="text" name="name" />
-                        <br />
-                        <a class="btn btn-primary" id="save-profile-information">Update Information</a>
+                    <div class="container-fluid">
+                        <div class="page-header">
+                            <h1>Profile <small>View and edit your profile</small></h1>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Name</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <input class="form-control" type="email" name="email" />
+                                    <br />
+                                    <input class="form-control" type="text" name="name" />
+                                    <br />
+                                    <a class="btn btn-primary" id="save-profile-information">Update Information</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="page" id="settings-page">
-                    <p>Device Settings</p>
+                    <div class="settings-enabled container-fluid">
+
+                        <div class="page-header">
+                            <h1>Device Settings <small>Configure device settings</small></h1>
+                        </div>
+
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-2">-->
+                                <!--Device Connection-->
+                            <!--</div>-->
+                            <!--<div class="col-md-6">-->
+                                <!--<button class="btn btn-default">Test Connection</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    </div>
+
+                    <!--<button class="btn btn-danger">Disable Device</button>-->
+                    <!--<button class="btn btn-success">Activate Device</button>-->
                 </div>
 
             </div>
