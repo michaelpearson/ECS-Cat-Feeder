@@ -14,6 +14,11 @@ void setup() {
 
   delay(1000);
 
+  Serial.println("Init...\n");
+
+  Serial.println(WiFi.macAddress());
+  
+
   if (isConfigured() && isConfigValid()) {
     configMode = false;
     runModeSetup();

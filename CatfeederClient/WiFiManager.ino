@@ -28,9 +28,6 @@ bool isConfigValid() {
    Address range: 2 - 102
 */
 char * getSSID() {
-  if (!isConfigured()) {
-    return NULL;
-  }
   return (char *)EEPROM.getDataPtr() + ADDRESS_SSID;
 }
 
@@ -40,9 +37,6 @@ char * getSSID() {
    Address range: 102 - 202
 */
 char * getPassword() {
-  if (!isConfigured()) {
-    return NULL;
-  }
   return (char *)EEPROM.getDataPtr() + ADDRESS_PASSWORD;
 }
 
@@ -66,11 +60,13 @@ bool setSSID(char * SSID) {
 */
 bool setPassword(char * password) {
   uint8_t length = strlen(password) + 1;
-  if (length > 100 || length == 1) {
-    return false;
-  }
   char * ptr = getPassword();
-  while ((*(ptr++) = *(password++)) != '\0');
+  if (length > 100 || length == 1) {
+    *ptr = '\0';
+  } else {
+    while ((*(ptr++) = *(password++)) != '\0');
+  }
+  
   EEPROM.commit();
 }
 
