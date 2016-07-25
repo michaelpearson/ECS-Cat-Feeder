@@ -29,6 +29,9 @@ body.login {
     body.login .form-signin .form-control:focus {
       z-index: 2; }
 
+.panel-body > .row {
+  margin-bottom: 20px; }
+
 .loadingbar {
   height: 2px;
   position: fixed;
