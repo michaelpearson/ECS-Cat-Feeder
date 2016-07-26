@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SocketManager implements ServletContextListener {
     private static final int PORT = 6969;
-    private List<CatFeederConnection> catFeeders = new ArrayList<>();
+    static List<CatFeederConnection> catFeeders = new ArrayList<>();
     private ServerSocket listener;
 
     private Thread serverThread = new Thread() {
@@ -48,6 +48,13 @@ public class SocketManager implements ServletContextListener {
         try {
             listener.close();
         } catch (IOException ignore) {}
+    }
+
+    public static CatFeeder getCatfeederConnection(int catfeederId) {
+        if(catFeeders.size() == 0) {
+            return null;
+        }
+        return catFeeders.get(0);
     }
 
 }

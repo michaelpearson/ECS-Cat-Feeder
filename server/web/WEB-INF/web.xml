@@ -5,34 +5,44 @@
         <servlet-class>catfeeder.api.LoginServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
     <servlet>
         <servlet-name>Test</servlet-name>
         <servlet-class>catfeeder.api.TestServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>ProfileInfo</servlet-name>
         <servlet-class>catfeeder.api.ProfileInfoServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>DeliverFood</servlet-name>
+        <servlet-class>catfeeder.api.manual.DeliverFood</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>Login Servlet</servlet-name>
         <url-pattern>/api/login</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>Test</servlet-name>
         <url-pattern>/api/test</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ProfileInfo</servlet-name>
         <url-pattern>/api/profile</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DeliverFood</servlet-name>
+        <url-pattern>/api/manual/deliverFood</url-pattern>
     </servlet-mapping>
 
     <listener>
         <display-name>name</display-name>
         <listener-class>catfeeder.feeder.SocketManager</listener-class>
     </listener>
-    
-    <post-construct>
-        <lifecycle-callback-method>name</lifecycle-callback-method>
-    </post-construct>
-
 </web-app>

@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class CatFeederConnection extends Thread {
+public class CatFeederConnection extends Thread implements CatFeeder {
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
+    private Queue<Byte> commandQueue = new LinkedList<>();
 
     public CatFeederConnection(Socket socket) {
         this.socket = socket;
@@ -24,12 +27,28 @@ public class CatFeederConnection extends Thread {
     @Override
     public void run() {
         try {
-            while(socket.isConnected()) {
-                System.out.printf("GOT: %d\n", readI32());
+            while(socket.isConnected() && !interrupted()) {
+                synchronized (this) {
+                    while(commandQueue.isEmpty()) {
+                        wait();
+                        if(!socket.isConnected()) {
+                            return;
+                        }
+                    }
+                }
+                int i = 0;
+                Byte b;
+                while((b = commandQueue.poll()) != null) {
+                    outputStream.write(b);
+                    i++;
+                }
+                System.out.println("Written " + i + " bytes");
+                outputStream.flush();
             }
-        } catch(IOException e) {
+        } catch(IOException | InterruptedException e) {
             System.err.println("Connection died");
         }
+        SocketManager.catFeeders.remove(this);
     }
 
     private int readI32() throws IOException {
@@ -40,8 +59,24 @@ public class CatFeederConnection extends Thread {
         return number;
     }
 
-    public void sendStatusCommand() throws IOException {
-        outputStream.write(new byte[] {0x00, 0x00, 0x00, 0x00});
+    @Override
+    public void deliverFood(int gramAmount, int foodIndex) {
+        commandQueue.add((byte)0x01); //Deliver food command
+        addIntToQueue(commandQueue, gramAmount);
+        addIntToQueue(commandQueue, foodIndex);
+        pushNotification();
     }
 
+    private static void addIntToQueue(Queue<Byte> queue, int value) {
+        queue.add((byte)(value & 0xFF));
+        queue.add((byte)((value >> 8) & 0xFF));
+        queue.add((byte)((value >> 16) & 0xFF));
+        queue.add((byte)((value >> 24) & 0xFF));
+    }
+
+    private void pushNotification() {
+        synchronized(this) {
+            notifyAll();
+        }
+    }
 }

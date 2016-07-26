@@ -1,3 +1,5 @@
+#include <Wire.h>
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -18,6 +20,12 @@ void setup() {
 
   Serial.println(WiFi.macAddress());
 
+  if(Serial.available()) {
+    while(Serial.available()) {
+      Serial.read();
+    }
+    setConfigValid(false);
+  }
 
   if (isConfigured() && isConfigValid()) {
     configMode = false;

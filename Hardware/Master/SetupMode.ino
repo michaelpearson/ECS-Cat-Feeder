@@ -22,7 +22,7 @@ void setupModeSetup() {
 
   server.on("/setup", handleSetup);
   server.on("/jquery.js", handleJquery);
-  server.on("/loading.gif", handleLoading);
+  server.on("/loading.svg", handleLoading);
   server.on("/wifi.png", handleWifi);
 
   server.onNotFound(handleRedirect);
@@ -49,7 +49,7 @@ void handleWifi() {
 }
 
 void handleLoading() {
-  sendFile("/loading.gif.gz", "image/gif");
+  sendFile("/loading.svg.gz", "image/svg+xml");
 }
 
 

@@ -1,8 +1,7 @@
-#define SERVER_CONNECTION "10.140.130.32"
+#define SERVER_CONNECTION "192.168.0.23"
 #define SERVER_PORT 6969
 
 WiFiClient client;
-int32_t number = 0;
 
 void runModeSetup() {
   char * password = getPassword();
@@ -38,14 +37,18 @@ void runModeSetup() {
   Serial.println(WiFi.localIP());
 
   connectClient();
-  write32(&client, ESP.getChipId());
+
+  Wire.begin(2, 14);
+  
   Serial.println("Ready");
 }
 
 void connectClient() {
   if (!client.connect(SERVER_CONNECTION, SERVER_PORT)) {
     Serial.println("connection failed");
-    //ESP.restart();
+    delay(1000);
+  } else {
+    write32(&client, ESP.getChipId());
   }
 }
 
@@ -53,9 +56,24 @@ void runModeLoop() {
   if(!client.connected()) {
     connectClient();
   } else {
-    write32(&client, number++);
+    if(client.available()) {
+      bool error = false;
+      switch(client.read()) {
+        //Deliver food
+        case 0x01:
+          int gramAmount, foodType;
+          error |= !read32(&client, &gramAmount);
+          error |= !read32(&client, &foodType);
+          if(!error) {
+            deliverFood(gramAmount, foodType);
+          }
+          break;
+      }
+      if(error) {
+        Serial.println("There was an error processing the request");
+      }
+    }
+    catFeederLoop();
+    delay(100);
   }
-  
-  delay(50);
 }
-
