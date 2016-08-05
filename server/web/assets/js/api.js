@@ -16,12 +16,12 @@ function getProfileInformation(successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
-function updateProfileInformation(name, email, successCallback, failCallback, finallyCallback) {
+function updateProfileInformation(name, password, successCallback, failCallback, finallyCallback) {
     $.ajax('/api/profile', {
         method : 'post',
         data : {
             name : name,
-            email : email
+            password : password
         },
         success : function (response) {
             if(response.success) {
@@ -59,3 +59,47 @@ function deliverFood(amount, type, successCallback, failCallback, finallyCallbac
         complete : finallyCallback || function () {}
     });
 }
+
+function scheduleFoodDelivery(amount, type, timestamp, successCallback, failCallback, finallyCallback) {
+    $.ajax('/api/schedule', {
+        method : 'post',
+        data : {
+            gramAmount : amount,
+            foodIndex : type,
+            date : timestamp,
+            recurring : false
+        },
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+
+
+function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyCallback) {
+    $.ajax('/api/schedule?id=' + id, {
+        method : 'delete',
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+

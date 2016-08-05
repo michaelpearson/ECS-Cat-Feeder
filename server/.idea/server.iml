@@ -26,5 +26,6 @@
     <orderEntry type="library" name="Java EE 6-Java EE 6" level="project" />
     <orderEntry type="library" name="json-simple-1.1" level="project" />
     <orderEntry type="library" name="h2-1.3.176" level="project" />
+    <orderEntry type="library" name="ormlite" level="project" />
   </component>
 </module>

@@ -1,8 +1,9 @@
 var pages = window.pages || {};
 pages.profile = {
     initialized : false,
-    emailElement : null,
+    passwordElement : null,
     nameElement : null,
+    emailElement : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
         var me = pages.profile;
         me.renderCompleteCallback = renderCompleteCallback;
@@ -17,6 +18,7 @@ pages.profile = {
     initPage : function () {
         var me = pages.profile;
         getProfileInformation(function (response) {
+            me.passwordElement.val("");
             me.emailElement.val(response.email);
             me.nameElement.val(response.name);
         }, function (response) {
@@ -30,8 +32,9 @@ pages.profile = {
     },
     initControls : function () {
         var me = pages.profile;
+        me.passwordElement = $('input[name=password]');
+        me.nameElement = $('input[name=name]');
         me.emailElement = $('input[name=email]');
-        me.nameElement = $('input[name=name]'); 
         $('#save-profile-information').click(function () {
             me.save();
         });
@@ -39,9 +42,9 @@ pages.profile = {
     save : function () {
         var me = pages.profile;
         var name = me.nameElement.val();
-        var email = me.emailElement.val();
+        var password = me.passwordElement.val();
         me.renderCompleteCallback = app.beginNavigation();
-        updateProfileInformation(name, email, function (response) {
+        updateProfileInformation(name, password, function (response) {
             me.renderCompleteCallback();
             $('#user-name').text(name);
         }, function (response) {

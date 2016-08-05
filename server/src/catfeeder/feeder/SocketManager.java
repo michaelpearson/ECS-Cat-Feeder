@@ -50,7 +50,7 @@ public class SocketManager implements ServletContextListener {
         } catch (IOException ignore) {}
     }
 
-    public static CatFeeder getCatfeederConnection(int catfeederId) {
+    public static CatFeederConnection getCatfeederConnection(long catfeederId) {
         if(catFeeders.size() == 0) {
             return null;
         }

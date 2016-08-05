@@ -1,6 +1,0 @@
-{
-  "database" : {
-    "seed" : "<Project path>/server/database_schema.sql",
-    "connection_string" : "jdbc:h2:~/.cat-feeder-db;AUTO_SERVER=TRUE"
-  }
-}

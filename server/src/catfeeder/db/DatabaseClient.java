@@ -1,70 +1,78 @@
 package catfeeder.db;
 
-import catfeeder.Configuration;
-import org.h2.jdbcx.JdbcDataSource;
-import org.h2.tools.Server;
+import catfeeder.Passwords;
+import catfeeder.model.CatFeeder;
+import catfeeder.model.FoodDelivery;
+import catfeeder.model.Schedule;
+import catfeeder.model.User;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Date;
 
-public class DatabaseClient {
-    private static final Server server;
-
-    private static Connection connection = null;
+public class DatabaseClient implements ServletContextListener {
+    private static ConnectionSource connectionSource = null;
 
     static {
         try {
-            server = Server.createTcpServer().start();
-        } catch (SQLException e) {
-            throw new RuntimeException("Could not start database; " + e.getMessage());
-        }
-    }
+            connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+            TableUtils.createTable(connectionSource, CatFeeder.class);
+            TableUtils.createTable(connectionSource, User.class);
+            TableUtils.createTable(connectionSource, Schedule.class);
+            TableUtils.createTable(connectionSource, FoodDelivery.class);
 
+            Dao<CatFeeder, Long> feederDao = DaoManager.createDao(connectionSource, CatFeeder.class);
+            Dao<User, String> userDao = getUserDao();
+            Dao<Schedule, Long> scheduleDao = getScheduleDao();
 
-    public static Connection getConnection() {
-        try {
-            if(connection != null && !connection.isClosed()) {
-                return connection;
+            CatFeeder cf = new CatFeeder();
+            cf.setHardware_id(1);
+            cf.setName("Test cat feeder");
+            cf.setLastConnectionAt(null);
+            feederDao.create(cf);
+
+            for(int a = 0;a < 10;a++) {
+                Schedule schedule = new Schedule();
+                schedule.setRecurring(false);
+                schedule.setGramAmount(100);
+                schedule.setFirstDelivery(new Date());
+                schedule.setFeeder(cf);
+                scheduleDao.create(schedule);
             }
-        } catch (SQLException ignore) {
-            connection = null;
-        }
 
-        String connectionString = Configuration.getConfigurationString("database", "connection_string");
+            User u = new User();
+            u.setEmail("zl2mjp@gmail.com");
+            u.setName("Michael Pearson");
+            u.setPassword(Passwords.getHash("password"));
+            u.setCatFeeder(feederDao.queryForId(1L));
+            userDao.create(u);
 
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL(connectionString);
-        ds.setUser("sa");
-        ds.setPassword("sa");
-        try {
-            connection = ds.getConnection();
-            ResultSet result = connection.prepareStatement("show TABLES;").executeQuery();
-            if(!result.next()) {
-                seed(connection);
-            }
-            return connection;
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Could not get connection");
-        }
-    }
-    private static void seed(Connection connection) throws SQLException {
-        System.out.println("Seeding database");
-        ScriptRunner scriptRunner = new ScriptRunner(connection, true, true);
-        try {
-            scriptRunner.runScript(new FileReader(Configuration.getConfigurationString("database", "seed")));
-        } catch (IOException e) {
-            //throw new RuntimeException("Could not seed database; " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static void main(String argv[]) throws SQLException {
-        seed(getConnection());
+    public static Dao<User, String> getUserDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, User.class);
     }
+
+    public static Dao<Schedule, Long> getScheduleDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, Schedule.class);
+    }
+
+    public static ConnectionSource getConnectionSource() {
+        return connectionSource;
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {}
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {}
 }

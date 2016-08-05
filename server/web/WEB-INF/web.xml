@@ -7,11 +7,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>Test</servlet-name>
-        <servlet-class>catfeeder.api.TestServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>ProfileInfo</servlet-name>
         <servlet-class>catfeeder.api.ProfileInfoServlet</servlet-class>
     </servlet>
@@ -21,14 +16,19 @@
         <servlet-class>catfeeder.api.manual.DeliverFood</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>Schedule</servlet-name>
+        <servlet-class>catfeeder.api.schedule.ScheduleServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
-        <servlet-name>Login Servlet</servlet-name>
-        <url-pattern>/api/login</url-pattern>
+        <servlet-name>Schedule</servlet-name>
+        <url-pattern>/api/schedule</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>Test</servlet-name>
-        <url-pattern>/api/test</url-pattern>
+        <servlet-name>Login Servlet</servlet-name>
+        <url-pattern>/api/login</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -42,7 +42,9 @@
     </servlet-mapping>
 
     <listener>
-        <display-name>name</display-name>
         <listener-class>catfeeder.feeder.SocketManager</listener-class>
+    </listener>
+    <listener>
+        <listener-class>catfeeder.db.DatabaseClient</listener-class>
     </listener>
 </web-app>

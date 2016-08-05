@@ -16,7 +16,21 @@ CREATE TABLE IF NOT EXISTS PUBLIC.users
   name VARCHAR(255),
   feeder_id INT
 );
+
+CREATE TABLE IF NOT EXISTS PUBLIC.schedule
+(
+  id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  feeder_id INT,
+  gram_amount INT,
+  recurring BOOL DEFAULT FALSE ,
+  first_delivery TIMESTAMP,
+  days_of_week OTHER,
+  end_date DATE DEFAULT NULL
+);
+
 CREATE UNIQUE INDEX IF NOT EXISTS "USERS_EMAIL_uindex" ON PUBLIC.USERS (EMAIL);
+
+
 
 
 INSERT INTO cat_feeder (description, name, ip_address) VALUES ('This cat feeder is a test cat feeder', 'Test', '0.0.0.0');
@@ -32,3 +46,5 @@ INSERT INTO users VALUES (null,
                           '1000:e87c47727dc5a3a64552c7b5238c4f57:2a76704823b9a0beadabb453455fb3a34d300b2a10651c3b1f3f1da43a80470486a03ba150cac9edd8aa8efb8217f0b98c135e8590bcbbfe59e79a41db6f9ff6',
                           'Test User',
                           1);
+
+INSERT INTO schedule VALUES (null, 1, 100, false, '2016-08-06 12:00:00', null, null);

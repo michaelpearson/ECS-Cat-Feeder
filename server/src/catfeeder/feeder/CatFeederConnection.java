@@ -7,7 +7,8 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class CatFeederConnection extends Thread implements CatFeeder {
+
+public class CatFeederConnection extends Thread {
     private Socket socket;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -59,7 +60,6 @@ public class CatFeederConnection extends Thread implements CatFeeder {
         return number;
     }
 
-    @Override
     public void deliverFood(int gramAmount, int foodIndex) {
         commandQueue.add((byte)0x01); //Deliver food command
         addIntToQueue(commandQueue, gramAmount);
