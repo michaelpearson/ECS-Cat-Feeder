@@ -42,28 +42,13 @@
 
     <target name="install"/>
 
-    <target name="run" depends="war, seed">
+    <target name="run" depends="war">
         <echo message="Running" />
         <java jar="${basedir}/lib/webapp-runner-8.0.18.0-M1.jar" fork="true">
-            <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />
             <arg value="--expand-war" />
             <arg value="${basedir}/out/dist.war" />
             <arg value="--port" />
             <arg value="${port}" />
-        </java>
-    </target>
-
-    <target name="seed" depends="compile">
-        <java classname="catfeeder.db.DatabaseClient">
-            <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />
-            <classpath path="${basedir}/out/classes" />
-        </java>
-    </target>
-
-    <target name="make-password" depends="compile">
-        <java classname="catfeeder.Passwords">
-            <sysproperty key="config-file" value="${basedir}/herokuconfiguration.json" />
-            <classpath path="${basedir}/out/classes" />
         </java>
     </target>
 </project>

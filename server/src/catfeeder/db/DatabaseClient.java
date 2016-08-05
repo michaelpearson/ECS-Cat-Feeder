@@ -46,16 +46,20 @@ public class DatabaseClient implements ServletContextListener {
                 scheduleDao.create(schedule);
             }
 
-            User u = new User();
-            u.setEmail("zl2mjp@gmail.com");
-            u.setName("Michael Pearson");
-            u.setPassword(Passwords.getHash("password"));
-            u.setCatFeeder(feederDao.queryForId(1L));
-            userDao.create(u);
+            userDao.create(createUser("test@test.com", "Test User", "password", cf));
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static User createUser(String email, String name, String password, CatFeeder catFeeder) {
+        User u = new User();
+        u.setEmail(email);
+        u.setName(name);
+        u.setPassword(Passwords.getHash(password));
+        u.setCatFeeder(catFeeder);
+        return u;
     }
 
     public static Dao<User, String> getUserDao() throws SQLException {
