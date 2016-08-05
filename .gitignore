@@ -23,3 +23,5 @@ dictionaries/*
 target/
 *.db
 server/.idea/dataSources*
+*.iml
+.idea/
