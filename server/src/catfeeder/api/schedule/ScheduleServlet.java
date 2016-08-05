@@ -63,6 +63,7 @@ public class ScheduleServlet extends HttpServlet {
             }
             JSONObject responseData = new JSONObject();
             responseData.put("deliveries", allDeliveries);
+            responseData.put("success", true);
             WriteJsonResponse.writeResponse(resp, responseData);
         } catch (SQLException | RuntimeException e) {
             WriteErrorResponse.Write(resp, e.getMessage());

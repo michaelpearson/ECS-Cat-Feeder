@@ -103,3 +103,25 @@ function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyC
     });
 }
 
+function getAllScheduledDeliveries(month, year, successCallback, failCallback, finallyCallback) {
+    $.ajax('/api/schedule', {
+        method : 'get',
+        data : {
+            month : month,
+            year : year
+        },
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+
