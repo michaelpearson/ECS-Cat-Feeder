@@ -9,7 +9,10 @@
         <link href="assets/lib/css/morris.css" rel="stylesheet" />
         <link href="assets/lib/css/sb-admin.css" rel="stylesheet" />
         <link href="assets/css/styles.css" rel="stylesheet">
+        <link href="assets/lib/css/fullcalendar.min.css" rel="stylesheet">
         <script src="assets/lib/js/jquery-2.2.3.js"></script>
+        <script src="assets/lib/js/moment.min.js"></script>
+        <script src="assets/lib/js/fullcalendar.min.js"></script>
         <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
         <script src="assets/lib/js/raphael.min.js"></script>
         <script src="assets/lib/js/morris.min.js"></script>
@@ -17,7 +20,7 @@
         <script src="assets/js/app.js"></script>
         <script src="assets/js/api.js"></script>
         <script src="assets/js/dashboard.js"></script>
-        <script src="assets/js/options.js"></script>
+        <script src="assets/js/schedule.js"></script>
         <script src="assets/js/manual.js"></script>
         <script src="assets/js/learning.js"></script>
         <script src="assets/js/profile.js"></script>
@@ -54,8 +57,8 @@
                         <li class="nav-link dashboard">
                             <a href="#/dashboard"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                         </li>
-                        <li class="nav-link options">
-                            <a href="#/options"><i class="fa fa-fw fa-pencil"></i> Options</a>
+                        <li class="nav-link schedule">
+                            <a href="#/schedule"><i class="fa fa-fw fa-pencil"></i> Schedule</a>
                         </li>
                         <li class="nav-link manual">
                             <a href="#/manual"><i class="fa fa-fw fa-crosshairs"></i> Manual Mode</a>
@@ -72,11 +75,6 @@
                     </ul>
                 </div>
             </nav>
-
-            <!------------------->
-            <!--DASHBOARD START-->
-            <!------------------->
-
             <div id="page-wrapper">
                 <div class="page" id="dashboard-page">
                     <div class="container-fluid">
@@ -85,21 +83,8 @@
                                 <h1 class="page-header">
                                     Dashboard <small>Overview</small>
                                 </h1>
-                                <!--<ol class="breadcrumb">-->
-                                    <!--<li class="active">-->
-                                        <!--<i class="fa fa-dashboard"></i> Dashboard-->
-                                    <!--</li>-->
-                                <!--</ol>-->
                             </div>
                         </div>
-                        <!--<div class="row">-->
-                            <!--<div class="col-lg-12">-->
-                                <!--<div class="alert alert-info alert-dismissable">-->
-                                    <!--<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>-->
-                                    <!--<i class="fa fa-info-circle"></i>  <strong>Like SB Admin?</strong> Try out <a href="http://startbootstrap.com/template-overviews/sb-admin-2" class="alert-link">SB Admin 2</a> for additional features!-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
                         <div class="row">
                             <div class="col-lg-3 col-md-6">
                                 <div class="panel panel-primary">
@@ -109,7 +94,6 @@
                                                 <i class="fa fa-5x fa-flask"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <!--<div class="huge">26</div>-->
                                                 <div>Learning Mode</div>
                                             </div>
                                         </div>
@@ -131,7 +115,6 @@
                                                 <i class="fa fa-crosshairs fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <!--<div class="huge">12</div>-->
                                                 <div>Manual Mode</div>
                                             </div>
                                         </div>
@@ -153,7 +136,6 @@
                                                 <i class="fa fa-pencil fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <!--<div class="huge">12</div>-->
                                                 <div>Options</div>
                                             </div>
                                         </div>
@@ -175,7 +157,6 @@
                                                 <i class="fa fa-cogs fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <!--<div class="huge">124</div>-->
                                                 <div>Device Settings</div>
                                             </div>
                                         </div>
@@ -197,7 +178,6 @@
                                                 <i class="fa fa-user fa-5x"></i>
                                             </div>
                                             <div class="col-xs-9 text-right">
-                                                <!--<div class="huge">13</div>-->
                                                 <div>Profile</div>
                                             </div>
                                         </div>
@@ -362,16 +342,26 @@
                     </div>
                 </div>
 
-                <div class="page" id="options-page">
-                    <div class="container-fluid">
+                <div class="page" id="schedule-page">
+                    <div class="container-fluid col-lg-6">
                         <div class="page-header">
-                            <h1>Options <small>Device options</small></h1>
+                            <h1>Schedule <small>Food delivery schedule</small></h1>
                         </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Food Delivery schedule</h3>
+                            </div>
+                            <div class="panel-body container-fluid schedule-panel">
+
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
                 <div class="page" id="manual-control-page">
-                    <div class="container-fluid">
+                    <div class="container-fluid col-lg-6">
                         <div class="page-header">
                             <h1>Manual Control <small>Control the feeder remotely</small></h1>
                         </div>
@@ -433,11 +423,6 @@
                             <h1>Learning Mode <small>Introduce cats to the system</small></h1>
                         </div>
 
-                        <!--<div class="learning-disabled"> &lt;!&ndash; show if learning mode is disabled in config&ndash;&gt;-->
-                            <!--<h3>You do not currently have Learning Mode enabled.</h3>-->
-                            <!--<button class="btn btn-success">Enable Learning Mode</button>-->
-                        <!--</div>-->
-
                         <div class="learning-enabled"> <!--To be displayed when learning mode is enabled-->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
@@ -457,10 +442,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!--<div class="learning-add-container">-->
-                                <!--<button style="margin-top: -6px; float: right; margin-left: 10px;" class="btn btn-success">Change Current Cat</button>-->
-                            <!--</div>-->
                         </div>
                     </div>
                 </div>
@@ -511,12 +492,7 @@
                     <!--<button class="btn btn-danger">Disable Device</button>-->
                     <!--<button class="btn btn-success">Activate Device</button>-->
                 </div>
-
             </div>
-
-
-
-
         </div>
     </body>
 </html>

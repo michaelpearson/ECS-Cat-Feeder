@@ -21,10 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ScheduleServlet extends HttpServlet {
 
@@ -54,8 +51,9 @@ public class ScheduleServlet extends HttpServlet {
                 List<FoodDelivery> deliveries = s.getDeliveriesForMonth(year, month);
                 for(FoodDelivery d : deliveries) {
                     JSONObject dItem = new JSONObject();
-                    dItem.put("delivery_id", d.getId());
-                    dItem.put("schedule_id", s.getId());
+                    dItem.put("deliveryId", d.getId());
+                    dItem.put("scheduleId", s.getId());
+                    dItem.put("foodIndex", s.getFoodIndex());
                     dItem.put("gramAmount", d.getGramAmount());
                     dItem.put("date", d.getDateTime().getTime());
                     allDeliveries.add(dItem);
@@ -82,14 +80,18 @@ public class ScheduleServlet extends HttpServlet {
             if(recurring) {
                 throw new RuntimeException("Not implemented");
             } else {
-                Date date = new Date(Long.valueOf(req.getParameter("date")));
+                Calendar c = Calendar.getInstance();
+                c.setTimeZone(TimeZone.getTimeZone("UTC"));
+                c.setTimeInMillis(Long.valueOf(req.getParameter("date")));
+
+
                 int gramAmount = Integer.valueOf(req.getParameter("gramAmount"));
                 int foodIndex = Integer.valueOf(req.getParameter("foodIndex"));
 
                 CatFeeder catFeeder = DatabaseClient.getUserDao().queryForId((String)req.getSession().getAttribute(LoginServlet.KEY_SESSION_USER_ID)).getCatFeeder();
                 Schedule schedule = new Schedule();
                 schedule.setRecurring(false);
-                schedule.setFirstDelivery(date);
+                schedule.setFirstDelivery(c.getTime());
                 schedule.setGramAmount(gramAmount);
                 schedule.setFoodIndex(foodIndex);
                 schedule.setFeeder(catFeeder);
@@ -120,7 +122,13 @@ public class ScheduleServlet extends HttpServlet {
             if(s.getFeeder().getHardware_id() != catFeeder.getHardware_id()) {
                 throw new RuntimeException("Sorry, you're not able to delete that");
             }
-            scheduleDao.delete(s);
+            if(s.isRecurring()) {
+                throw new RuntimeException("Not implemented");
+                //Logic is to delete set the end date of the schedule.
+            } else {
+                scheduleDao.delete(s);
+            }
+
             JSONObject response = new JSONObject();
             response.put("success", true);
             WriteJsonResponse.writeResponse(resp, response);
