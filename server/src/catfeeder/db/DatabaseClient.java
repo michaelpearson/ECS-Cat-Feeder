@@ -8,12 +8,10 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import java.sql.SQLException;
 import java.util.Date;
 
-public class DatabaseClient implements ServletContextListener {
+public class DatabaseClient {
     private static ConnectionSource connectionSource = null;
 
     static {
@@ -80,9 +78,4 @@ public class DatabaseClient implements ServletContextListener {
         return connectionSource;
     }
 
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {}
-
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {}
 }

@@ -1,7 +1,5 @@
 package catfeeder.feeder;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,10 +7,14 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocketManager implements ServletContextListener {
+public class SocketManager {
+    private static SocketManager singleton;
+
     private static final int PORT = 6969;
     static List<CatFeederConnection> catFeeders = new ArrayList<>();
     private ServerSocket listener;
+
+    private SocketManager() {}
 
     private Thread serverThread = new Thread() {
         @Override
@@ -30,23 +32,22 @@ public class SocketManager implements ServletContextListener {
         }
     };
 
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
+    public static void init() {
+        singleton = new SocketManager();
         try {
-            listener = new ServerSocket(PORT);
-            listener.setSoTimeout(1000);
-            serverThread.start();
+            singleton.listener = new ServerSocket(PORT);
+            singleton.listener.setSoTimeout(1000);
+            singleton.serverThread.start();
         } catch (IOException e) {
             throw new RuntimeException("Could not start listening for connections");
         }
     }
 
-    @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        serverThread.interrupt();
-        serverThread = null;
+    public static void shutdown() {
+        singleton.serverThread.interrupt();
+        singleton.serverThread = null;
         try {
-            listener.close();
+            singleton.listener.close();
         } catch (IOException ignore) {}
     }
 
