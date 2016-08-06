@@ -17,7 +17,12 @@ public class Bootstrap {
         setupLogging();
         ResourceConfig rc = new ResourceConfig().packages("catfeeder.api");
         rc.register(JacksonFeature.class);
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:8080/api/"), rc);
+        String port = System.getProperty("port");
+        if(port == null) {
+            port = "8080";
+        }
+
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:" + port + "/api/"), rc);
         StaticHttpHandler staticHandler = new StaticHttpHandler("web/");
         staticHandler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(staticHandler);
