@@ -1,1 +1,1 @@
-web: mvn -f server/pom.xml exec:java -Dexec.mainClass="catfeeder.Bootstrap" -Dport="$PORT"
+web: java -jar server/target/catfeeder-project-1.0-jar-with-dependencies.jar -Dport="$PORT"

@@ -1,0 +1,9 @@
+<project default="build">
+  <target name="build">
+    <exec executable="mvn">
+      <arg value="-f" />
+      <arg value="server/pom.xml" />
+      <arg value="package" />
+    </exec>
+  </target>
+</project>
