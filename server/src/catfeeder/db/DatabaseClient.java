@@ -1,10 +1,7 @@
 package catfeeder.db;
 
 import catfeeder.Passwords;
-import catfeeder.model.CatFeeder;
-import catfeeder.model.FoodDelivery;
-import catfeeder.model.Schedule;
-import catfeeder.model.User;
+import catfeeder.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -26,13 +23,14 @@ public class DatabaseClient implements ServletContextListener {
             TableUtils.createTable(connectionSource, User.class);
             TableUtils.createTable(connectionSource, Schedule.class);
             TableUtils.createTable(connectionSource, FoodDelivery.class);
+            TableUtils.createTable(connectionSource, SessionToken.class);
 
             Dao<CatFeeder, Long> feederDao = DaoManager.createDao(connectionSource, CatFeeder.class);
             Dao<User, String> userDao = getUserDao();
-            Dao<Schedule, Long> scheduleDao = getScheduleDao();
+            Dao<Schedule, Integer> scheduleDao = getScheduleDao();
 
             CatFeeder cf = new CatFeeder();
-            cf.setHardware_id(1);
+            cf.setHardwareId(1);
             cf.setName("Test cat feeder");
             cf.setLastConnectionAt(null);
             feederDao.create(cf);
@@ -66,8 +64,16 @@ public class DatabaseClient implements ServletContextListener {
         return DaoManager.createDao(connectionSource, User.class);
     }
 
-    public static Dao<Schedule, Long> getScheduleDao() throws SQLException {
+    public static Dao<CatFeeder, Integer> getFeederDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, CatFeeder.class);
+    }
+
+    public static Dao<Schedule, Integer> getScheduleDao() throws SQLException {
         return DaoManager.createDao(connectionSource, Schedule.class);
+    }
+
+    public static Dao<SessionToken, String> getSessionTokenDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, SessionToken.class);
     }
 
     public static ConnectionSource getConnectionSource() {

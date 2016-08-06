@@ -1,26 +1,19 @@
-<%
-    String forwardedFor = request.getHeader("x-forwarded-proto");
-    if(forwardedFor != null && !forwardedFor.equals("https")) {
-        response.getWriter().println("Here");
-        response.sendRedirect("https://" + request.getHeader("host"));
-    }
-%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link href="/assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
-    <link href="/assets/lib/css/font-awesome.css" rel="stylesheet">
-    <link href="/assets/css/styles.css" rel="stylesheet">
-    <script src="/assets/lib/js/jquery-2.2.3.js"></script>
-    <script src="/assets/lib/bootstrap/js/bootstrap.js"></script>
+    <link href="assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="assets/lib/css/font-awesome.css" rel="stylesheet">
+    <link href="assets/css/styles.css" rel="stylesheet">
+    <script src="assets/lib/js/jquery-2.2.3.js"></script>
+    <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
     <script>
         $(function () {
             $('.form-signin input[type=submit]').click(function () {
                 var email = $('#email').val();
                 var password = $('#password').val();
-                $.ajax('/api/login', {
+                $.ajax('/api/authentication/login', {
                     method: 'post',
                     data : {
                         email : email,
@@ -28,6 +21,7 @@
                     },
                     success : function (response) {
                         if(response.success) {
+                            localStorage.setItem("token", response.token);
                             window.location.href = "/admin.html"
                         } else {
                             $('.error').show();

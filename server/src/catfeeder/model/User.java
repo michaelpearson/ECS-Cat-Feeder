@@ -12,7 +12,7 @@ public class User {
     private String password;
     @DatabaseField
     private String name;
-    @DatabaseField(foreign = true, canBeNull = false)
+    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private CatFeeder catFeeder;
 
     public String getEmail() {
@@ -30,7 +30,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     public boolean checkPassword(String password) {
         return Passwords.checkPassword(password, this.password);
@@ -50,5 +49,9 @@ public class User {
 
     public void setCatFeeder(CatFeeder catFeeder) {
         this.catFeeder = catFeeder;
+    }
+
+    public boolean doesUserOwnCatfeeder(CatFeeder feeder) {
+        return feeder.getHardwareId() == getCatFeeder().getHardwareId();
     }
 }

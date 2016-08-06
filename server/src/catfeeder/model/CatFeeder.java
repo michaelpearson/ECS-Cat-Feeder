@@ -1,39 +1,38 @@
 package catfeeder.model;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableUtils;
 
-import java.sql.SQLException;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Date;
 
-/**
- CREATE TABLE IF NOT EXISTS PUBLIC.cat_feeder
- (
- id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
- description TEXT,
- name VARCHAR(255),
- ip_address VARCHAR(255)
- );
- */
-@DatabaseTable(tableName = "Cat_Feeder")
+@XmlAccessorType(XmlAccessType.FIELD)
+@DatabaseTable(tableName = "cat_feeders")
 public class CatFeeder {
+    @XmlElement
     @DatabaseField(id = true)
-    private long hardware_id;
+    private int hardwareId;
+    @XmlElement
     @DatabaseField
     private String name;
+    @XmlElement
     @DatabaseField
     private Date lastConnectionAt;
+    @ForeignCollectionField
+    @XmlTransient
+    private ForeignCollection<Schedule> scheduledDeliveries;
 
-    public long getHardware_id() {
-        return hardware_id;
+    public int getHardwareId() {
+        return hardwareId;
     }
 
-    public void setHardware_id(long hardware_id) {
-        this.hardware_id = hardware_id;
+    public void setHardwareId(int hardwareId) {
+        this.hardwareId = hardwareId;
     }
 
     public String getName() {
@@ -50,5 +49,13 @@ public class CatFeeder {
 
     public void setLastConnectionAt(Date lastConnectionAt) {
         this.lastConnectionAt = lastConnectionAt;
+    }
+
+    public ForeignCollection<Schedule> getScheduledDeliveries() {
+        return scheduledDeliveries;
+    }
+
+    public void setScheduledDeliveries(ForeignCollection<Schedule> scheduledDeliveries) {
+        this.scheduledDeliveries = scheduledDeliveries;
     }
 }

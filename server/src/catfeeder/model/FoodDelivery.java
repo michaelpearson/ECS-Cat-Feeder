@@ -4,19 +4,25 @@ package catfeeder.model;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @DatabaseTable(tableName = "food_deliveries")
 public class FoodDelivery {
     @DatabaseField(id = true)
-    private long id;
+    private int id;
+    @XmlElement(name = "date")
     @DatabaseField
     private Date dateTime;
     @DatabaseField
     private int gramAmount;
     @DatabaseField(foreign = true, canBeNull = false)
     private CatFeeder feeder;
-    @DatabaseField(foreign = true, canBeNull = true)
+    @XmlElement
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Schedule scheduledDelivery;
 
     public Date getDateTime() {
@@ -31,11 +37,11 @@ public class FoodDelivery {
         return gramAmount;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
