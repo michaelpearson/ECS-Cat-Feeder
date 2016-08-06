@@ -9,6 +9,19 @@
     <script src="assets/lib/js/jquery-2.2.3.js"></script>
     <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
     <script>
+        function isLocal(l) {
+            if(l.indexOf("127.0.0.1") > -1) {
+                return true;
+            }
+            if(l.indexOf("localhost") > -1) {
+                return true;
+            }
+            return false;
+        }
+        if (window.location.protocol != "https:" && !isLocal(window.location.href)) {
+            window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+        }
+
         $(function () {
             $('.form-signin input[type=submit]').click(function () {
                 var email = $('#email').val();
