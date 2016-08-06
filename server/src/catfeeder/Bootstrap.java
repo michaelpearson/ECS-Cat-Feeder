@@ -25,7 +25,6 @@ public class Bootstrap {
         System.in.read();
         server.shutdown();
     }
-    Fail
 
     private static void setupLogging() {
         Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
