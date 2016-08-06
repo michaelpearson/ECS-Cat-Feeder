@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Bootstrap {
-    public static void main(String[] argv) throws IOException {
+    public static void main(String[] argv) throws IOException, InterruptedException {
         setupLogging();
         ResourceConfig rc = new ResourceConfig().packages("catfeeder.api");
         rc.register(JacksonFeature.class);
@@ -21,13 +21,20 @@ public class Bootstrap {
         if(port == null) {
             port = "8080";
         }
+        String pathPrefix = System.getProperty("prefix");
+        if(pathPrefix == null) {
+            pathPrefix = "";
+        }
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://localhost:" + port + "/api/"), rc);
-        StaticHttpHandler staticHandler = new StaticHttpHandler("web/");
+
+
+
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc);
+        StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
         staticHandler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(staticHandler);
         server.start();
-        System.in.read();
+        Thread.currentThread().join();
         server.shutdown();
     }
 

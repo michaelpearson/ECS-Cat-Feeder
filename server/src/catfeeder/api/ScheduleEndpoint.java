@@ -44,6 +44,7 @@ public class ScheduleEndpoint {
 
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public GeneralResponse deleteScheduledItem(@PathParam("id") int scheduleId) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         Dao<Schedule, Integer> schedulesDao = DatabaseClient.getScheduleDao();
@@ -60,6 +61,7 @@ public class ScheduleEndpoint {
     }
 
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     public NewScheduleResponse scheduleNewDelivery(@FormParam("feederId") int feederId,
                                                    @FormParam("gramAmount") int amount,
                                                    @FormParam("foodIndex") int type,
