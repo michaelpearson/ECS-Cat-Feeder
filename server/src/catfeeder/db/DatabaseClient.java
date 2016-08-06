@@ -16,12 +16,12 @@ public class DatabaseClient {
 
     static {
         try {
-            String connectionString = System.getProperty("connection-string");
+            String connectionString = System.getProperty("db");
             if(connectionString == null) {
-                connectionString = "jdbc:h2:mem:test";
+                connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+            } else {
+                connectionSource = new JdbcConnectionSource(connectionString, System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
             }
-
-            connectionSource = new JdbcConnectionSource(connectionString);
 
             Dao<User, String> userDao = getUserDao();
             Dao<CatFeeder, Integer> feederDao = getFeederDao();
