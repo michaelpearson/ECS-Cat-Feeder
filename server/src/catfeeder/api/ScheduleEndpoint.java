@@ -4,11 +4,12 @@ import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
 import catfeeder.model.CatFeeder;
+import catfeeder.model.FoodType;
 import catfeeder.model.Schedule;
 import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
-import catfeeder.model.response.ScheduleListResponse;
-import catfeeder.model.response.shcedule.NewScheduleResponse;
+import catfeeder.model.response.schedule.ScheduleListResponse;
+import catfeeder.model.response.schedule.ScheduleResponse;
 import com.j256.ormlite.dao.Dao;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -17,15 +18,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Secured
 @Path("/schedule")
 public class ScheduleEndpoint {
+
+    private SimpleDateFormat htmlDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
     @Context
     private SecurityContext context;
@@ -65,32 +67,109 @@ public class ScheduleEndpoint {
         }
     }
 
-    @POST
+    @GET
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public NewScheduleResponse scheduleNewDelivery(@FormParam("feederId") int feederId,
-                                                   @FormParam("gramAmount") int amount,
-                                                   @FormParam("foodIndex") int type,
-                                                   @FormParam("date") String date,
-                                                   @FormParam("recurring") boolean recurring) throws SQLException {
+    public ScheduleResponse getScheduledDelivery(@PathParam("id") int id) throws SQLException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        Schedule s = DatabaseClient.getScheduleDao().queryForId(id);
+        if(s == null || !s.getFeeder().getOwner().getEmail().equals(user.getEmail())) {
+            throw new NotFoundException("Could not find schedule");
+        }
+        return new ScheduleResponse(s);
+    }
+
+    @POST
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ScheduleResponse scheduleNewDelivery(@PathParam("id") int scheduleId,
+                                                @FormParam("feederId") int feederId,
+                                                @FormParam("recurring") boolean recurring,
+                                                @FormParam("daysOfWeek") List<Boolean> daysOfWeek,
+                                                @FormParam("startDate") String startDate,
+                                                @FormParam("endDate") String endDate,
+                                                @FormParam("amountOfFood") int amount,
+                                                @FormParam("foodType") int type,
+                                                @FormParam("notes") String notes
+    ) throws SQLException, ParseException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder feeder = DatabaseClient.getFeederDao().queryForId(feederId);
+        FoodType foodType = DatabaseClient.getFoodTypeDao().queryForId(type);
+        Dao<Schedule, Integer> scheduleDao = DatabaseClient.getScheduleDao();
+
+
+        Schedule s = scheduleDao.queryForId(scheduleId);
+
+        if(s == null || !s.getFeeder().getOwner().getEmail().equals(user.getEmail())) {
+            throw new NotFoundException("Could not find schedule");
+        }
 
         if(feeder == null || !user.doesUserOwnCatfeeder(feeder)) {
             throw new NotFoundException("Feeder not found");
+        }
+        if(foodType == null) {
+            throw new NotFoundException("Food type not found");
+        }
+
+        if(recurring) {
+            throw new NotImplementedException();
+        } else {
+            s.setFeeder(feeder);
+            s.setFoodType(foodType);
+            s.setRecurring(false);
+            try {
+                s.setStartDate(htmlDateFormat.parse(startDate));
+            } catch (ParseException e) {
+                throw new BadRequestException("Invalid date");
+            }
+            s.setEndDate(null);
+            s.setDaysOfWeek(null);
+            s.setGramAmount(amount);
+            s.setNotes(notes);
+            scheduleDao.update(s);
+            return new ScheduleResponse(s);
+        }
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public ScheduleResponse scheduleNewDelivery(@FormParam("feederId") int feederId,
+                                                   @FormParam("recurring") boolean recurring,
+                                                   @FormParam("daysOfWeek") List<Boolean> daysOfWeek,
+                                                   @FormParam("startDate") String startDate,
+                                                   @FormParam("endDate") String endDate,
+                                                   @FormParam("amountOfFood") int amount,
+                                                   @FormParam("foodType") int type,
+                                                   @FormParam("notes") String notes
+                                                   ) throws SQLException, ParseException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        CatFeeder feeder = DatabaseClient.getFeederDao().queryForId(feederId);
+        FoodType foodType = DatabaseClient.getFoodTypeDao().queryForId(type);
+
+
+        if(feeder == null || !user.doesUserOwnCatfeeder(feeder)) {
+            throw new NotFoundException("Feeder not found");
+        }
+        if(foodType == null) {
+            throw new NotFoundException("Food type not found");
         }
         if(recurring) {
             throw new NotImplementedException();
         } else {
             Schedule s = new Schedule();
             s.setFeeder(feeder);
+            s.setFoodType(foodType);
             s.setRecurring(false);
-            s.setFirstDelivery(new Date(date));
+            try {
+                s.setStartDate(htmlDateFormat.parse(startDate));
+            } catch (ParseException e) {
+                throw new BadRequestException("Invalid date");
+            }
+
             s.setGramAmount(amount);
-            s.setFoodIndex(type);
-
+            s.setNotes(notes);
             DatabaseClient.getScheduleDao().create(s);
-
-            return new NewScheduleResponse(s);
+            return new ScheduleResponse(s);
         }
     }
 }

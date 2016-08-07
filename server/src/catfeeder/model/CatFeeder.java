@@ -9,9 +9,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.Collection;
 import java.util.Date;
 
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @DatabaseTable(tableName = "cat_feeders")
 public class CatFeeder {
     @XmlElement
@@ -33,6 +34,10 @@ public class CatFeeder {
     @XmlTransient
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private User owner;
+
+    @ForeignCollectionField
+    @XmlElement
+    private Collection<FoodType> foodTypes;
 
     public int getHardwareId() {
         return hardwareId;
@@ -72,5 +77,13 @@ public class CatFeeder {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public Collection<FoodType> getFoodTypes() {
+        return foodTypes;
+    }
+
+    public boolean isValidFoodType(FoodType foodType) {
+        return foodTypes.stream().anyMatch(ft -> ft.getId() == foodType.getId());
     }
 }

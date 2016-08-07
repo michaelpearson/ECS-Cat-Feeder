@@ -27,6 +27,7 @@ public class DatabaseClient {
             Dao<User, String> userDao = getUserDao();
             Dao<CatFeeder, Integer> feederDao = getFeederDao();
             Dao<Schedule, Integer> scheduleDao = getScheduleDao();
+            Dao<FoodType, Integer> foodTypeDao = getFoodTypeDao();
 
             if(!userDao.isTableExists()) {
 
@@ -35,9 +36,9 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, Schedule.class);
                 TableUtils.createTable(connectionSource, FoodDelivery.class);
                 TableUtils.createTable(connectionSource, SessionToken.class);
+                TableUtils.createTable(connectionSource, FoodType.class);
 
                 User user = createUser("test@test.com", "Test User", "password");
-
                 userDao.create(user);
 
                 CatFeeder cf = new CatFeeder();
@@ -47,12 +48,26 @@ public class DatabaseClient {
                 cf.setOwner(user);
                 feederDao.create(cf);
 
+                FoodType type = new FoodType();
+                type.setName("Food type 1");
+                type.setCatfeeder(cf);
+                foodTypeDao.create(type);
+
+                FoodType type1 = new FoodType();
+                type1.setName("Food type 2");
+                type1.setCatfeeder(cf);
+                foodTypeDao.create(type1);
+
+                cf = feederDao.queryForId(1);
+
                 for (int a = 0; a < 10; a++) {
                     Schedule schedule = new Schedule();
                     schedule.setRecurring(false);
-                    schedule.setGramAmount(100);
-                    schedule.setFirstDelivery(new Date());
+                    schedule.setGramAmount(5 * a);
+                    schedule.setStartDate(new Date());
                     schedule.setFeeder(cf);
+                    schedule.setFoodType(a % 2 == 0 ? type : type1);
+                    schedule.setNotes("Some note " + a);
                     scheduleDao.create(schedule);
                 }
 
@@ -73,6 +88,10 @@ public class DatabaseClient {
 
     public static Dao<User, String> getUserDao() throws SQLException {
         return DaoManager.createDao(connectionSource, User.class);
+    }
+
+    public static Dao<FoodType, Integer> getFoodTypeDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, FoodType.class);
     }
 
     public static Dao<CatFeeder, Integer> getFeederDao() throws SQLException {
