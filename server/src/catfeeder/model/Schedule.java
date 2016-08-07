@@ -37,27 +37,35 @@ public class Schedule {
     @XmlElement
     @DatabaseField(generatedId = true)
     private int id;
+
     @XmlTransient
     @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
     private CatFeeder feeder;
+
     @XmlElement
     @DatabaseField
     private int gramAmount;
+
     @XmlElement
     @DatabaseField
     private boolean recurring;
+
     @XmlElement
     @DatabaseField
     private Date firstDelivery;
+
     @XmlElement
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private DayOfWeek[] daysOfWeek;
+
     @XmlElement
     @DatabaseField
     private Date endDate;
+
     @XmlElement
     @DatabaseField
     private int foodIndex;
+
     @XmlElement(name = "deliveries")
     private List<FoodDelivery> derivedDeliveries;
 

@@ -31,13 +31,12 @@ pages.schedule = {
         }
     },
     dayClick : function (day) {
-        var catFeederId = 1;
         var amount = parseInt(prompt("How many grams?"));
         var foodIndex = parseInt(prompt("Which type of food?"));
         day.set('hour', prompt("Hour of day?"));
         day.set('minute', 0);
 
-        scheduleFoodDelivery(catFeederId, amount, foodIndex, day.toDate(), function () {
+        scheduleFoodDelivery(app.getCurrentFeederId(), amount, foodIndex, day.toDate(), function () {
             $('.schedule-panel').fullCalendar('refetchEvents');
         });
     },

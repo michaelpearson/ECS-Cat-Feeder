@@ -17,15 +17,22 @@ public class CatFeeder {
     @XmlElement
     @DatabaseField(id = true)
     private int hardwareId;
+
     @XmlElement
     @DatabaseField
     private String name;
+
     @XmlElement
     @DatabaseField
     private Date lastConnectionAt;
+
     @ForeignCollectionField
     @XmlTransient
     private ForeignCollection<Schedule> scheduledDeliveries;
+
+    @XmlTransient
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private User owner;
 
     public int getHardwareId() {
         return hardwareId;
@@ -57,5 +64,13 @@ public class CatFeeder {
 
     public void setScheduledDeliveries(ForeignCollection<Schedule> scheduledDeliveries) {
         this.scheduledDeliveries = scheduledDeliveries;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

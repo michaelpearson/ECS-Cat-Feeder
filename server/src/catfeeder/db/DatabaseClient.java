@@ -18,7 +18,8 @@ public class DatabaseClient {
         try {
             String connectionString = System.getProperty("db");
             if(connectionString == null) {
-                connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+                //connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+                connectionSource = new JdbcConnectionSource("jdbc:h2:~/.cat-feeder-db", "sa", "sa");
             } else {
                 connectionSource = new JdbcConnectionSource(connectionString, System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
             }
@@ -35,10 +36,15 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, FoodDelivery.class);
                 TableUtils.createTable(connectionSource, SessionToken.class);
 
+                User user = createUser("test@test.com", "Test User", "password");
+
+                userDao.create(user);
+
                 CatFeeder cf = new CatFeeder();
                 cf.setHardwareId(1);
                 cf.setName("Test cat feeder");
                 cf.setLastConnectionAt(null);
+                cf.setOwner(user);
                 feederDao.create(cf);
 
                 for (int a = 0; a < 10; a++) {
@@ -50,19 +56,18 @@ public class DatabaseClient {
                     scheduleDao.create(schedule);
                 }
 
-                userDao.create(createUser("test@test.com", "Test User", "password", cf));
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private static User createUser(String email, String name, String password, CatFeeder catFeeder) {
+    private static User createUser(String email, String name, String password) {
         User u = new User();
         u.setEmail(email);
         u.setName(name);
         u.setPassword(Passwords.getHash(password));
-        u.setCatFeeder(catFeeder);
         return u;
     }
 

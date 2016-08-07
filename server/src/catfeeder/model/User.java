@@ -1,7 +1,9 @@
 package catfeeder.model;
 
 import catfeeder.Passwords;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "users")
@@ -12,8 +14,8 @@ public class User {
     private String password;
     @DatabaseField
     private String name;
-    @DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
-    private CatFeeder catFeeder;
+    @ForeignCollectionField
+    private ForeignCollection<CatFeeder> feeders;
 
     public String getEmail() {
         return email;
@@ -43,15 +45,12 @@ public class User {
         this.name = name;
     }
 
-    public CatFeeder getCatFeeder() {
-        return catFeeder;
-    }
 
-    public void setCatFeeder(CatFeeder catFeeder) {
-        this.catFeeder = catFeeder;
+    public ForeignCollection<CatFeeder> getFeeders() {
+        return feeders;
     }
 
     public boolean doesUserOwnCatfeeder(CatFeeder feeder) {
-        return feeder.getHardwareId() == getCatFeeder().getHardwareId();
+        return getFeeders().stream().anyMatch(f -> f.getHardwareId() == feeder.getHardwareId());
     }
 }

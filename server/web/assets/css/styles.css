@@ -53,4 +53,7 @@ body.login {
     float: right;
     margin-top: 30px; }
 
+.feeder-menu li {
+  cursor: pointer; }
+
 /*# sourceMappingURL=styles.css.map */

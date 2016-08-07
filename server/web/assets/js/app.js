@@ -1,29 +1,58 @@
-$(function () {
-    $(window).on('hashchange', function (e) {
-        app.renderPage();
-    }).trigger('hashchange');
-    $(window).on('resize', function () {
-        if(pages[app.currentPage] && pages[app.currentPage].resize) {
-            pages[app.currentPage].resize();
-        }
-    });
-    getProfileInformation(function (response) {
-        $('#user-name').text(response.name);
-    }, function () {
-        window.location.href = "/";
-    });
-});
 // Array Remove - By John Resig (MIT Licensed)
 Array.prototype.remove = function(from, to) {
     var rest = this.slice((to || from) + 1 || this.length);
     this.length = from < 0 ? this.length + from : from;
     return this.push.apply(this, rest);
 };
+
+$(function () {
+    app.init();
+});
+
 var pages = window.pages || {};
 var app = {
     disableNavigation : false,
     currentHash : "",
     currentPage : null,
+    currentFeeder : null,
+    init : function () {
+        $(window).on('hashchange', function (e) {
+            app.renderPage();
+        }).trigger('hashchange');
+        $(window).on('resize', function () {
+            if(pages[app.currentPage] && pages[app.currentPage].resize) {
+                pages[app.currentPage].resize();
+            }
+        });
+        getProfileInformation(function (response) {
+            $('#user-name').text(response.name);
+        }, function () {
+            window.location.href = "/";
+        });
+        getAllFeeders(function (response) {
+            response = response || {};
+            var feeders = response.catFeeders || [];
+            var menuEl = $('.feeder-menu');
+            $(feeders).each(function (index, element) {
+                var el = $('<li><a>' + this.name + '</a></li>');
+                el.click(function (element) {
+                    app.updateCurrentFeeder(element);
+                }.bind(this, element));
+                menuEl.append(el);
+                return true;
+            });
+            menuEl.find('li').first().click();
+        });
+    },
+    updateCurrentFeeder : function (feeder) {
+        var me = app;
+        me.currentFeeder = feeder;
+        $('#feeder-name').text(me.currentFeeder.name);
+    },
+    getCurrentFeederId : function () {
+        var me = app;
+        return me.currentFeeder.hardwareId;
+    },
     decodeHash : function() {
         var me = app;
         try {
