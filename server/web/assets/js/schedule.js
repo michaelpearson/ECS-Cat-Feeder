@@ -180,10 +180,9 @@ pages.schedule = {
             endMonth += 11;
         }
 
-        var pending = 0, build = [];
+        var ajax = [], build = [];
         for(var a = startMonth; a <= endMonth;a++) {
-            pending++;
-            getAllScheduledDeliveries((a % 12) + 1, start.year() + ((a > 11) ? 1 : 0), function (response) {
+            ajax.push(getAllScheduledDeliveries((a % 12) + 1, start.year() + ((a > 11) ? 1 : 0), function (response) {
                 response.schedules = response.schedules || [];
                 for(var a = 0;a < response.schedules.length; a++) {
                     response.schedules[a].deliveries = response.schedules[a].deliveries || [];
@@ -197,11 +196,8 @@ pages.schedule = {
                         });
                     }
                 }
-                pending--;
-                if(pending == 0) {
-                    callback(build);
-                }
-            });
+            }));
         }
+        $.when.apply($, ajax).done(callback.bind(this, build));
     }
 };
