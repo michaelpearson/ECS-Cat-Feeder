@@ -1,6 +1,7 @@
-package catfeeder.model.response;
+package catfeeder.model.response.schedule;
 
 import catfeeder.model.Schedule;
+import catfeeder.model.response.GeneralResponse;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Collection;

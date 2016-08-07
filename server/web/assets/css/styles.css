@@ -29,6 +29,9 @@ body.login {
     body.login .form-signin .form-control:focus {
       z-index: 2; }
 
+body {
+  min-width: 390px; }
+
 .panel-body > .row {
   margin-bottom: 20px; }
 
@@ -54,6 +57,25 @@ body.login {
     margin-top: 30px; }
 
 .feeder-menu li {
+  cursor: pointer; }
+
+.schedule-item-add {
+  width: 100%;
+  height: 100%;
+  background-color: #2b669a;
+  cursor: pointer;
+  text-align: center; }
+  .schedule-item-add i {
+    top: 50%;
+    position: relative;
+    height: 0;
+    font-size: 30px;
+    margin-top: -15px; }
+
+.checkbox-pack label:not(:first-child) {
+  padding-left: 40px !important; }
+
+.fc-event-container {
   cursor: pointer; }
 
 /*# sourceMappingURL=styles.css.map */

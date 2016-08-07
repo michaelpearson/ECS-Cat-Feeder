@@ -52,7 +52,7 @@ public class Schedule {
 
     @XmlElement
     @DatabaseField
-    private Date firstDelivery;
+    private Date startDate;
 
     @XmlElement
     @DatabaseField(dataType = DataType.SERIALIZABLE)
@@ -63,11 +63,15 @@ public class Schedule {
     private Date endDate;
 
     @XmlElement
-    @DatabaseField
-    private int foodIndex;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private FoodType foodType;
 
     @XmlElement(name = "deliveries")
     private List<FoodDelivery> derivedDeliveries;
+
+    @XmlElement
+    @DatabaseField
+    private String notes;
 
 
     public int getId() {
@@ -102,12 +106,12 @@ public class Schedule {
         this.recurring = recurring;
     }
 
-    public Date getFirstDelivery() {
-        return firstDelivery;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setFirstDelivery(Date firstDelivery) {
-        this.firstDelivery = firstDelivery;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public DayOfWeek[] getDaysOfWeek() {
@@ -126,12 +130,27 @@ public class Schedule {
         this.endDate = endDate;
     }
 
-    public int getFoodIndex() {
-        return foodIndex;
+    public FoodType getFoodType() {
+        return foodType;
     }
 
-    public void setFoodIndex(int foodIndex) {
-        this.foodIndex = foodIndex;
+    public void setFoodType(FoodType foodType) {
+        if(getFeeder() == null || !getFeeder().isValidFoodType(foodType)) {
+            return;
+        }
+        this.foodType = foodType;
+    }
+
+    public void setDerivedDeliveries(List<FoodDelivery> derivedDeliveries) {
+        this.derivedDeliveries = derivedDeliveries;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public List<FoodDelivery> getDerivedDeliveries() {
@@ -140,7 +159,7 @@ public class Schedule {
 
     public void populateDeliveries(int month, int year) {
         Calendar deliveryStartDate = Calendar.getInstance();
-        deliveryStartDate.setTime(firstDelivery);
+        deliveryStartDate.setTime(startDate);
         if(!recurring) {
             ArrayList<FoodDelivery> r = new ArrayList<>();
             if(year != deliveryStartDate.get(Calendar.YEAR) || month != deliveryStartDate.get(Calendar.MONTH) + 1) {
@@ -149,7 +168,7 @@ public class Schedule {
             }
             FoodDelivery d = new FoodDelivery();
             d.setGramAmount(gramAmount);
-            d.setDateTime(firstDelivery);
+            d.setDateTime(startDate);
             r.add(d);
             this.derivedDeliveries = r;
             return;

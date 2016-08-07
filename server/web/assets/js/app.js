@@ -16,20 +16,12 @@ var app = {
     currentPage : null,
     currentFeeder : null,
     init : function () {
-        $(window).on('hashchange', function (e) {
-            app.renderPage();
-        }).trigger('hashchange');
-        $(window).on('resize', function () {
-            if(pages[app.currentPage] && pages[app.currentPage].resize) {
-                pages[app.currentPage].resize();
-            }
-        });
-        getProfileInformation(function (response) {
+        var profileInfo = getProfileInformation(function (response) {
             $('#user-name').text(response.name);
         }, function () {
             window.location.href = "/";
         });
-        getAllFeeders(function (response) {
+        var feederInfo = getAllFeeders(function (response) {
             response = response || {};
             var feeders = response.catFeeders || [];
             var menuEl = $('.feeder-menu');
@@ -43,6 +35,17 @@ var app = {
             });
             menuEl.find('li').first().click();
         });
+        $.when(profileInfo, feederInfo).done(app.start);
+    },
+    start : function () {
+        $(window).on('hashchange', function (e) {
+            app.renderPage();
+        }).trigger('hashchange');
+        $(window).on('resize', function () {
+            if(pages[app.currentPage] && pages[app.currentPage].resize) {
+                pages[app.currentPage].resize();
+            }
+        });
     },
     updateCurrentFeeder : function (feeder) {
         var me = app;
@@ -52,6 +55,9 @@ var app = {
     getCurrentFeederId : function () {
         var me = app;
         return me.currentFeeder.hardwareId;
+    },
+    getFeederInfo : function () {
+        return app.currentFeeder;
     },
     decodeHash : function() {
         var me = app;

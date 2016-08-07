@@ -3,7 +3,7 @@ function addRequestHeader(xhr) {
 }
 
 function getProfileInformation(successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/user', {
+    return $.ajax('/api/user', {
         method : 'get',
         data : {},
         beforeSend : addRequestHeader,
@@ -15,7 +15,7 @@ function getProfileInformation(successCallback, failCallback, finallyCallback) {
     });
 }
 function updateProfileInformation(name, password, successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/user', {
+    return $.ajax('/api/user', {
         method : 'post',
         data : {
             name : name,
@@ -38,7 +38,7 @@ function updateProfileInformation(name, password, successCallback, failCallback,
 }
 
 function getAllFeeders(successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/feeder/list', {
+    return $.ajax('/api/feeder/list', {
         method : 'get',
         data : {},
         beforeSend : addRequestHeader,
@@ -51,7 +51,7 @@ function getAllFeeders(successCallback, failCallback, finallyCallback) {
 }
 
 function deliverFood(amount, type, hardwareId, successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/feeder/' + hardwareId + '/deliverFood', {
+    return $.ajax('/api/feeder/' + hardwareId + '/deliverFood', {
         method : 'post',
         data : {
             amount : amount,
@@ -73,16 +73,30 @@ function deliverFood(amount, type, hardwareId, successCallback, failCallback, fi
     });
 }
 
-function scheduleFoodDelivery(catfeederId, amount, type, date, successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/schedule', {
+function scheduleFoodDelivery(options, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/schedule', {
         method : 'post',
-        data : {
-            feederId : catfeederId,
-            gramAmount : amount,
-            foodIndex : type,
-            date : date,
-            recurring : false
+        data : options,
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
         },
+        complete : finallyCallback || function () {}
+    });
+}
+
+function updateScheduledFoodDelivery(id, options, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/schedule/' + id, {
+        method : 'post',
+        data : options,
         beforeSend : addRequestHeader,
         success : function (response) {
             if(response.success) {
@@ -101,7 +115,7 @@ function scheduleFoodDelivery(catfeederId, amount, type, date, successCallback, 
 
 
 function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/schedule/' + id, {
+    return $.ajax('/api/schedule/' + id, {
         method : 'delete',
         beforeSend : addRequestHeader,
         success : function (response) {
@@ -118,8 +132,28 @@ function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyC
     });
 }
 
+function getScheduledDelivery(id, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/schedule/' + id, {
+        method : 'get',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        error : failCallback || function () {},
+        complete : finallyCallback || function () {}
+    });
+}
+
 function getAllScheduledDeliveries(month, year, successCallback, failCallback, finallyCallback) {
-    $.ajax('/api/schedule/list', {
+    return $.ajax('/api/schedule/list', {
         method : 'get',
         data : {
             month : month,
