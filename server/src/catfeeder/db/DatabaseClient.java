@@ -18,7 +18,8 @@ public class DatabaseClient {
         try {
             String connectionString = System.getProperty("db");
             if(connectionString == null) {
-                connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+                //connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+                connectionSource = new JdbcConnectionSource("jdbc:h2:~/.cat-feeder-db", "sa", "sa");
             } else {
                 connectionSource = new JdbcConnectionSource(connectionString, System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
             }
@@ -62,7 +63,6 @@ public class DatabaseClient {
         u.setEmail(email);
         u.setName(name);
         u.setPassword(Passwords.getHash(password));
-        u.setCatFeeder(catFeeder);
         return u;
     }
 

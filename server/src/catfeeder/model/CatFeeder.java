@@ -26,6 +26,8 @@ public class CatFeeder {
     @ForeignCollectionField
     @XmlTransient
     private ForeignCollection<Schedule> scheduledDeliveries;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private User owner;
 
     public int getHardwareId() {
         return hardwareId;
@@ -57,5 +59,13 @@ public class CatFeeder {
 
     public void setScheduledDeliveries(ForeignCollection<Schedule> scheduledDeliveries) {
         this.scheduledDeliveries = scheduledDeliveries;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }

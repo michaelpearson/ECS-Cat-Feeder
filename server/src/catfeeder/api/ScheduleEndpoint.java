@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,11 @@ public class ScheduleEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public ScheduleListResponse getAllScheduledDeliveries(@QueryParam("month") int month, @QueryParam("year") int year) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        List<Schedule> scheduleObjects = new ArrayList<>(user.getCatFeeder().getScheduledDeliveries());
+        Collection<CatFeeder> feeders = user.getFeeders();
+        List<Schedule> scheduleObjects = new ArrayList<>();
+        for(CatFeeder f : feeders) {
+            scheduleObjects.addAll(f.getScheduledDeliveries());
+        }
         for(Schedule s : scheduleObjects) {
             s.populateDeliveries(month, year);
         }
