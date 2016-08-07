@@ -5,21 +5,22 @@ import catfeeder.model.response.GeneralResponse;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Collection;
 import java.util.List;
 
 @XmlType(name = "")
 public class CatfeederListResponse extends GeneralResponse {
     @XmlElement
-    private List<CatFeeder> catFeeders;
+    private Collection<CatFeeder> catFeeders;
 
-    public CatfeederListResponse(List<CatFeeder> catFeeders) {
+    public CatfeederListResponse(Collection<CatFeeder> catFeeders) {
         this.catFeeders = catFeeders;
         this.success = true;
     }
 
     public CatfeederListResponse() {}
 
-    public List<CatFeeder> getCatFeeders() {
+    public Collection<CatFeeder> getCatFeeders() {
         return catFeeders;
     }
 

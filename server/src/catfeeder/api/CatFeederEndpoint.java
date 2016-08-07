@@ -30,9 +30,7 @@ public class CatFeederEndpoint {
     @Path("/list")
     public CatfeederListResponse getAllCatFeeders() {
         User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        List<CatFeeder> catFeederList = new ArrayList<>();
-        catFeederList.add(u.getCatFeeder());
-        return new CatfeederListResponse(catFeederList);
+        return new CatfeederListResponse(u.getFeeders());
     }
 
     @POST
@@ -44,7 +42,7 @@ public class CatFeederEndpoint {
         if(feeder == null || !user.doesUserOwnCatfeeder(feeder)) {
             throw new NotFoundException();
         }
-        CatFeederConnection connection = SocketManager.getCatfeederConnection(user.getCatFeeder().getHardwareId());
+        CatFeederConnection connection = SocketManager.getCatfeederConnection(hardwareId);
         if(connection == null) {
             return new GeneralResponse(false);
         }

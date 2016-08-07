@@ -17,15 +17,20 @@ public class CatFeeder {
     @XmlElement
     @DatabaseField(id = true)
     private int hardwareId;
+
     @XmlElement
     @DatabaseField
     private String name;
+
     @XmlElement
     @DatabaseField
     private Date lastConnectionAt;
+
     @ForeignCollectionField
     @XmlTransient
     private ForeignCollection<Schedule> scheduledDeliveries;
+
+    @XmlTransient
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private User owner;
 
