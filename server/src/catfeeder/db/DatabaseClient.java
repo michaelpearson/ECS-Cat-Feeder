@@ -16,34 +16,42 @@ public class DatabaseClient {
 
     static {
         try {
-            connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
-            TableUtils.createTable(connectionSource, CatFeeder.class);
-            TableUtils.createTable(connectionSource, User.class);
-            TableUtils.createTable(connectionSource, Schedule.class);
-            TableUtils.createTable(connectionSource, FoodDelivery.class);
-            TableUtils.createTable(connectionSource, SessionToken.class);
-
-            Dao<CatFeeder, Long> feederDao = DaoManager.createDao(connectionSource, CatFeeder.class);
-            Dao<User, String> userDao = getUserDao();
-            Dao<Schedule, Integer> scheduleDao = getScheduleDao();
-
-            CatFeeder cf = new CatFeeder();
-            cf.setHardwareId(1);
-            cf.setName("Test cat feeder");
-            cf.setLastConnectionAt(null);
-            feederDao.create(cf);
-
-            for(int a = 0;a < 10;a++) {
-                Schedule schedule = new Schedule();
-                schedule.setRecurring(false);
-                schedule.setGramAmount(100);
-                schedule.setFirstDelivery(new Date());
-                schedule.setFeeder(cf);
-                scheduleDao.create(schedule);
+            String connectionString = System.getProperty("db");
+            if(connectionString == null) {
+                connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
+            } else {
+                connectionSource = new JdbcConnectionSource(connectionString, System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
             }
 
-            userDao.create(createUser("test@test.com", "Test User", "password", cf));
+            Dao<User, String> userDao = getUserDao();
+            Dao<CatFeeder, Integer> feederDao = getFeederDao();
+            Dao<Schedule, Integer> scheduleDao = getScheduleDao();
 
+            if(!userDao.isTableExists()) {
+
+                TableUtils.createTable(connectionSource, CatFeeder.class);
+                TableUtils.createTable(connectionSource, User.class);
+                TableUtils.createTable(connectionSource, Schedule.class);
+                TableUtils.createTable(connectionSource, FoodDelivery.class);
+                TableUtils.createTable(connectionSource, SessionToken.class);
+
+                CatFeeder cf = new CatFeeder();
+                cf.setHardwareId(1);
+                cf.setName("Test cat feeder");
+                cf.setLastConnectionAt(null);
+                feederDao.create(cf);
+
+                for (int a = 0; a < 10; a++) {
+                    Schedule schedule = new Schedule();
+                    schedule.setRecurring(false);
+                    schedule.setGramAmount(100);
+                    schedule.setFirstDelivery(new Date());
+                    schedule.setFeeder(cf);
+                    scheduleDao.create(schedule);
+                }
+
+                userDao.create(createUser("test@test.com", "Test User", "password", cf));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
