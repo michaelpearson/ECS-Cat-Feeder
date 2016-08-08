@@ -60,12 +60,8 @@ public class ScheduleEndpoint {
         if(scheduleItem == null || !user.doesUserOwnCatfeeder(scheduleItem.getFeeder())) {
             throw new NotFoundException("Schedule not found");
         }
-        if(scheduleItem.isRecurring()) {
-            throw new NotImplementedException();
-        } else {
-            schedulesDao.delete(scheduleItem);
-            return new GeneralResponse(true);
-        }
+        schedulesDao.delete(scheduleItem);
+        return new GeneralResponse(true);
     }
 
     @GET

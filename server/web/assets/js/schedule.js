@@ -171,7 +171,7 @@ pages.schedule = {
         var startMonth = start.month();
         var endMonth = end.month();
         if(endMonth < startMonth) {
-            endMonth += 11;
+            endMonth += 12;
         }
 
         var ajax = [], build = [];

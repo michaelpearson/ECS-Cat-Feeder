@@ -8,6 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @DatabaseTable(tableName = "schedule")
@@ -191,30 +192,31 @@ public class Schedule {
         }
         this.derivedDeliveries = new ArrayList<>();
         for(DayOfWeek d : daysOfWeek) {
-            Date[] days = getAllDaysInMonth(d, year, month);
+            List<Date> days = getAllDaysInMonth(d, year, month).stream()
+                    .filter(date -> endDate == null || date.before(endDate))
+                    .filter(date -> date.after(startDate))
+                    .collect(Collectors.toList());
             for(Date date : days) {
                 FoodDelivery delivery = new FoodDelivery();
                 delivery.setDateTime(date);
                 delivery.setFeeder(feeder);
                 delivery.setGramAmount(gramAmount);
-                //derivedDeliveries.add(delivery);
+                derivedDeliveries.add(delivery);
             }
         }
     }
 
-    private synchronized static Date[] getAllDaysInMonth(DayOfWeek day, int year, int month) {
-        Date[] dates = new Date[4];
+    private synchronized static List<Date> getAllDaysInMonth(DayOfWeek day, int year, int month) {
+        List<Date> dates = new LinkedList<>();
         calendar.set(Calendar.DAY_OF_WEEK, day.getCalendarDay());
-        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
-        dates[0] = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
-        dates[1] = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
-        dates[2] = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
-        dates[3] = calendar.getTime();
+        int i = 1;
+        while(calendar.get(Calendar.MONTH) == month - 1) {
+            dates.add(calendar.getTime());
+            calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, ++i);
+        }
         return dates;
     }
 }
