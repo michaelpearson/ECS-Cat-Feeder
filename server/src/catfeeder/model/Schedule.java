@@ -1,38 +1,54 @@
 package catfeeder.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+@XmlAccessorType(XmlAccessType.NONE)
 @DatabaseTable(tableName = "schedule")
 public class Schedule {
 
+    private static Calendar calendar = Calendar.getInstance();
+
     @XmlEnum
     public enum DayOfWeek implements Serializable {
-        @XmlEnumValue("Monday")
-        MONDAY,
-        @XmlEnumValue("Tuesday")
-        TUESDAY,
-        @XmlEnumValue("Wednesday")
-        WEDNESDAY,
-        @XmlEnumValue("Thursday")
-        THURSDAY,
-        @XmlEnumValue("Friday")
-        FRIDAY,
-        @XmlEnumValue("Saturday")
-        SATURDAY,
-        @XmlEnumValue("Sunday")
-        SUNDAY
+        MONDAY("Monday", Calendar.MONDAY),
+        TUESDAY("Tuesday", Calendar.TUESDAY),
+        WEDNESDAY("Wednesday", Calendar.WEDNESDAY),
+        THURSDAY("Thursday", Calendar.THURSDAY),
+        FRIDAY("Friday", Calendar.FRIDAY),
+        SATURDAY("Saturday", Calendar.SATURDAY),
+        SUNDAY("Sunday", Calendar.SUNDAY);
+        private String value;
+        private int calendarDay;
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+
+        public int getCalendarDay() {
+            return calendarDay;
+        }
+
+        DayOfWeek(String value, int calendarDay) {
+            this.value = value;
+            this.calendarDay = calendarDay;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+        public static DayOfWeek fromString(String d) {
+            return Arrays.stream(DayOfWeek.values()).filter(day -> day.value.equals(d)).findFirst().orElse(null);
+        }
     }
     @XmlElement
     @DatabaseField(generatedId = true)
@@ -56,7 +72,7 @@ public class Schedule {
 
     @XmlElement
     @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private DayOfWeek[] daysOfWeek;
+    private ArrayList<DayOfWeek> daysOfWeek;
 
     @XmlElement
     @DatabaseField
@@ -114,11 +130,11 @@ public class Schedule {
         this.startDate = startDate;
     }
 
-    public DayOfWeek[] getDaysOfWeek() {
+    public ArrayList<DayOfWeek> getDaysOfWeek() {
         return daysOfWeek;
     }
 
-    public void setDaysOfWeek(DayOfWeek[] daysOfWeek) {
+    public void setDaysOfWeek(ArrayList<DayOfWeek> daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
     }
 
@@ -173,6 +189,32 @@ public class Schedule {
             this.derivedDeliveries = r;
             return;
         }
-        throw new RuntimeException("Haven't implemented scheduling yet");
+        this.derivedDeliveries = new ArrayList<>();
+        for(DayOfWeek d : daysOfWeek) {
+            Date[] days = getAllDaysInMonth(d, year, month);
+            for(Date date : days) {
+                FoodDelivery delivery = new FoodDelivery();
+                delivery.setDateTime(date);
+                delivery.setFeeder(feeder);
+                delivery.setGramAmount(gramAmount);
+                //derivedDeliveries.add(delivery);
+            }
+        }
+    }
+
+    private synchronized static Date[] getAllDaysInMonth(DayOfWeek day, int year, int month) {
+        Date[] dates = new Date[4];
+        calendar.set(Calendar.DAY_OF_WEEK, day.getCalendarDay());
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+        dates[0] = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+        dates[1] = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+        dates[2] = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, 1);
+        dates[3] = calendar.getTime();
+        return dates;
     }
 }

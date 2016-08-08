@@ -113,8 +113,12 @@ pages.schedule = {
     },
     getScheduledData : function () {
         var daysOfWeek = [];
+        var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         $('#schedule-days-of-week').find('input[type=checkbox]').each(function (i, element) {
-            daysOfWeek.push(element.checked);
+            if(!element.checked) {
+                return;
+            }
+            daysOfWeek.push(days[i]);
         });
         var recurring = $('#schedule-recurring')[0].checked;
         var startDate = $('#schedule-start-date').val();
