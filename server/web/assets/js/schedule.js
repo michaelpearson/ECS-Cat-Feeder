@@ -10,7 +10,7 @@ pages.schedule = {
         me.renderCompleteCallback = renderCompleteCallback;
 
         if(pageArguments.date) {
-            me.renderSchedulePage({startDate : pageArguments.date});
+            me.renderSchedulePage({startDate : moment(pageArguments.date)});
         } else if(pageArguments.id) {
            me.renderSchedulePageFromId(pageArguments.id);
         } else {
@@ -147,7 +147,7 @@ pages.schedule = {
         var me = pages.schedule;
 
         if(day.isSame(me.highlightedDay)) {
-            window.location.href = "#/schedule/date/" + day;
+            window.location.href = "#/schedule/date/" + day.format("YYYY-MM-DD");
             return;
         }
 
@@ -159,23 +159,13 @@ pages.schedule = {
         if(day) {
             me.highlightedDayEl = element;
             me.highlightedDay = day;
-            var addButton = $('<div class="schedule-item-add"><i class="fa fa-plus"></i></div>');
-            element.append(addButton);
+            element.append($('<div class="schedule-item-add"><i class="fa fa-plus"></i></div>'));
         }
     },
     dayClick : function (day) {
         var me = pages.schedule;
         var element = $(this);
         me.highlightDay(day, element);
-        return;
-        var amount = parseInt(prompt("How many grams?"));
-        var foodIndex = parseInt(prompt("Which type of food?"));
-        day.set('hour', prompt("Hour of day?"));
-        day.set('minute', 0);
-
-        scheduleFoodDelivery(app.getCurrentFeederId(), amount, foodIndex, day.toDate(), function () {
-            $('.schedule-panel').fullCalendar('refetchEvents');
-        });
     },
     getEvents : function (start, end, timezone, callback) {
         var startMonth = start.month();
