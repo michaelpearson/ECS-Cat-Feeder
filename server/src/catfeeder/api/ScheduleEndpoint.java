@@ -11,6 +11,7 @@ import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.schedule.ScheduleListResponse;
 import catfeeder.model.response.schedule.ScheduleResponse;
 import com.j256.ormlite.dao.Dao;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.*;
@@ -59,12 +60,8 @@ public class ScheduleEndpoint {
         if(scheduleItem == null || !user.doesUserOwnCatfeeder(scheduleItem.getFeeder())) {
             throw new NotFoundException("Schedule not found");
         }
-        if(scheduleItem.isRecurring()) {
-            throw new NotImplementedException();
-        } else {
-            schedulesDao.delete(scheduleItem);
-            return new GeneralResponse(true);
-        }
+        schedulesDao.delete(scheduleItem);
+        return new GeneralResponse(true);
     }
 
     @GET
@@ -82,60 +79,77 @@ public class ScheduleEndpoint {
     @POST
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ScheduleResponse scheduleNewDelivery(@PathParam("id") int scheduleId,
-                                                @FormParam("feederId") int feederId,
-                                                @FormParam("recurring") boolean recurring,
-                                                @FormParam("daysOfWeek") List<Boolean> daysOfWeek,
-                                                @FormParam("startDate") String startDate,
-                                                @FormParam("endDate") String endDate,
-                                                @FormParam("amountOfFood") int amount,
-                                                @FormParam("foodType") int type,
-                                                @FormParam("notes") String notes
+    public ScheduleResponse updateDelivery(@PathParam("id") int scheduleId,
+                                           @FormParam("feederId") int feederId,
+                                           @FormParam("recurring") boolean recurring,
+                                           @FormParam("daysOfWeek[]") List<String> daysOfWeekString,
+                                           @FormParam("startDate") String startDate,
+                                           @FormParam("endDate") String endDate,
+                                           @FormParam("amountOfFood") int amount,
+                                           @FormParam("foodType") int type,
+                                           @FormParam("notes") String notes
     ) throws SQLException, ParseException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder feeder = DatabaseClient.getFeederDao().queryForId(feederId);
         FoodType foodType = DatabaseClient.getFoodTypeDao().queryForId(type);
         Dao<Schedule, Integer> scheduleDao = DatabaseClient.getScheduleDao();
-
-
         Schedule s = scheduleDao.queryForId(scheduleId);
-
         if(s == null || !s.getFeeder().getOwner().getEmail().equals(user.getEmail())) {
             throw new NotFoundException("Could not find schedule");
         }
-
         if(feeder == null || !user.doesUserOwnCatfeeder(feeder)) {
             throw new NotFoundException("Feeder not found");
         }
         if(foodType == null) {
             throw new NotFoundException("Food type not found");
         }
+        buildSchedule(s, feeder, recurring, foodType, amount, notes, startDate, endDate, daysOfWeekString);
+        DatabaseClient.getScheduleDao().update(s);
+        return new ScheduleResponse(s);
+    }
 
-        if(recurring) {
-            throw new NotImplementedException();
-        } else {
-            s.setFeeder(feeder);
-            s.setFoodType(foodType);
-            s.setRecurring(false);
-            try {
-                s.setStartDate(htmlDateFormat.parse(startDate));
-            } catch (ParseException e) {
-                throw new BadRequestException("Invalid date");
-            }
-            s.setEndDate(null);
-            s.setDaysOfWeek(null);
-            s.setGramAmount(amount);
-            s.setNotes(notes);
-            scheduleDao.update(s);
-            return new ScheduleResponse(s);
+    private ArrayList<Schedule.DayOfWeek> decodeDaysOfWeek(List<String> daysOfWeek) {
+        List<Schedule.DayOfWeek> build = daysOfWeek.stream().map(Schedule.DayOfWeek::fromString).filter(d -> d != null).collect(Collectors.toList());
+        return new ArrayList<>(build);
+    }
+
+    private Schedule buildSchedule(Schedule s,
+                                   CatFeeder feeder,
+                                   boolean recurring,
+                                   FoodType foodType,
+                                   int amount,
+                                   String notes,
+                                   String startDate,
+                                   String endDate,
+                                   List<String> daysOfWeekString) {
+
+        if(s == null) {
+            s = new Schedule();
         }
+        s.setFeeder(feeder);
+        s.setRecurring(recurring);
+        s.setFoodType(foodType);
+        s.setGramAmount(amount);
+        s.setNotes(notes);
+        s.setDaysOfWeek(decodeDaysOfWeek(daysOfWeekString));
+
+        try {
+            s.setStartDate(htmlDateFormat.parse(startDate));
+            if(endDate != null && !endDate.equals("")) {
+                s.setEndDate(htmlDateFormat.parse(endDate));
+            }
+        } catch (ParseException e) {
+            throw new BadRequestException("Invalid date");
+        }
+
+        return s;
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public ScheduleResponse scheduleNewDelivery(@FormParam("feederId") int feederId,
                                                    @FormParam("recurring") boolean recurring,
-                                                   @FormParam("daysOfWeek") List<Boolean> daysOfWeek,
+                                                   @FormParam("daysOfWeek[]") List<String> daysOfWeekString,
                                                    @FormParam("startDate") String startDate,
                                                    @FormParam("endDate") String endDate,
                                                    @FormParam("amountOfFood") int amount,
@@ -153,23 +167,8 @@ public class ScheduleEndpoint {
         if(foodType == null) {
             throw new NotFoundException("Food type not found");
         }
-        if(recurring) {
-            throw new NotImplementedException();
-        } else {
-            Schedule s = new Schedule();
-            s.setFeeder(feeder);
-            s.setFoodType(foodType);
-            s.setRecurring(false);
-            try {
-                s.setStartDate(htmlDateFormat.parse(startDate));
-            } catch (ParseException e) {
-                throw new BadRequestException("Invalid date");
-            }
-
-            s.setGramAmount(amount);
-            s.setNotes(notes);
-            DatabaseClient.getScheduleDao().create(s);
-            return new ScheduleResponse(s);
-        }
+        Schedule s = buildSchedule(null, feeder, recurring, foodType, amount, notes, startDate, endDate, daysOfWeekString);
+        DatabaseClient.getScheduleDao().create(s);
+        return new ScheduleResponse(s);
     }
 }
