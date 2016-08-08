@@ -374,27 +374,13 @@
                                 <label class="col-sm-2 control-label">Days of week</label>
                                 <div class="col-sm-10">
                                     <div class="checkbox checkbox-pack" id="schedule-days-of-week">
-                                        <label>
-                                            <input type="checkbox"> M
-                                        </label>
-                                        <label>
-                                            <input type="checkbox"> T
-                                        </label>
-                                        <label>
-                                            <input type="checkbox"> W
-                                        </label>
-                                        <label>
-                                            <input type="checkbox"> T
-                                        </label>
-                                        <label>
-                                            <input type="checkbox"> F
-                                        </label>
-                                        <label>
-                                            <input type="checkbox"> S
-                                        </label>
-                                        <label>
-                                            <input type="checkbox"> S
-                                        </label>
+                                        <label><input type="checkbox"> M</label>
+                                        <label><input type="checkbox"> T</label>
+                                        <label><input type="checkbox"> W</label>
+                                        <label><input type="checkbox"> T</label>
+                                        <label><input type="checkbox"> F</label>
+                                        <label><input type="checkbox"> S</label>
+                                        <label><input type="checkbox"> S</label>
                                     </div>
                                 </div>
                             </div>
@@ -426,7 +412,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="schedule-amount" class="col-sm-2 control-label">Notes</label>
+                                <label for="schedule-notes" class="col-sm-2 control-label">Notes</label>
                                 <div class="col-sm-10">
                                     <textarea id="schedule-notes" rows="7" class="form-control"></textarea>
                                 </div>
@@ -449,59 +435,33 @@
                 </div>
 
                 <div class="page" id="manual-control-page">
-                    <div class="container-fluid col-xl-6 col-lg-12">
+                    <div class="container-fluid">
                         <div class="page-header">
                             <h1>Manual Control <small>Control the feeder remotely</small></h1>
                         </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Hardware</h3>
+
+                        <div class="col-lg-8 col-md-12">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="schedule-food-type" class="col-sm-2 control-label">Food type</label>
+                                    <div class="col-sm-10">
+                                        <select id="manual-food-type" class="form-control"></select>
+                                    </div>
                                 </div>
-                                <div class="panel-body container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="margin: 0;">Door Status</h3>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <strong>Open</strong>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <button class="btn btn-default" onclick="toggleDoor()">Toggle</button> <!--Change value depending on status-->
-                                        </div>
+                                <div class="form-group">
+                                    <label for="manual-deliver-amount" class="col-sm-2 control-label">Amount to deliver</label>
+                                    <div class="col-sm-10">
+                                        <input type="range" min="1" max="500" style="margin-top: 7px;" id="manual-deliver-amount">
+                                        <p id="manual-amount-indicator"></p>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="margin: 0;">Last RFID Scan</h3>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <strong>#1234</strong>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <button class="btn btn-default" onclick="testScan()">Test Scanner</button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 style="margin: 0;">Conveyor Status</h3>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <strong>Running</strong>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <button class="btn btn-default" onclick="toggleBelt()">Toggle</button>
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default" id="manual-deliver">Deliver food</button>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Food Delivery</h3>
-                                </div>
-                                <div class="panel-body container-fluid food-delivery-panel">
-
-                                </div>
-                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -539,20 +499,29 @@
                         <div class="page-header">
                             <h1>Profile <small>View and edit your profile</small></h1>
                         </div>
-                        <div class="col-lg-5" >
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Name</h3>
+                        <div class="col-lg-8 col-md-12">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="profile-email" class="col-sm-2 control-label">Email</label>
+                                    <div class="col-sm-10">
+                                        <input id="profile-email" class="form-control" type="email" disabled />
+                                    </div>
                                 </div>
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <input class="form-control" type="email" name="email" disabled />
-                                        <br />
-                                        <input class="form-control" type="text" name="name" />
-                                        <br />
-                                        <input class="form-control" type="password" name="password" />
-                                        <br />
-                                        <a class="btn btn-primary" id="save-profile-information">Update Information</a>
+                                <div class="form-group">
+                                    <label for="profile-name" class="col-sm-2 control-label">Display name</label>
+                                    <div class="col-sm-10">
+                                        <input id="profile-name" class="form-control" type="text" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-password" class="col-sm-2 control-label">Password</label>
+                                    <div class="col-sm-10">
+                                        <input id="profile-password" class="form-control" type="password" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default" id="profile-save">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -566,20 +535,9 @@
                         <div class="page-header">
                             <h1>Device Settings <small>Configure device settings</small></h1>
                         </div>
-
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-2">-->
-                                <!--Device Connection-->
-                            <!--</div>-->
-                            <!--<div class="col-md-6">-->
-                                <!--<button class="btn btn-default">Test Connection</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
                     </div>
-
-                    <!--<button class="btn btn-danger">Disable Device</button>-->
-                    <!--<button class="btn btn-success">Activate Device</button>-->
                 </div>
+
             </div>
         </div>
     </body>

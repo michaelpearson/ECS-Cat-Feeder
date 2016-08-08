@@ -32,10 +32,10 @@ pages.profile = {
     },
     initControls : function () {
         var me = pages.profile;
-        me.passwordElement = $('input[name=password]');
-        me.nameElement = $('input[name=name]');
-        me.emailElement = $('input[name=email]');
-        $('#save-profile-information').click(function () {
+        me.passwordElement = $('#profile-password');
+        me.nameElement = $('#profile-name');
+        me.emailElement = $('#profile-email');
+        $('#profile-save').click(function () {
             me.save();
         });
     },

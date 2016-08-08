@@ -26,9 +26,6 @@ public class Bootstrap {
             pathPrefix = "";
         }
 
-
-
-
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc);
         StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
         staticHandler.setFileCacheEnabled(false);
