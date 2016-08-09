@@ -36,6 +36,7 @@ function updateProfileInformation(name, password, successCallback, failCallback,
         complete : finallyCallback || function () {}
     });
 }
+
 function getAllFeeders(successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/list', {
         method : 'get',
@@ -48,6 +49,7 @@ function getAllFeeders(successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
+
 function deliverFood(amount, type, hardwareId, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/' + hardwareId + '/deliverFood', {
         method : 'post',
@@ -70,6 +72,7 @@ function deliverFood(amount, type, hardwareId, successCallback, failCallback, fi
         complete : finallyCallback || function () {}
     });
 }
+
 function scheduleFoodDelivery(options, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule', {
         method : 'post',
@@ -89,6 +92,7 @@ function scheduleFoodDelivery(options, successCallback, failCallback, finallyCal
         complete : finallyCallback || function () {}
     });
 }
+
 function updateScheduledFoodDelivery(id, options, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/' + id, {
         method : 'post',
@@ -108,6 +112,8 @@ function updateScheduledFoodDelivery(id, options, successCallback, failCallback,
         complete : finallyCallback || function () {}
     });
 }
+
+
 function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/' + id, {
         method : 'delete',
@@ -125,6 +131,7 @@ function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyC
         complete : finallyCallback || function () {}
     });
 }
+
 function getScheduledDelivery(id, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/' + id, {
         method : 'get',
@@ -144,12 +151,35 @@ function getScheduledDelivery(id, successCallback, failCallback, finallyCallback
         complete : finallyCallback || function () {}
     });
 }
+
 function getAllScheduledDeliveries(month, year, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/list', {
         method : 'get',
         data : {
             month : month,
             year : year
+        },
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+function updateFoodType(foodTypeId, defaultAmount, name, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/food/' + foodTypeId, {
+        method : 'post',
+        data : {
+            defaultGramAmount : defaultAmount,
+            name : name
         },
         beforeSend : addRequestHeader,
         success : function (response) {
@@ -184,6 +214,7 @@ function getLastCardId(hardwareId, successCallback, failCallback, finallyCallbac
         complete : finallyCallback || function () {}
     });
 }
+
 function getLogOfEvents(hardwareId, maxNumberOfItems, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/status/log/' + hardwareId + "/list?maxItems=" + maxNumberOfItems, {
         method : 'get',

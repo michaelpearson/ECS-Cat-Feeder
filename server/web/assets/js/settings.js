@@ -7,9 +7,9 @@ pages.settings = {
             display : 'block'
         });
         var foodTypes = $('settings-edit-food-type');
-        foodTypes.children().remove()
+        foodTypes.children().remove();
         $(app.getFeederInfo().foodTypes).each(function (i, element) {
-            foodTypes.append('<option value="' + element.id + '">' + element.name + '</option>')
+            foodTypes.append('<option value="' + element.id + '">' + element.name + '</option>');
         });
         me.initControls();
     },
@@ -48,10 +48,9 @@ pages.settings = {
     },
     updateFood : function () {
         var me = pages.settings;
-        var id = app.getCurrentFeederId();
-        var amount = me.amountEl.val();
-        var type = me.foodTypeEl.val();
-        console.log(amount, type, id);
-        //post food type
+        var defaultAmount = me.amountEl.val();
+        var foodTypeId = me.foodTypeEl.val();
+        foodTypeId = 1;
+        updateFoodType(foodTypeId, defaultAmount, "New Name " + Math.random(), app.invalidateFeederInfo);
     }
 };

@@ -20,8 +20,12 @@ public class FoodType {
     private String name;
 
     @XmlTransient
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private CatFeeder catfeeder;
+
+    @XmlElement
+    @DatabaseField
+    private int defaultGramAmount = 50;
 
     @DatabaseField
     private int foodIndex;
@@ -44,6 +48,14 @@ public class FoodType {
 
     public void setCatfeeder(CatFeeder catfeeder) {
         this.catfeeder = catfeeder;
+    }
+
+    public int getDefaultGramAmount() {
+        return defaultGramAmount;
+    }
+
+    public void setDefaultGramAmount(int defaultGramAmount) {
+        this.defaultGramAmount = defaultGramAmount;
     }
 
     public int getFoodIndex() {
