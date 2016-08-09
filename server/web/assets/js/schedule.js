@@ -18,7 +18,6 @@ pages.schedule = {
         }
 
         me.initControls();
-        renderCompleteCallback();
     },
     renderCalendarPage : function () {
         $('#schedule-page.page').css({
@@ -190,6 +189,7 @@ pages.schedule = {
         me.highlightDay(day, element);
     },
     getEvents : function (start, end, timezone, callback) {
+        var me = pages.schedule;
         var startMonth = start.month();
         var endMonth = end.month();
         if(endMonth < startMonth) {
@@ -214,6 +214,12 @@ pages.schedule = {
                 }
             }));
         }
-        $.when.apply($, ajax).done(callback.bind(this, build));
+        $.when.apply($, ajax).done(function () {
+            callback(build);
+            if(me.renderCompleteCallback != null) {
+                me.renderCompleteCallback();
+                me.renderCompleteCallback = null;
+            }
+        });
     }
 };
