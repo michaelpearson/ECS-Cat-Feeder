@@ -23,6 +23,9 @@ public class FoodType {
     @DatabaseField(foreign = true)
     private CatFeeder catfeeder;
 
+    @DatabaseField
+    private int foodIndex;
+
     public int getId() {
         return id;
     }
@@ -41,5 +44,13 @@ public class FoodType {
 
     public void setCatfeeder(CatFeeder catfeeder) {
         this.catfeeder = catfeeder;
+    }
+
+    public int getFoodIndex() {
+        return foodIndex;
+    }
+
+    public void setFoodIndex(int foodIndex) {
+        this.foodIndex = foodIndex;
     }
 }

@@ -175,3 +175,22 @@ function getAllScheduledDeliveries(month, year, successCallback, failCallback, f
     });
 }
 
+
+function getLastCardId(hardwareId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/test/readCard/' + hardwareId, {
+        method : 'get',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}

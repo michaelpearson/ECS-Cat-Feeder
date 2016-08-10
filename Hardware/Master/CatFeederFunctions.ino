@@ -48,5 +48,21 @@ void runConveyer(int index, bool run) {
   Wire.write(index & 0xFF);
   Wire.write(run ? 0x01 : 0x00);
   Wire.endTransmission();
-  Serial.printf("Conveyer %d is %s.\n", index, run ? "running" : "stopped");
+  //Serial.printf("Conveyer %d is %s.\n", index, run ? "running" : "stopped");
 }
+
+void getCardInfo(uint32_t * cardId, bool * isPresent) {
+  uint32_t id = 0;
+  Wire.requestFrom(8, 5); 
+  id |= (Wire.read() & 0xFF) << (0 * 8);
+  id |= (Wire.read() & 0xFF) << (1 * 8);
+  id |= (Wire.read() & 0xFF) << (2 * 8);
+  id |= (Wire.read() & 0xFF) << (3 * 8);
+  *cardId = id;
+  *isPresent = Wire.read() > 0;
+  Serial.print("Card requested: ");
+  Serial.print(*cardId);
+  Serial.print(" Is Present ");
+  Serial.println(*isPresent ? "True" : "False");
+}
+

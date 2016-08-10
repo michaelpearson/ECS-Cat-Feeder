@@ -1,5 +1,7 @@
 package catfeeder.model;
 
+import catfeeder.feeder.CatFeederConnection;
+import catfeeder.feeder.SocketManager;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -85,5 +87,9 @@ public class CatFeeder {
 
     public boolean isValidFoodType(FoodType foodType) {
         return foodTypes.stream().anyMatch(ft -> ft.getId() == foodType.getId());
+    }
+
+    public CatFeederConnection getFeederConnection() {
+        return SocketManager.getCatfeederConnection(getHardwareId());
     }
 }
