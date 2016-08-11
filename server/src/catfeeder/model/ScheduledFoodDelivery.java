@@ -1,5 +1,6 @@
 package catfeeder.model;
 
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -8,36 +9,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
 
-@XmlAccessorType(XmlAccessType.NONE)
-@DatabaseTable(tableName = "food_delivery")
-public class FoodDelivery {
-    @XmlElement(name = "deliveryId")
+@XmlAccessorType(XmlAccessType.FIELD)
+@DatabaseTable(tableName = "scheduled_food_delivery")
+public class ScheduledFoodDelivery {
     @DatabaseField(generatedId = true)
     private int id;
-
     @XmlElement(name = "date")
     @DatabaseField
     private Date dateTime;
-
-    @XmlElement
     @DatabaseField
     private int gramAmount;
-
     @XmlElement
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Schedule scheduledDelivery;
     @DatabaseField(foreign = true)
-    private FoodType foodType;
-
-    @DatabaseField(foreign = true)
-    private LogEntry logEntry;
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private LogEntry logEntryEntry;
 
     public Date getDateTime() {
         return dateTime;
@@ -51,23 +37,31 @@ public class FoodDelivery {
         return gramAmount;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setGramAmount(int gramAmount) {
         this.gramAmount = gramAmount;
     }
 
-    public LogEntry getLogEntry() {
-        return logEntry;
+    public Schedule getScheduledDelivery() {
+        return scheduledDelivery;
     }
 
-    public void setLogEntry(LogEntry logEntry) {
-        this.logEntry = logEntry;
+    public void setScheduledDelivery(Schedule scheduledDelivery) {
+        this.scheduledDelivery = scheduledDelivery;
     }
 
-    public FoodType getFoodType() {
-        return foodType;
+    public LogEntry getLogEntryEntry() {
+        return logEntryEntry;
     }
 
-    public void setFoodType(FoodType foodType) {
-        this.foodType = foodType;
+    public void setLogEntry(LogEntry logEntryEntry) {
+        this.logEntryEntry = logEntryEntry;
     }
 }

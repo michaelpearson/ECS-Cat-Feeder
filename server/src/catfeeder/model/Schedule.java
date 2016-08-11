@@ -84,7 +84,7 @@ public class Schedule {
     private FoodType foodType;
 
     @XmlElement(name = "deliveries")
-    private List<FoodDelivery> derivedDeliveries;
+    private List<ScheduledFoodDelivery> derivedDeliveries;
 
     @XmlElement
     @DatabaseField
@@ -158,7 +158,7 @@ public class Schedule {
         this.foodType = foodType;
     }
 
-    public void setDerivedDeliveries(List<FoodDelivery> derivedDeliveries) {
+    public void setDerivedDeliveries(List<ScheduledFoodDelivery> derivedDeliveries) {
         this.derivedDeliveries = derivedDeliveries;
     }
 
@@ -170,7 +170,7 @@ public class Schedule {
         this.notes = notes;
     }
 
-    public List<FoodDelivery> getDerivedDeliveries() {
+    public List<ScheduledFoodDelivery> getDerivedDeliveries() {
         return derivedDeliveries;
     }
 
@@ -178,12 +178,12 @@ public class Schedule {
         Calendar deliveryStartDate = Calendar.getInstance();
         deliveryStartDate.setTime(startDate);
         if(!recurring) {
-            ArrayList<FoodDelivery> r = new ArrayList<>();
+            ArrayList<ScheduledFoodDelivery> r = new ArrayList<>();
             if(year != deliveryStartDate.get(Calendar.YEAR) || month != deliveryStartDate.get(Calendar.MONTH) + 1) {
                 this.derivedDeliveries = r;
                 return;
             }
-            FoodDelivery d = new FoodDelivery();
+            ScheduledFoodDelivery d = new ScheduledFoodDelivery();
             d.setGramAmount(gramAmount);
             d.setDateTime(startDate);
             r.add(d);
@@ -197,9 +197,8 @@ public class Schedule {
                     .filter(date -> date.after(startDate))
                     .collect(Collectors.toList());
             for(Date date : days) {
-                FoodDelivery delivery = new FoodDelivery();
+                ScheduledFoodDelivery delivery = new ScheduledFoodDelivery();
                 delivery.setDateTime(date);
-                delivery.setFeeder(feeder);
                 delivery.setGramAmount(gramAmount);
                 derivedDeliveries.add(delivery);
             }
