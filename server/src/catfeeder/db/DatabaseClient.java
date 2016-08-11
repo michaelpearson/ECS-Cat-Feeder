@@ -34,16 +34,19 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, CatFeeder.class);
                 TableUtils.createTable(connectionSource, User.class);
                 TableUtils.createTable(connectionSource, Schedule.class);
+                TableUtils.createTable(connectionSource, ScheduledFoodDelivery.class);
                 TableUtils.createTable(connectionSource, FoodDelivery.class);
                 TableUtils.createTable(connectionSource, SessionToken.class);
                 TableUtils.createTable(connectionSource, FoodType.class);
+                TableUtils.createTable(connectionSource, LogEntry.class);
 
                 User user = createUser("test@test.com", "Test User", "password");
                 userDao.create(user);
 
                 CatFeeder cf = new CatFeeder();
                 //This is the id of the esp we have
-                cf.setHardwareId(9240906);
+                int feederId = 9240906;
+                cf.setHardwareId(feederId);
                 cf.setName("Test cat feeder");
                 cf.setLastConnectionAt(null);
                 cf.setOwner(user);
@@ -61,7 +64,7 @@ public class DatabaseClient {
                 type1.setFoodIndex(1);
                 foodTypeDao.create(type1);
 
-                cf = feederDao.queryForId(1);
+                cf = feederDao.queryForId(feederId);
 
                 for (int a = 0; a < 10; a++) {
                     Schedule schedule = new Schedule();
@@ -80,6 +83,7 @@ public class DatabaseClient {
             e.printStackTrace();
         }
     }
+
 
     private static User createUser(String email, String name, String password) {
         User u = new User();
@@ -109,8 +113,15 @@ public class DatabaseClient {
         return DaoManager.createDao(connectionSource, SessionToken.class);
     }
 
-    public static ConnectionSource getConnectionSource() {
-        return connectionSource;
+    public static Dao<LogEntry, Integer> getLogEntryDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, LogEntry.class);
     }
 
+    public static Dao<ScheduledFoodDelivery, Integer> getScheduledFoodDeliveryDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, ScheduledFoodDelivery.class);
+    }
+
+    public static Dao<FoodDelivery, Integer> getFoodDeliveryDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, FoodDelivery.class);
+    }
 }

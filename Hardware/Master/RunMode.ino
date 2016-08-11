@@ -40,6 +40,7 @@ void connectClient() {
   HTTPClient http;
   StaticJsonBuffer<200> jsonBuffer;
   char buff[100];
+  
   Serial.println("Requesting URL to connect to");
   sprintf(buff, "http://%s/api/feeder/%d/url", SERVER_CONNECTION, ESP.getChipId());
   Serial.print("Requesting: ");

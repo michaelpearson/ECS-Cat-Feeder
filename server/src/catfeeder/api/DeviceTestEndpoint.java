@@ -20,10 +20,6 @@ public class DeviceTestEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public ReadCardResponse readCard(@PathParam("id") int id) throws SQLException {
         CatFeeder cf = DatabaseClient.getFeederDao().queryForId(id);
-        CatFeederConnection connection = cf.getFeederConnection();
-        if(connection == null) {
-            return new ReadCardResponse();
-        }
-        return new ReadCardResponse(connection.queryLastCardId());
+        return new ReadCardResponse(cf.getLastCardInfo());
     }
 }

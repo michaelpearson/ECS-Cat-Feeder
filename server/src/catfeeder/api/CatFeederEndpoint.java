@@ -48,12 +48,11 @@ public class CatFeederEndpoint {
             throw new NotFoundException();
         }
 
-        CatFeederConnection connection = SocketManager.getCatfeederConnection(hardwareId);
-        if(connection == null) {
+        boolean success = feeder.deliverFood(gramAmount, foodType);
+        if(!success) {
             System.err.println("Cat feeder not connected");
             return new GeneralResponse(false);
         }
-        connection.deliverFood(gramAmount, foodType);
         return new GeneralResponse(true);
     }
 
