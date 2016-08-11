@@ -42,7 +42,8 @@ public class DatabaseClient {
                 userDao.create(user);
 
                 CatFeeder cf = new CatFeeder();
-                cf.setHardwareId(1);
+                //This is the id of the esp we have
+                cf.setHardwareId(9240906);
                 cf.setName("Test cat feeder");
                 cf.setLastConnectionAt(null);
                 cf.setOwner(user);
@@ -51,11 +52,13 @@ public class DatabaseClient {
                 FoodType type = new FoodType();
                 type.setName("Food type 1");
                 type.setCatfeeder(cf);
+                type.setFoodIndex(0);
                 foodTypeDao.create(type);
 
                 FoodType type1 = new FoodType();
                 type1.setName("Food type 2");
                 type1.setCatfeeder(cf);
+                type1.setFoodIndex(1);
                 foodTypeDao.create(type1);
 
                 cf = feederDao.queryForId(1);

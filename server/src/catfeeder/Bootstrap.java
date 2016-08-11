@@ -1,5 +1,6 @@
 package catfeeder;
 
+import catfeeder.feeder.SocketManager;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -25,6 +26,8 @@ public class Bootstrap {
         if(pathPrefix == null) {
             pathPrefix = "";
         }
+
+        SocketManager.init();
 
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc);
         StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");

@@ -7,6 +7,7 @@ import catfeeder.db.DatabaseClient;
 import catfeeder.feeder.CatFeederConnection;
 import catfeeder.feeder.SocketManager;
 import catfeeder.model.CatFeeder;
+import catfeeder.model.FoodType;
 import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.CatfeederListResponse;
@@ -38,14 +39,18 @@ public class CatFeederEndpoint {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}/deliverFood")
-    public GeneralResponse deliverFood(@PathParam("id") int hardwareId, @FormParam("amount") int gramAmount, @FormParam("type") int foodType) throws SQLException {
+    public GeneralResponse deliverFood(@PathParam("id") int hardwareId, @FormParam("amount") int gramAmount, @FormParam("type") int foodTypeId) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder feeder = DatabaseClient.getFeederDao().queryForId(hardwareId);
-        if(feeder == null || !user.doesUserOwnCatfeeder(feeder)) {
+        FoodType foodType = DatabaseClient.getFoodTypeDao().queryForId(foodTypeId);
+
+        if(feeder == null || foodType == null || !user.doesUserOwnCatfeeder(feeder)) {
             throw new NotFoundException();
         }
+
         CatFeederConnection connection = SocketManager.getCatfeederConnection(hardwareId);
         if(connection == null) {
+            System.err.println("Cat feeder not connected");
             return new GeneralResponse(false);
         }
         connection.deliverFood(gramAmount, foodType);

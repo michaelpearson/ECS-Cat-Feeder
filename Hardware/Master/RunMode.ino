@@ -7,18 +7,18 @@ void runModeSetup() {
   Serial.println("Starting in configured mode");
   Serial.print("WiFi network SSID: ");
   Serial.println(ssid);
-  if(*password != '\0') {
+  if (*password != '\0') {
     Serial.print("WiFi network password: ");
     Serial.println(password);
   }
 
   WiFi.mode(WIFI_STA);
-  if(*password == '\0') {
+  if (*password == '\0') {
     WiFi.begin(ssid);
   } else {
     WiFi.begin(ssid, password);
   }
-  
+
   uint8_t i = 0;
   Serial.println("Connecting to network");
   while (WiFi.status() != WL_CONNECTED) {
@@ -37,7 +37,7 @@ void runModeSetup() {
   connectClient();
 
   Wire.begin(2, 14);
-  
+
   Serial.println("Ready");
 }
 
@@ -74,23 +74,42 @@ void connectClient() {
 }
 
 void runModeLoop() {
-  if(!client.connected()) {
+  if (!client.connected()) {
     connectClient();
   } else {
-    if(client.available()) {
+    if (client.available()) {
       bool error = false;
-      switch(client.read()) {
+      switch (client.read()) {
         //Deliver food
         case 0x01:
-          int gramAmount, foodType;
-          error |= !read32(&client, &gramAmount);
-          error |= !read32(&client, &foodType);
-          if(!error) {
-            deliverFood(gramAmount, foodType);
+          {
+            int gramAmount, foodType;
+            error |= !read32(&client, &gramAmount);
+            error |= !read32(&client, &foodType);
+            if (!error) {
+              deliverFood(gramAmount, foodType);
+            }
+          }
+          break;
+        //Get last card UID
+        case 0x02:
+          {
+            Serial.println("Get card");
+            uint32_t cardId = 0;
+            bool isPresent = false;
+            getCardInfo(&cardId, &isPresent);
+            write32(&client, cardId);
+            write32(&client, isPresent ? 1 : 0);
+          }
+          break;
+        // PING PONG
+        case 0x03:
+          {
+            client.write(0x03);
           }
           break;
       }
-      if(error) {
+      if (error) {
         Serial.println("There was an error processing the request");
       }
     }
