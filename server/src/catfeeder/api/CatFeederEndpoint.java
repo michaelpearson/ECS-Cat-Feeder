@@ -1,5 +1,6 @@
 package catfeeder.api;
 
+import catfeeder.api.annotations.Insecure;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
@@ -9,6 +10,7 @@ import catfeeder.model.CatFeeder;
 import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.CatfeederListResponse;
+import catfeeder.model.response.catfeeder.UrlResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -48,5 +50,13 @@ public class CatFeederEndpoint {
         }
         connection.deliverFood(gramAmount, foodType);
         return new GeneralResponse(true);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}/url")
+    @Insecure
+    public UrlResponse getConnectionDetails(@PathParam("id") int feederId) {
+        return new UrlResponse();
     }
 }
