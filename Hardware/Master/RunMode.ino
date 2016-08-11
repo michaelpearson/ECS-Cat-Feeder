@@ -11,14 +11,12 @@ void runModeSetup() {
     Serial.print("WiFi network password: ");
     Serial.println(password);
   }
-
   WiFi.mode(WIFI_STA);
   if (*password == '\0') {
     WiFi.begin(ssid);
   } else {
     WiFi.begin(ssid, password);
   }
-
   uint8_t i = 0;
   Serial.println("Connecting to network");
   while (WiFi.status() != WL_CONNECTED) {
@@ -33,11 +31,8 @@ void runModeSetup() {
   Serial.println();
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
-
   connectClient();
-
   Wire.begin(2, 14);
-
   Serial.println("Ready");
 }
 

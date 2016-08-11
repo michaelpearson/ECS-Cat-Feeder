@@ -11,8 +11,6 @@ import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.schedule.ScheduleListResponse;
 import catfeeder.model.response.schedule.ScheduleResponse;
 import com.j256.ormlite.dao.Dao;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -21,7 +19,9 @@ import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Secured
