@@ -94,7 +94,7 @@ void runModeLoop() {
         //Get last card UID
         case 0x02:
           {
-            Serial.println("Ger card");
+            Serial.println("Get card");
             uint32_t cardId = 0;
             bool isPresent = false;
             getCardInfo(&cardId, &isPresent);
