@@ -1,6 +1,4 @@
-#define SERVER_CONNECTION "192.168.0.23"
-#define SERVER_PORT 6969
-
+#define SERVER_CONNECTION "catfeeder.herokuapp.com"
 WiFiClient client;
 
 void runModeSetup() {
@@ -44,7 +42,30 @@ void runModeSetup() {
 }
 
 void connectClient() {
-  if (!client.connect(SERVER_CONNECTION, SERVER_PORT)) {
+  HTTPClient http;
+  StaticJsonBuffer<200> jsonBuffer;
+  char buff[100];
+  Serial.println("Requesting URL to connect to");
+  sprintf(buff, "http://%s/api/feeder/%d/url", SERVER_CONNECTION, ESP.getChipId());
+  Serial.print("Requesting: ");
+  Serial.println(buff);
+  http.begin(buff);
+  int httpCode = http.GET();
+  Serial.print("Response code: ");
+  Serial.println(httpCode);
+  if(httpCode != 200) {
+    Serial.println("Could not get url to connect to");
+    delay(1000);
+    return;
+  }
+  JsonObject& root = jsonBuffer.parseObject(http.getString());
+  if(!root.success()) {
+    Serial.println("Could not decode json");
+    delay(1000);
+    return;
+  }
+  Serial.printf("Connecting to %s, on port: %d\n", (const char *)root["host"], (int)root["port"]);
+  if (!client.connect((const char *)root["host"], (int)root["port"])) {
     Serial.println("connection failed");
     delay(1000);
   } else {
