@@ -43,7 +43,8 @@ public class DatabaseClient {
 
                 CatFeeder cf = new CatFeeder();
                 //This is the id of the esp we have
-                cf.setHardwareId(9240906);
+                int feederId = 9240906;
+                cf.setHardwareId(feederId);
                 cf.setName("Test cat feeder");
                 cf.setLastConnectionAt(null);
                 cf.setOwner(user);
@@ -61,7 +62,7 @@ public class DatabaseClient {
                 type1.setFoodIndex(1);
                 foodTypeDao.create(type1);
 
-                cf = feederDao.queryForId(1);
+                cf = feederDao.queryForId(feederId);
 
                 for (int a = 0; a < 10; a++) {
                     Schedule schedule = new Schedule();
