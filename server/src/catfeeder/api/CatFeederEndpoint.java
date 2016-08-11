@@ -57,6 +57,6 @@ public class CatFeederEndpoint {
     @Path("/{id}/url")
     @Insecure
     public UrlResponse getConnectionDetails(@PathParam("id") int feederId) {
-        return new UrlResponse();
+        return new UrlResponse(UrlResponse.HOST, UrlResponse.PORT);
     }
 }
