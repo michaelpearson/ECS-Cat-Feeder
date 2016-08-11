@@ -16,6 +16,9 @@ var app = {
     currentPage : null,
     currentFeeder : null,
     init : function () {
+        $('.page').css({
+            display : 'none'
+        });
         var profileInfo = getProfileInformation(function (response) {
             $('#user-name').text(response.name);
         }, function () {

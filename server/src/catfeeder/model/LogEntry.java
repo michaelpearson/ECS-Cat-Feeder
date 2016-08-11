@@ -22,18 +22,21 @@ public class LogEntry {
     @DatabaseField
     private Date eventGeneratedAt;
 
-    @XmlElement
     @ForeignCollectionField
     private Collection<ScheduledFoodDelivery> scheduledFoodDeliveries;
 
-    @XmlElement
     @ForeignCollectionField
     private Collection<FoodDelivery> foodDeliveries;
 
     @DatabaseField(foreign = true)
     private CatFeeder feeder;
 
+    @XmlElement
+    @DatabaseField
+    private EventType eventType;
+
     public enum EventType {
+        ScheduledFoodDelivery,
         FoodDelivery,
         Disconnection,
         Connection;
@@ -43,6 +46,21 @@ public class LogEntry {
         }
     }
 
+    @XmlElement
+    public Object getEvent() {
+        switch(eventType) {
+            case Connection:
+                return null;
+            case Disconnection:
+                return null;
+            case ScheduledFoodDelivery:
+                return scheduledFoodDeliveries.iterator().next();
+            case FoodDelivery:
+                return foodDeliveries.iterator().next();
+            default:
+                return null;
+        }
+    }
 
     public int getId() {
         return id;
@@ -62,5 +80,13 @@ public class LogEntry {
 
     public void setFeeder(CatFeeder feeder) {
         this.feeder = feeder;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
 }

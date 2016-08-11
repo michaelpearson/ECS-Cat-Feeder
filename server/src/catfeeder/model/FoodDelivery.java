@@ -24,7 +24,7 @@ public class FoodDelivery {
     private int gramAmount;
 
     @XmlElement
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private FoodType foodType;
 
     @DatabaseField(foreign = true)

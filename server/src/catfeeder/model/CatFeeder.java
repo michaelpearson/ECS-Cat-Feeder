@@ -108,7 +108,7 @@ public class CatFeeder {
         LogEntry entry = new LogEntry();
         entry.setFeeder(this);
         entry.setEventGeneratedAt(new Date());
-
+        entry.setEventType(schedule == null ? LogEntry.EventType.FoodDelivery : LogEntry.EventType.ScheduledFoodDelivery);
         DatabaseClient.getLogEntryDao().create(entry);
 
         if(schedule != null) {
