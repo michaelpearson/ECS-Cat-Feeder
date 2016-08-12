@@ -36,13 +36,20 @@ public class LogEntry {
     private EventType eventType;
 
     public enum EventType {
-        ScheduledFoodDelivery,
-        FoodDelivery,
-        Disconnection,
-        Connection;
+        ScheduledFoodDelivery("Scheduled delivery"),
+        FoodDelivery("One off delivery"),
+        Disconnection("Device disconnected"),
+        Connection("Device connected");
+
+        private String jsonString;
+
+        EventType(String value) {
+            this.jsonString = value;
+        }
+
         @JsonValue
-        public String getEventType() {
-            return this.toString();
+        public String getEventName() {
+            return jsonString;
         }
     }
 

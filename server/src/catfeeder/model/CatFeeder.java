@@ -1,6 +1,7 @@
 package catfeeder.model;
 
 import catfeeder.db.DatabaseClient;
+import catfeeder.exceptions.FeederNotConnected;
 import catfeeder.feeder.CatFeederConnection;
 import catfeeder.feeder.SocketManager;
 import catfeeder.feeder.response.CardInfo;
@@ -46,6 +47,9 @@ public class CatFeeder {
 
     @ForeignCollectionField(orderColumnName = "eventGeneratedAt")
     private Collection<LogEntry> logEntries;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Tag trustedTag;
 
     public int getHardwareId() {
         return hardwareId;
@@ -95,11 +99,8 @@ public class CatFeeder {
         return foodTypes.stream().anyMatch(ft -> ft.getId() == foodType.getId());
     }
 
-    private boolean deliverFood(int amount, FoodType foodType, Schedule schedule) throws SQLException {
+    private boolean deliverFood(int amount, FoodType foodType, Schedule schedule) throws SQLException, FeederNotConnected {
         CatFeederConnection connection = getFeederConnection();
-        if(connection == null) {
-            return false;
-        }
         if(foodType == null) {
             return false;
         }
@@ -130,27 +131,38 @@ public class CatFeeder {
 
     }
 
-    public boolean deliverFood(int amount, Schedule schedule) throws SQLException {
+    public boolean deliverFood(int amount, Schedule schedule) throws SQLException, FeederNotConnected {
         return deliverFood(amount, schedule.getFoodType(), schedule);
     }
 
-    public boolean deliverFood(int amount, FoodType foodType) throws SQLException {
+    public boolean deliverFood(int amount, FoodType foodType) throws SQLException, FeederNotConnected {
         return deliverFood(amount, foodType, null);
     }
 
-    public CardInfo getLastCardInfo() {
+    public CardInfo getLastCardInfo() throws FeederNotConnected, SQLException {
         CatFeederConnection connection = getFeederConnection();
-        if(connection == null) {
-            return null;
-        }
         return connection.queryLastCardId();
     }
 
-    private CatFeederConnection getFeederConnection() {
-        return SocketManager.getCatfeederConnection(getHardwareId());
+    private CatFeederConnection getFeederConnection() throws FeederNotConnected {
+        CatFeederConnection connection = SocketManager.getCatfeederConnection(getHardwareId());
+        if(connection == null) {
+            throw new FeederNotConnected();
+        }
+        return connection;
     }
 
     public Collection<LogEntry> getLogEntries() {
         return logEntries;
+    }
+
+    public Tag getTrustedTag() {
+        return trustedTag;
+    }
+
+    public void setTrustedTag(Tag trustedTag) throws FeederNotConnected {
+        CatFeederConnection connection = getFeederConnection();
+        connection.setTrustedTag(trustedTag);
+        this.trustedTag = trustedTag;
     }
 }

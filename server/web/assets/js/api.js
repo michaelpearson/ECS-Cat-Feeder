@@ -36,7 +36,6 @@ function updateProfileInformation(name, password, successCallback, failCallback,
         complete : finallyCallback || function () {}
     });
 }
-
 function getAllFeeders(successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/list', {
         method : 'get',
@@ -49,7 +48,6 @@ function getAllFeeders(successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
-
 function deliverFood(amount, type, hardwareId, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/' + hardwareId + '/deliverFood', {
         method : 'post',
@@ -72,7 +70,6 @@ function deliverFood(amount, type, hardwareId, successCallback, failCallback, fi
         complete : finallyCallback || function () {}
     });
 }
-
 function scheduleFoodDelivery(options, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule', {
         method : 'post',
@@ -92,7 +89,6 @@ function scheduleFoodDelivery(options, successCallback, failCallback, finallyCal
         complete : finallyCallback || function () {}
     });
 }
-
 function updateScheduledFoodDelivery(id, options, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/' + id, {
         method : 'post',
@@ -112,8 +108,6 @@ function updateScheduledFoodDelivery(id, options, successCallback, failCallback,
         complete : finallyCallback || function () {}
     });
 }
-
-
 function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/' + id, {
         method : 'delete',
@@ -123,7 +117,7 @@ function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyC
                 successCallback(response);
             }
         },
-        error : function () {
+        error : function (response) {
             if(failCallback) {
                 failCallback(response);
             }
@@ -131,7 +125,6 @@ function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyC
         complete : finallyCallback || function () {}
     });
 }
-
 function getScheduledDelivery(id, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/' + id, {
         method : 'get',
@@ -151,7 +144,6 @@ function getScheduledDelivery(id, successCallback, failCallback, finallyCallback
         complete : finallyCallback || function () {}
     });
 }
-
 function getAllScheduledDeliveries(month, year, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/schedule/list', {
         method : 'get',
@@ -174,10 +166,8 @@ function getAllScheduledDeliveries(month, year, successCallback, failCallback, f
         complete : finallyCallback || function () {}
     });
 }
-
-
 function getLastCardId(hardwareId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/test/readCard/' + hardwareId, {
+    return $.ajax('/api/feeder/' + hardwareId + '/tags/available', {
         method : 'get',
         beforeSend : addRequestHeader,
         success : function (response) {
@@ -194,10 +184,85 @@ function getLastCardId(hardwareId, successCallback, failCallback, finallyCallbac
         complete : finallyCallback || function () {}
     });
 }
-
 function getLogOfEvents(hardwareId, maxNumberOfItems, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/status/log/' + hardwareId + "/list?maxItems=" + maxNumberOfItems, {
         method : 'get',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+function saveTag(tag, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/status/tag', {
+        method : 'post',
+        data : tag,
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+function deleteTag(tag, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/status/tag/' + tag.tagUID, {
+        method : 'delete',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+function listAllKnownTags(tag, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/status/tag/list', {
+        method : 'get',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+function setAuthenticatedTag(feederHardwareId, tagId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/tag/setTrusted', {
+        method : 'post',
+        data : {
+            tagId : tagId
+        },
         beforeSend : addRequestHeader,
         success : function (response) {
             if(response.success) {

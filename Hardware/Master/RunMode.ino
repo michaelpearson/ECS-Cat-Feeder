@@ -40,7 +40,7 @@ void connectClient() {
   HTTPClient http;
   StaticJsonBuffer<200> jsonBuffer;
   char buff[100];
-  
+
   Serial.println("Requesting URL to connect to");
   sprintf(buff, "http://%s/api/feeder/%d/url", SERVER_CONNECTION, ESP.getChipId());
   Serial.print("Requesting: ");
@@ -49,13 +49,13 @@ void connectClient() {
   int httpCode = http.GET();
   Serial.print("Response code: ");
   Serial.println(httpCode);
-  if(httpCode != 200) {
+  if (httpCode != 200) {
     Serial.println("Could not get url to connect to");
     delay(1000);
     return;
   }
   JsonObject& root = jsonBuffer.parseObject(http.getString());
-  if(!root.success()) {
+  if (!root.success()) {
     Serial.println("Could not decode json");
     delay(1000);
     return;
@@ -63,9 +63,10 @@ void connectClient() {
   Serial.printf("Connecting to %s, on port: %d\n", (const char *)root["host"], (int)root["port"]);
   if (!client.connect((const char *)root["host"], (int)root["port"])) {
     Serial.println("connection failed");
-    delay(1000);
+    delay(10000);
   } else {
     write32(&client, ESP.getChipId());
+    Serial.println("Connection succeeded");
   }
 }
 
@@ -90,18 +91,35 @@ void runModeLoop() {
         //Get last card UID
         case 0x02:
           {
-            Serial.println("Get card");
+            Serial.print("Card requested: ");
             uint32_t cardId = 0;
             bool isPresent = false;
             getCardInfo(&cardId, &isPresent);
             write32(&client, cardId);
             write32(&client, isPresent ? 1 : 0);
+            Serial.print(cardId);
+            Serial.print(" Is Present ");
+            Serial.println(isPresent ? "True" : "False");
           }
           break;
         // PING PONG
         case 0x03:
           {
             client.write(0x03);
+          }
+          break;
+        //Set authorized tag
+        case 0x04:
+          {
+            Serial.print("Setting trusted tag: ");
+            int tagUID;
+            if (!read32(&client, &tagUID)) {
+              Serial.println("Error reading tag UID");
+              error = 1;
+              break;
+            }
+            Serial.println(tagUID);
+            setTrustedTag(tagUID);
           }
           break;
       }

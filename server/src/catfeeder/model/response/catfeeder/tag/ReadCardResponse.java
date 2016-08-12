@@ -1,6 +1,6 @@
-package catfeeder.model.response.test;
+package catfeeder.model.response.catfeeder.tag;
 
-import catfeeder.feeder.response.CardInfo;
+import catfeeder.model.Tag;
 import catfeeder.model.response.GeneralResponse;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,12 +11,15 @@ import javax.xml.bind.annotation.XmlElement;
 public class ReadCardResponse extends GeneralResponse {
 
     @XmlElement
-    private CardInfo card;
+    private Tag tag;
+    @XmlElement
+    private boolean isPresent;
 
     public ReadCardResponse() {}
 
-    public ReadCardResponse(CardInfo card) {
-        this.card = card;
+    public ReadCardResponse(Tag tag, boolean isPresent) {
+        this.tag = tag;
+        this.isPresent = isPresent;
         success = true;
     }
 }

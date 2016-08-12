@@ -43,6 +43,7 @@ public class SocketManager {
                         connectionsToRemove.add(c);
                     }
                 }
+                catFeeders.removeAll(connectionsToRemove);
                 try {
                     sleep(60000);
                 } catch (InterruptedException e) {

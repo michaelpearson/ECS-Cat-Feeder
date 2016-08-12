@@ -36,7 +36,7 @@ pages.dashboard = {
             var foodType = $('<td>');
             var amount = $('<td>');
             switch(log.logEntries[a].eventType) {
-                case 'FoodDelivery':
+                case 'One off delivery':
                     foodType.text(log.logEntries[a].event.foodType.name);
                     amount.text(log.logEntries[a].event.gramAmount + "g");
                     break;

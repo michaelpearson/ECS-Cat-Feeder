@@ -129,6 +129,9 @@ var app = {
         $('.page').css({
             display: 'none'
         });
+        if(pages[app.currentPage] && pages[app.currentPage].unload) {
+            pages[app.currentPage].unload();
+        }
         if (pages[pageState.pageName] && pages[pageState.pageName].renderPage) {
             app.currentPage = pageState.pageName;
             app.beginNavigation();

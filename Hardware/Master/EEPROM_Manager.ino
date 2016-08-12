@@ -1,6 +1,7 @@
-#define ADDRESS_STATUS      0
-#define ADDRESS_SSID        1
-#define ADDRESS_PASSWORD    101
+#define ADDRESS_STATUS          0
+#define ADDRESS_SSID            1
+#define ADDRESS_PASSWORD        101
+#define ADDRESS_AUTHORIZED_TAG  204
 
 #define MASK_CONFIGURED     (1 << 0)
 #define MASK_VALID          (1 << 1)
@@ -38,6 +39,15 @@ char * getSSID() {
 */
 char * getPassword() {
   return (char *)EEPROM.getDataPtr() + ADDRESS_PASSWORD;
+}
+
+uint32_t getTrustedTag() {
+  return *(uint32_t *)(EEPROM.getDataPtr() + ADDRESS_AUTHORIZED_TAG);
+}
+
+void setTrustedTag(uint32_t tag) {
+  *((uint32_t *)(EEPROM.getDataPtr() + ADDRESS_AUTHORIZED_TAG)) = tag;
+  EEPROM.commit();
 }
 
 /**
