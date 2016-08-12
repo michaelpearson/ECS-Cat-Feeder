@@ -395,6 +395,8 @@
 
                         <div class="col-lg-8 col-md-12">
                             <div class="form-horizontal">
+                                <h3>Manual food delivery</h3>
+                                <hr />
                                 <div class="form-group">
                                     <label for="manual-food-type" class="col-sm-2 control-label">Food type</label>
                                     <div class="col-sm-10">
@@ -410,9 +412,15 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10">
-                                        <button type="submit" class="btn btn-default" id="manual-deliver">Deliver food</button>
+                                        <button type="submit" class="btn btn-primary" id="manual-deliver">Deliver food</button>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-horizontal">
+                                <h3>Detected tags</h3>
+                                <p>New tags will appear here when the feeder detects them</p>
+                                <hr />
+                                <div id="manual-found-tags"></div>
                             </div>
                         </div>
                     </div>
@@ -424,26 +432,7 @@
                             <h1>Learning Mode <small>Introduce cats to the system</small></h1>
                         </div>
 
-                        <div class="learning-enabled"> <!--To be displayed when learning mode is enabled-->
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Current Progress (for Cat's name)</h3>
-                                </div>
-                                <div class="panel-body container-fluid">
-                                    <div class="row">
-                                        <div style="float:left; width: 20%; padding-left: 15px;">
-                                            <h3 style="color: #333;">Stage 1</h3>
-                                            <p style="color: #777;">Device door always open</p>
-                                        </div>
-                                        <div class="progress learning-progressbar">
-                                            <div class="progress-bar" role="progressbar" style="width: 10%;">
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

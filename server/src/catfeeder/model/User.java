@@ -6,6 +6,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.Collection;
+
 @DatabaseTable(tableName = "users")
 public class User {
     @DatabaseField(id = true)
@@ -16,6 +18,8 @@ public class User {
     private String name;
     @ForeignCollectionField
     private ForeignCollection<CatFeeder> feeders;
+    @ForeignCollectionField
+    private Collection<Tag> tags;
 
     public String getEmail() {
         return email;
@@ -52,5 +56,13 @@ public class User {
 
     public boolean doesUserOwnCatfeeder(CatFeeder feeder) {
         return getFeeders().stream().anyMatch(f -> f.getHardwareId() == feeder.getHardwareId());
+    }
+
+    public Collection<Tag> getTags() {
+        return tags;
+    }
+
+    public boolean isSame(User user) {
+        return user != null && user.getEmail().equals(getEmail());
     }
 }

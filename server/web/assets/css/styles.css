@@ -78,4 +78,8 @@ body {
 .fc-event-container {
   cursor: pointer; }
 
+.added-margin {
+  margin-top: 30px;
+  margin-bottom: 30px; }
+
 /*# sourceMappingURL=styles.css.map */

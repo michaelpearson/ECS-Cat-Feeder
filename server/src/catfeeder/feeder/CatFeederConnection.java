@@ -4,12 +4,12 @@ import catfeeder.db.DatabaseClient;
 import catfeeder.feeder.response.CardInfo;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
+import catfeeder.model.Tag;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -27,7 +27,7 @@ public class CatFeederConnection extends Thread {
     public CatFeederConnection(Socket socket) {
         this.socket = socket;
         try {
-            socket.setSoTimeout(1000);
+            socket.setSoTimeout(5000);
             this.inputStream = socket.getInputStream();
             this.outputStream = socket.getOutputStream();
             int feederId = readI32();
@@ -63,10 +63,8 @@ public class CatFeederConnection extends Thread {
                 System.out.println("Written " + i + " bytes");
                 outputStream.flush();
             }
-        } catch(IOException | InterruptedException e) {
-            System.err.println("Connection died");
-        }
-        System.err.println("Socked dead");
+        } catch(IOException | InterruptedException e) {}
+        System.err.println("Feeder thread dead");
     }
 
     synchronized boolean checkConnection() {
@@ -100,6 +98,7 @@ public class CatFeederConnection extends Thread {
             return number;
         } catch (IOException e) {
             socket.close();
+            System.err.println("Socked closed due to read error");
             throw e;
         }
     }
@@ -136,9 +135,14 @@ public class CatFeederConnection extends Thread {
             boolean present = readI32() > 0;
             return new CardInfo(present, id);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
+    }
+
+    public synchronized void setTrustedTag(Tag tag) {
+        commandQueue.add((byte)0x04); //Set trusted tag
+        addIntToQueue(commandQueue, (int)tag.getTagUID());
+        pushNotification();
     }
 
     public long getFeederHardwareId() {

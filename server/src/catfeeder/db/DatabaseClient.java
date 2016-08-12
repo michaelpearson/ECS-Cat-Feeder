@@ -39,6 +39,7 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, SessionToken.class);
                 TableUtils.createTable(connectionSource, FoodType.class);
                 TableUtils.createTable(connectionSource, LogEntry.class);
+                TableUtils.createTable(connectionSource, Tag.class);
 
                 User user = createUser("test@test.com", "Test User", "password");
                 userDao.create(user);
@@ -123,5 +124,9 @@ public class DatabaseClient {
 
     public static Dao<FoodDelivery, Integer> getFoodDeliveryDao() throws SQLException {
         return DaoManager.createDao(connectionSource, FoodDelivery.class);
+    }
+
+    public static Dao<Tag, Integer> getTagDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, Tag.class);
     }
 }
