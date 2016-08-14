@@ -8,6 +8,19 @@ pages.settings = {
         });
         me.type1 = app.getFeederInfo().foodTypes[0];
         me.type2 = app.getFeederInfo().foodTypes[1];
+        me.tagList = $('#settings-tag-list');
+        listAllKnownTags(1,
+            function(data){
+                me.knownTags = data;
+                for(var i=0; i<me.knownTags.length; i++){
+                    me.tagList.children().append();//option with known tag's value
+                }
+            },
+            function(err){
+                console.log(err);
+            }
+        );
+
         me.initControls();
     },
     initControls : function () {
@@ -26,6 +39,7 @@ pages.settings = {
 
         var button1 = $('#settings-food-one-update');
         var button2 = $('#settings-food-two-update');
+        var tagButton = $('#settings-tag-forget');
 
         name1.val(me.type1.name);
         name2.val(me.type2.name);
@@ -40,6 +54,10 @@ pages.settings = {
             me.updateFood(name2.val(), default2.val(), 2)
         });
 
+        tagButton.click(function(){
+            me.forgetTag($('#settings-tag-list option:selected'));
+        });
+
         default1.on('input', function(){
             indicator1.text(default1.val() + 'grams')
         }).trigger('input');
@@ -51,5 +69,12 @@ pages.settings = {
     },
     updateFood : function (name, def, typeId) {
         updateFoodType(typeId, def, name, app.invalidateFeederInfo);
+    },
+    forgetTag : function(tag){
+        console.log(tag);
+        //var val = tag.id //not sure about tag fields
+        // deleteTag(tag, function(){
+        //     $('#settings-tag-list option[value=val]').remove();//remove forgotten tag from list
+        // });
     }
 };

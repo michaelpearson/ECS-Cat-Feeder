@@ -476,66 +476,76 @@
 
                 <div class="page" id="settings-page">
                     <div class="settings-enabled container-fluid">
-
                         <div class="page-header">
                             <h1>Device Settings <small>Configure device settings</small></h1>
                         </div>
-
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Edit Food Types</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="col-lg-8 col-md-12">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="settings-food-one-name" class="col-sm-2 control-label">Type 1</label>
-                                            <div class="col-sm-10">
-                                                <input id="settings-food-one-name" class="form-control" type=text />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="settings-food-one-default" class="col-sm-2 control-label">Default Delivery Amount</label>
-                                            <div class="col-sm-10">
-                                                <input type="range" min="1" max="500" style="margin-top: 7px;" id="settings-food-one-default">
-                                                <p id="settings-food-one-indicator"></p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-offset-2 col-sm-10">
-                                                <button type="submit" class="btn btn-default" id="settings-food-one-update">Update Food Type 1</button>
-                                            </div>
-                                        </div>
+                        <div class="col-lg-8 col-md-12">
+                            <div class="form-horizontal">
+                                <h3>Edit Food Types</h3>
+                                <hr/>
+                                <div class="form-group">
+                                    <label for="settings-food-one-name" class="col-sm-2 control-label">Type 1</label>
+                                    <div class="col-sm-10">
+                                        <input id="settings-food-one-name" class="form-control" type=text />
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="settings-food-one-default" class="col-sm-2 control-label">Default Delivery Amount</label>
+                                    <div class="col-sm-10">
+                                        <input type="range" min="1" max="500" style="margin-top: 7px;" id="settings-food-one-default">
+                                        <p id="settings-food-one-indicator"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default" id="settings-food-one-update">Update Food Type 1</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                <div class="col-lg-8 col-md-12" style="margin-top: 50px;">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="settings-food-two-name" class="col-sm-2 control-label">Type 2</label>
-                                            <div class="col-sm-10">
-                                                <input id="settings-food-two-name" type="text" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="settings-food-two-default" class="col-sm-2 control-label">Default Delivery Amount</label>
-                                            <div class="col-sm-10">
-                                                <input type="range" min="1" max="500" style="margin-top: 7px;" id="settings-food-two-default">
-                                                <p id="settings-food-two-indicator"></p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-offset-2 col-sm-10">
-                                                <button type="submit" class="btn btn-default" id="settings-food-two-update">Update Food Type 2</button>
-                                            </div>
-                                        </div>
+                        <div class="col-lg-8 col-md-12" style="margin-top: 50px;">
+                            <div class="form-horizontal">
+                                <hr/>
+                                <div class="form-group">
+                                    <label for="settings-food-two-name" class="col-sm-2 control-label">Type 2</label>
+                                    <div class="col-sm-10">
+                                        <input id="settings-food-two-name" type="text" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-food-two-default" class="col-sm-2 control-label">Default Delivery Amount</label>
+                                    <div class="col-sm-10">
+                                        <input type="range" min="1" max="500" style="margin-top: 7px;" id="settings-food-two-default">
+                                        <p id="settings-food-two-indicator"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default" id="settings-food-two-update">Update Food Type 2</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-md-12" style="margin-top: 50px;">
+                            <div class="form-horizontal">
+                                <h3>Known RFID Tags</h3>
+                                <hr/>
+                                <div class="form-group">
+                                    <label for="settings-tag-list" class="col-sm-2 control-label">ID</label>
+                                    <div class="col-sm-10">
+                                        <select id="settings-tag-list" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-danger" id="settings-tag-forget">Forget Tag</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </body>
