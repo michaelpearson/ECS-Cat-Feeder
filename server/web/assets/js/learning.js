@@ -6,5 +6,6 @@ pages.learning = {
         $('#learning-page.page').css({
             display : 'block'
         });
+        renderCompleteCallback();
     }
 };

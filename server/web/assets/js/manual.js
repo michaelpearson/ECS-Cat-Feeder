@@ -9,7 +9,7 @@ pages.manual = {
     foundTags : [],
     renderPage : function (pageArguments, renderCompleteCallback) {
         var me = pages.manual;
-        me.renderCompleteCallback = renderCompleteCallback;
+        renderCompleteCallback();
         $('#manual-control-page.page').css({
             display : 'block'
         });
