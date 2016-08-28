@@ -6,8 +6,7 @@ pages.settings = {
         $('#settings-page.page').css({
             display : 'block'
         });
-        me.type1 = app.getFeederInfo().foodTypes[0];
-        me.type2 = app.getFeederInfo().foodTypes[1];
+        me.foodList = app.getFeederInfo().foodTypes;
         me.tagList = $('#settings-tag-list');
         listAllKnownTags(1,
             function(data){
@@ -29,45 +28,18 @@ pages.settings = {
             return;
         }
         me.init = true;
-
-        var name1 = $('#settings-food-one-name');
-        var name2 = $('#settings-food-two-name');
-        var default1 = $('#settings-food-one-default');
-        var default2 = $('#settings-food-two-default');
-        var indicator1 = $('#settings-food-one-indicator');
-        var indicator2 = $('#settings-food-two-indicator');
-
-        var button1 = $('#settings-food-one-update');
-        var button2 = $('#settings-food-two-update');
-        var tagButton = $('#settings-tag-forget');
-
-        name1.val(me.type1.name);
-        name2.val(me.type2.name);
-        default1.val(me.type1.defaultGramAmount);
-        default2.val(me.type2.defaultGramAmount);
-
-        button1.click(function(){
-            me.updateFood(name1.val(), default1.val(), 1)
-        });
-
-        button2.click(function(){
-            me.updateFood(name2.val(), default2.val(), 2)
-        });
-
-        tagButton.click(function(){
-            me.forgetTag($('#settings-tag-list option:selected'));
-        });
-
-        default1.on('input', function(){
-            indicator1.text(default1.val() + 'grams')
-        }).trigger('input');
-        default2.on('input', function(){
-            indicator2.text(default2.val() + 'grams')
-        }).trigger('input');
-
-
+        
+        console.log(me.foodList);
+        for(var i=0; i<me.foodList.length; i++){
+            $('#food-container').append('<div class="col-lg-8 col-md-12">\n    <div class="form-horizontal">\n        <hr/>\n        <div class="form-group">\n            <label for="settings-food-name" class="col-sm-2 control-label">Name</label>\n            <div class="col-sm-10">\n                <input id="settings-food-name" class="form-control" type=text value="'+me.foodList[i].name+'"/>\n            </div>\n        </div>\n        <div class="form-group">\n            <label for="settings-food-default'+me.foodList[i].id+'" class="col-sm-2 control-label">Default Delivery Amount</label>\n            <div class="col-sm-10">\n                <input type="range" value="'+me.foodList[i].defaultGramAmount+'" min="1" max="500" style="margin-top: 7px;" id="settings-food-default'+me.foodList[i].id+'">\n                <p id="settings-food-indicator'+me.foodList[i].id+'"></p>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-sm-offset-2 col-sm-10">\n                <button type="submit" onclick="pages.settings.updateFood(this.parentElement.parentElement.parentElement);" class="btn btn-default" id="settings-food-update">Update</button>\n            </div>\n            <input value="'+me.foodList[i].id+'" style="display: none;"/>\n        </div>\n    </div>\n</div>');
+            var id = me.foodList[i].id;
+            $('#settings-food-default'+id).on('input', me.generateHandler(me.foodList, i)).trigger('input');
+        }
     },
-    updateFood : function (name, def, typeId) {
+    updateFood : function (element) {
+        var name = $($(element).find('input')[0]).val();
+        var def = $($(element).find('input')[1]).val();
+        var typeId = $($(element).find('input')[2]).val();
         updateFoodType(typeId, def, name, app.invalidateFeederInfo);
     },
     forgetTag : function(tag){
@@ -76,5 +48,10 @@ pages.settings = {
         // deleteTag(tag, function(){
         //     $('#settings-tag-list option[value=val]').remove();//remove forgotten tag from list
         // });
+    },
+    generateHandler: function(list, j){
+        return function(){
+            $('#settings-food-indicator'+list[j].id).text($('#settings-food-default'+list[j].id).val() + 'grams')
+        }
     }
 };
