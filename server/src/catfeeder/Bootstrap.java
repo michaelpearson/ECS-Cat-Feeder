@@ -1,6 +1,5 @@
 package catfeeder;
 
-import catfeeder.feeder.SocketManager;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -16,6 +15,7 @@ import java.util.logging.Logger;
 public class Bootstrap {
     public static void main(String[] argv) throws IOException, InterruptedException {
         setupLogging();
+
         ResourceConfig rc = new ResourceConfig().packages("catfeeder.api");
         rc.register(JacksonFeature.class);
         String port = System.getProperty("port");
@@ -27,12 +27,13 @@ public class Bootstrap {
             pathPrefix = "";
         }
 
-        SocketManager.init();
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc, false);
+        WebsocketServerTest.registerApplication(server);
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc);
         StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
         staticHandler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(staticHandler);
+
         server.start();
         Thread.currentThread().join();
         server.shutdown();
