@@ -252,8 +252,8 @@ function saveTag(tag, successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
-function deleteTag(tag, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag/' + tag.tagUID, {
+function deleteTag(tagId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/status/tag/' + tagId, {
         method : 'delete',
         beforeSend : addRequestHeader,
         success : function (response) {

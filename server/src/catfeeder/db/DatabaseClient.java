@@ -26,6 +26,7 @@ public class DatabaseClient {
             Dao<User, String> userDao = getUserDao();
             Dao<CatFeeder, Integer> feederDao = getFeederDao();
             Dao<FoodType, Integer> foodTypeDao = getFoodTypeDao();
+            Dao<Tag, Integer> tagDao = getTagDao();
 
             if(!userDao.isTableExists()) {
 
@@ -63,6 +64,9 @@ public class DatabaseClient {
                 type1.setFoodIndex(1);
                 foodTypeDao.create(type1);
 
+                Tag tag = new Tag();
+                tag.setTagName("Test Tag");
+                tagDao.create(tag);
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -62,11 +62,15 @@ public class TagEndpoint {
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{tagUID}")
-    public GeneralResponse deleteTag(@PathParam("tagUID") long tagUID) throws SQLException {
+    @Path("/{tagId}")
+    public GeneralResponse deleteTag(@PathParam("tagId") int tagId) throws SQLException {
         User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         Dao<Tag, Integer> knownTagDao = DatabaseClient.getTagDao();
-        Tag tag = getTag(knownTagDao, u, tagUID);
+        Tag tag = getTagById(knownTagDao, u, tagId);
+
+        if(tag == null) {
+            throw new NotFoundException("Tag not found");
+        }
         return new GeneralResponse(knownTagDao.delete(tag) > 0);
     }
 
@@ -74,6 +78,14 @@ public class TagEndpoint {
         tagUID = tagUID & 0xFFFFFFL;
         Tag queryTag = new Tag();
         queryTag.setTagUID(tagUID);
+        queryTag.setUser(u);
+        List<Tag> tags = knownTagDao.queryForMatching(queryTag);
+        return (tags == null || tags.size() == 0) ? queryTag : tags.get(0);
+    }
+
+    private static Tag getTagById(Dao<Tag, Integer> knownTagDao, User u, int tagId) throws SQLException {
+        Tag queryTag = new Tag();
+        queryTag.setId(tagId);
         queryTag.setUser(u);
         List<Tag> tags = knownTagDao.queryForMatching(queryTag);
         return (tags == null || tags.size() == 0) ? queryTag : tags.get(0);
