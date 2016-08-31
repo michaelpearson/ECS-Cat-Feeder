@@ -4,7 +4,7 @@ import catfeeder.api.annotations.Insecure;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
-import catfeeder.feeder.response.CardInfo;
+import catfeeder.model.response.CardInfo;
 import catfeeder.mappers.CardInfoToTagResponseMapper;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;

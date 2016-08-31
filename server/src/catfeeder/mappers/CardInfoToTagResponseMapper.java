@@ -1,7 +1,7 @@
 package catfeeder.mappers;
 
 import catfeeder.db.DatabaseClient;
-import catfeeder.feeder.response.CardInfo;
+import catfeeder.model.response.CardInfo;
 import catfeeder.model.Tag;
 import catfeeder.model.response.catfeeder.tag.ReadCardResponse;
 import catfeeder.util.First;

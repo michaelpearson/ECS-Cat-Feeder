@@ -11,7 +11,7 @@ import java.util.Date;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @DatabaseTable(tableName = "scheduled_food_delivery")
-public class ScheduledFoodDelivery {
+public class ScheduledFoodDelivery implements ScheduledItem {
     @DatabaseField(generatedId = true)
     private int id;
     @XmlElement(name = "date")
@@ -63,5 +63,10 @@ public class ScheduledFoodDelivery {
 
     public void setLogEntry(LogEntry logEntryEntry) {
         this.logEntryEntry = logEntryEntry;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Food delivery: amount, %d, day %s", getGramAmount(), getDateTime().toString());
     }
 }

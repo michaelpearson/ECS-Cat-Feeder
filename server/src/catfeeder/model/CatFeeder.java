@@ -4,7 +4,7 @@ import catfeeder.db.DatabaseClient;
 import catfeeder.exceptions.FeederNotConnected;
 import catfeeder.feeder.CatFeederConnection;
 import catfeeder.feeder.SocketManager;
-import catfeeder.feeder.response.CardInfo;
+import catfeeder.model.response.CardInfo;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;

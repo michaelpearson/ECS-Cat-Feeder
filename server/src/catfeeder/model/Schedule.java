@@ -191,6 +191,7 @@ public class Schedule {
             return;
         }
         this.derivedDeliveries = new ArrayList<>();
+        calendar.setTime(getStartDate());
         for(DayOfWeek d : daysOfWeek) {
             List<Date> days = getAllDaysInMonth(d, year, month).stream()
                     .filter(date -> endDate == null || date.before(endDate))

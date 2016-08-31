@@ -1,7 +1,7 @@
 package catfeeder.feeder;
 
 import catfeeder.db.DatabaseClient;
-import catfeeder.feeder.response.CardInfo;
+import catfeeder.model.response.CardInfo;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
 import catfeeder.model.Tag;
