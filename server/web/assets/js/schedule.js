@@ -60,7 +60,7 @@ pages.schedule = {
             element.checked = data.daysOfWeek[index];
         });
         $('#schedule-start-date').val(moment(data.startDate).format("YYYY-MM-DDThh:ss"));
-        $('#schedule-end-date').val(data.endDate || '');
+        $('#schedule-end-date').val(moment(data.endDate || '').format("YYYY-MM-DDThh:ss"));
 
 
         foodTypeEl.change(function () {

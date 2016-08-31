@@ -195,7 +195,7 @@ public class Schedule {
         for(DayOfWeek d : daysOfWeek) {
             List<Date> days = getAllDaysInMonth(d, year, month).stream()
                     .filter(date -> endDate == null || date.before(endDate))
-                    .filter(date -> date.after(startDate))
+                    .filter(date -> startDate.compareTo(date) < 1)
                     .collect(Collectors.toList());
             for(Date date : days) {
                 ScheduledFoodDelivery delivery = new ScheduledFoodDelivery();
