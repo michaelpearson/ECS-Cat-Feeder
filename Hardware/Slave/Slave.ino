@@ -36,7 +36,6 @@ void receiveEvent(int howMany) {
 }
 
 void loop() {
-  stepperLoop();
   readerLoop();
   delay(10);
 }

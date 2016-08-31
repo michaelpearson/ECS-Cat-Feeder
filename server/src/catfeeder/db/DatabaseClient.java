@@ -18,7 +18,6 @@ public class DatabaseClient {
         try {
             String connectionString = System.getProperty("db");
             if(connectionString == null) {
-                //connectionSource = new JdbcConnectionSource("jdbc:h2:mem:test");
                 connectionSource = new JdbcConnectionSource("jdbc:h2:~/.cat-feeder-db", "sa", "sa");
             } else {
                 connectionSource = new JdbcConnectionSource(connectionString, System.getenv("DB_USERNAME"), System.getenv("DB_PASSWORD"));
@@ -26,7 +25,6 @@ public class DatabaseClient {
 
             Dao<User, String> userDao = getUserDao();
             Dao<CatFeeder, Integer> feederDao = getFeederDao();
-            Dao<Schedule, Integer> scheduleDao = getScheduleDao();
             Dao<FoodType, Integer> foodTypeDao = getFoodTypeDao();
 
             if(!userDao.isTableExists()) {
@@ -64,20 +62,6 @@ public class DatabaseClient {
                 type1.setCatfeeder(cf);
                 type1.setFoodIndex(1);
                 foodTypeDao.create(type1);
-
-                cf = feederDao.queryForId(feederId);
-
-                for (int a = 0; a < 10; a++) {
-                    Schedule schedule = new Schedule();
-                    schedule.setRecurring(false);
-                    schedule.setGramAmount(5 * a);
-                    schedule.setStartDate(new Date());
-                    schedule.setFeeder(cf);
-                    schedule.setFoodType(a % 2 == 0 ? type : type1);
-                    schedule.setNotes("Some note " + a);
-                    scheduleDao.create(schedule);
-                }
-
 
             }
         } catch (SQLException e) {
