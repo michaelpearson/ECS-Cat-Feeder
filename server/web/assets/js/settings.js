@@ -1,26 +1,65 @@
 var pages = window.pages || {};
 pages.settings = {
+    editFoodTemplate : '<div class="col-lg-8 col-md-12">\n    <div class="form-horizontal">\n        <hr/>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Name</label>\n            <div class="col-sm-10">\n                <input class="form-control settings-food-name" type="text" />\n            </div>\n        </div>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Default Delivery Amount</label>\n            <div class="col-sm-10">\n                <input class="settings-food-default" type="range" value="" min="1" max="500" style="margin-top: 7px;">\n                <p id="settings-food-indicator"></p>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-sm-offset-2 col-sm-10">\n                <button type="submit" class="btn btn-default settings-food-update">Update</button>\n            </div>       \n        </div>\n    </div>\n</div>',
+    init : false,
+    knownTags : [],
+    renderCompleteCallback : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
         var me = pages.settings;
-        renderCompleteCallback();
+
         $('#settings-page.page').css({
             display : 'block'
         });
-        me.foodList = app.getFeederInfo().foodTypes;
-        me.tagList = $('#settings-tag-list');
-        listAllKnownTags(1,
-            function(data){
-                me.knownTags = data;
-                for(var i=0; i<me.knownTags.length; i++){
-                    me.tagList.children().append();//option with known tag's value
+        me.renderCompleteCallback = renderCompleteCallback;
+        me.renderFoodElements();
+        me.updateTagList();
+        me.initControls();
+    },
+    renderFoodElements : function () {
+        var me = pages.settings;
+        var knownFoodTypes = app.getFeederInfo().foodTypes;
+        var foodElements = [];
+        var foodContainerEl = $('.food-container');
+        foodContainerEl.children().remove();
+        for(var a = 0;a < knownFoodTypes.length;a++) {
+            var el = $(me.editFoodTemplate);
+            var foodNameEl = el.find('.settings-food-name');
+            var defaultAmountEl = el.find('.settings-food-default');
+            el.find('.settings-food-update').click(me.updateFood.bind(me, {
+                id : knownFoodTypes[a].id,
+                foodName : foodNameEl,
+                amount : defaultAmountEl
+            }));
+            foodNameEl.val(knownFoodTypes[a].name);
+            defaultAmountEl.val(knownFoodTypes[a].defaultGramAmount);
+            foodContainerEl.append(el);
+        }
+    },
+    updateTagList : function () {
+        var me = pages.settings;
+        listAllKnownTags(1, function(data) {
+                me.renderTagElements(data.tags || []);
+            }, function(err) {
+            }, function () {
+                if(me.renderCompleteCallback) {
+                    me.renderCompleteCallback();
+                    me.renderCompleteCallback = null;
                 }
-            },
-            function(err){
-                console.log(err);
             }
         );
+    },
+    renderTagElements : function (tags) {
+        var me = pages.settings;
+        me.knownTags = tags;
+        var tagListEl = $('.settings-tag-list');
 
-        me.initControls();
+        tagListEl.children().remove();
+        for(var a = 0; a < tags.length; a++) {
+            var el = $('<option>');
+            el.val(tags[a].id);
+            el.text(tags[a].tagName);
+            tagListEl.append(el);
+        }
     },
     initControls : function () {
         var me = pages.settings;
@@ -28,28 +67,19 @@ pages.settings = {
             return;
         }
         me.init = true;
-        
-        console.log(me.foodList);
-        me.foodContainer = $('#food-container');
-        for(var i=0; i<me.foodList.length; i++){
-            me.foodContainer.append('<div class="col-lg-8 col-md-12">\n    <div class="form-horizontal">\n        <hr/>\n        <div class="form-group">\n            <label for="settings-food-name'+me.foodList[i].id+'" class="col-sm-2 control-label">Name</label>\n            <div class="col-sm-10">\n                <input id="settings-food-name'+me.foodList[i].id+'" class="form-control" type=text value="'+me.foodList[i].name+'"/>\n            </div>\n        </div>\n        <div class="form-group">\n            <label for="settings-food-default'+me.foodList[i].id+'" class="col-sm-2 control-label">Default Delivery Amount</label>\n            <div class="col-sm-10">\n                <input type="range" value="'+me.foodList[i].defaultGramAmount+'" min="1" max="500" style="margin-top: 7px;" id="settings-food-default'+me.foodList[i].id+'">\n                <p id="settings-food-indicator'+me.foodList[i].id+'"></p>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-sm-offset-2 col-sm-10">\n                <button type="submit" onclick="pages.settings.updateFood(this.parentElement.parentElement.parentElement);" class="btn btn-default" id="settings-food-update">Update</button>\n                <input value="'+me.foodList[i].id+'" class="settings-food-id" style="display: none;"/>\n            </div>       \n        </div>\n    </div>\n</div>');
-            var id = me.foodList[i].id;
-            $('#settings-food-default'+id).on('input', me.generateHandler(me.foodList, i)).trigger('input');
-        }
+        $('.settings-tag-forget').click(me.forgetTag);
+
     },
     updateFood : function (element) {
-        var el = $(element);
-        var typeId = el.find('input.settings-food-id').val();
-        var name = el.find(('input#settings-food-name'+typeId)).val();
-        var def = el.find(('input#settings-food-default'+typeId)).val();
-        updateFoodType(typeId, def, name, app.invalidateFeederInfo);
+        var id = element.id;
+        var name = element.foodName.val();
+        var amount = element.amount.val();
+        updateFoodType(id, amount, name, app.invalidateFeederInfo);
     },
     forgetTag : function(tag){
-        console.log(tag);
-        //var val = tag.id //not sure about tag fields
-        // deleteTag(tag, function(){
-        //     $('#settings-tag-list option[value=val]').remove();//remove forgotten tag from list
-        // });
+        var me = pages.settings;
+        var id = $('.settings-tag-list').val();
+        deleteTag(id, me.updateTagList);
     },
     generateHandler: function(list, j){
         return function(){
