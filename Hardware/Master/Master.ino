@@ -1,3 +1,5 @@
+#include <WebSockets.h>
+#include <WebSocketsClient.h>
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <Wire.h>
@@ -7,6 +9,7 @@
 #include <EEPROM.h>
 #include <DNSServer.h>
 #include <FS.h>
+
 
 bool configMode;
 

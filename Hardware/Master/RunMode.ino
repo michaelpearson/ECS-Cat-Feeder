@@ -1,5 +1,10 @@
-#define SERVER_CONNECTION "catfeeder.herokuapp.com"
-WiFiClient client;
+#define SERVER_CONNECTION "192.168.0.23"
+#define SERVER_PORT 8080
+
+#define COMMAND_DELIVER_FOOD 1
+#define COMMAND_GET_CARD 2
+
+WebSocketsClient socket;
 
 void runModeSetup() {
   char * password = getPassword();
@@ -37,40 +42,71 @@ void runModeSetup() {
 }
 
 void connectClient() {
-  HTTPClient http;
-  StaticJsonBuffer<200> jsonBuffer;
-  char buff[100];
+  socket.begin(SERVER_CONNECTION, SERVER_PORT, "/ws");
+  socket.onEvent(socketEvent);
+}
 
-  Serial.println("Requesting URL to connect to");
-  sprintf(buff, "http://%s/api/feeder/%d/url", SERVER_CONNECTION, ESP.getChipId());
-  Serial.print("Requesting: ");
-  Serial.println(buff);
-  http.begin(buff);
-  int httpCode = http.GET();
-  Serial.print("Response code: ");
-  Serial.println(httpCode);
-  if (httpCode != 200) {
-    Serial.println("Could not get url to connect to");
-    delay(1000);
-    return;
-  }
-  JsonObject& root = jsonBuffer.parseObject(http.getString());
-  if (!root.success()) {
-    Serial.println("Could not decode json");
-    delay(1000);
-    return;
-  }
-  Serial.printf("Connecting to %s, on port: %d\n", (const char *)root["host"], (int)root["port"]);
-  if (!client.connect((const char *)root["host"], (int)root["port"])) {
-    Serial.println("connection failed");
-    delay(10000);
-  } else {
-    write32(&client, ESP.getChipId());
-    Serial.println("Connection succeeded");
+
+void runModeLoop() {
+  socket.loop();
+  catFeederLoop();
+  delay(100);
+}
+
+void socketEvent(WStype_t type, uint8_t * payload, size_t lenght) {
+  StaticJsonBuffer<400> jsonBuffer;
+  switch (type) {
+    case WStype_CONNECTED:
+      {
+        Serial.printf("Connected to url: %s\n",  payload);
+        JsonObject&  root = jsonBuffer.createObject();
+        root["deviceId"] = ESP.getChipId();
+        char buff[200];
+        root.printTo(buff, sizeof(buff));
+        socket.sendTXT(buff);
+      }
+      break;
+    case WStype_TEXT:
+      {
+        Serial.printf("Received command: %s\n", payload);
+        JsonObject& root = jsonBuffer.parseObject((char *)payload);
+        executeInstruction(root);
+      }
+      break;
   }
 }
 
-void runModeLoop() {
+void executeInstruction(JsonObject& payload) {
+  StaticJsonBuffer<200> responseBuffer;
+  switch ((int)payload["command"]) {
+    case COMMAND_DELIVER_FOOD:
+      {
+        Serial.print("Deliver food: ");
+        int gramAmount = (int)payload["gram_amount"];
+        int foodIndex = (int)payload["food_type"];
+        Serial.printf("Gram amount %d, Food type %d\n", gramAmount, foodIndex);
+        deliverFood(gramAmount, foodIndex);
+      }
+      break;
+    case COMMAND_GET_CARD:
+      {
+        char buff[200];
+        JsonObject& root = responseBuffer.createObject();
+        Serial.print("Get card info: ");
+        uint32_t cardId = 0;
+        bool isPresent = false;
+        getCardInfo(&cardId, &isPresent);
+        root["card_id"] = cardId;
+        root["is_present"] = isPresent;
+        root.printTo(buff, sizeof(buff));
+        socket.sendTXT(buff);
+      }
+  }
+
+}
+
+/*
+  void runModeLoop() {
   if (!client.connected()) {
     connectClient();
   } else {
@@ -130,4 +166,5 @@ void runModeLoop() {
     catFeederLoop();
     delay(100);
   }
-}
+  }
+*/

@@ -3,7 +3,7 @@ package catfeeder.model;
 import catfeeder.db.DatabaseClient;
 import catfeeder.exceptions.FeederNotConnected;
 import catfeeder.feeder.CatFeederConnection;
-import catfeeder.feeder.SocketManager;
+import catfeeder.feeder.CatfeederSocketApplication;
 import catfeeder.model.response.CardInfo;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
@@ -139,13 +139,13 @@ public class CatFeeder {
         return deliverFood(amount, foodType, null);
     }
 
-    public CardInfo getLastCardInfo() throws FeederNotConnected, SQLException {
+    public CardInfo getLastCardInfo() throws FeederNotConnected, SQLException, InterruptedException {
         CatFeederConnection connection = getFeederConnection();
         return connection.queryLastCardId();
     }
 
     private CatFeederConnection getFeederConnection() throws FeederNotConnected {
-        CatFeederConnection connection = SocketManager.getCatfeederConnection(getHardwareId());
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(getHardwareId());
         if(connection == null) {
             throw new FeederNotConnected();
         }
@@ -164,5 +164,10 @@ public class CatFeeder {
         CatFeederConnection connection = getFeederConnection();
         connection.setTrustedTag(trustedTag);
         this.trustedTag = trustedTag;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Cat feeder: %d", getHardwareId());
     }
 }

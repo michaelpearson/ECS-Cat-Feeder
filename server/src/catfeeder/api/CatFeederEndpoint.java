@@ -60,7 +60,7 @@ public class CatFeederEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}/tags/available")
-    public ReadCardResponse getAvailableTag(@PathParam("id") int hardwareId) throws SQLException {
+    public ReadCardResponse getAvailableTag(@PathParam("id") int hardwareId) throws SQLException, InterruptedException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder query = new CatFeeder();
         query.setOwner(user);

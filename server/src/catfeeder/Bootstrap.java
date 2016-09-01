@@ -1,7 +1,10 @@
 package catfeeder;
 
+import catfeeder.feeder.CatfeederSocketApplication;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
+import org.glassfish.grizzly.websockets.WebSocketAddOn;
+import org.glassfish.grizzly.websockets.WebSocketEngine;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -28,7 +31,9 @@ public class Bootstrap {
         }
 
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc, false);
-        WebsocketServerTest.registerApplication(server);
+
+        WebSocketEngine.getEngine().register("", "/ws", CatfeederSocketApplication.getInstance());
+        server.getListener("grizzly").registerAddOn(new WebSocketAddOn());
 
         StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
         staticHandler.setFileCacheEnabled(false);
