@@ -5,7 +5,7 @@ import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
 import catfeeder.model.ScheduledItem;
 import catfeeder.model.Tag;
-import catfeeder.model.response.CardInfo;
+import catfeeder.model.CardInfo;
 import com.j256.ormlite.dao.Dao;
 import org.glassfish.grizzly.websockets.WebSocket;
 import org.json.simple.JSONObject;
@@ -30,7 +30,9 @@ public class CatFeederConnection {
     private enum Commands {
         DeliverFood(1),
         GetLastCard(2),
-        SetTrustedTag(3);
+        SetTrustedTag(3),
+        ReadWeight(4),
+        TareSensor(5);
 
         private int commandId;
 
@@ -115,6 +117,17 @@ public class CatFeederConnection {
         return feeder.getHardwareId();
     }
 
+    public int readWeight() throws InterruptedException {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.ReadWeight.getCommandId());
+        socket.send(payload.toJSONString());
+        JSONObject response = waitForMessage();
+        if(response == null) {
+            return 0;
+        }
+        return (int)(long)response.get("weight");
+    }
+
     public void updateAlarm() throws SQLException {
         calendar.setTime(new Date());
         scheduleManager = new ScheduleManager(DatabaseClient.getScheduleDao(), feeder);
@@ -130,6 +143,12 @@ public class CatFeederConnection {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
         AlarmManager.registerAlarm(calendar.getTime(), this::alarm);
+    }
+
+    public void tare() {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.TareSensor.getCommandId());
+        socket.send(payload.toJSONString());
     }
 
     private synchronized void alarm() {

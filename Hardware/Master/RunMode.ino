@@ -4,6 +4,8 @@
 #define COMMAND_DELIVER_FOOD          1
 #define COMMAND_GET_CARD              2
 #define COMMAND_SET_TRUSTED_CARD      3
+#define COMMAND_READ_WEIGHT           4
+#define COMMAND_TARE                  5
 
 WebSocketsClient socket;
 
@@ -11,16 +13,16 @@ void runModeSetup() {
   char * password = getPassword();
   char * ssid = getSSID();
   Serial.println("Starting in configured mode");
-  
+
   WiFi.mode(WIFI_STA);
   if (*password == '\0') {
     WiFi.begin(ssid);
   } else {
     WiFi.begin(ssid, password);
   }
-  
+
   Serial.println("Connecting to network");
-  
+
   uint8_t i = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -30,8 +32,8 @@ void runModeSetup() {
       delay(100);
       ESP.restart();
     }
-    Serial.println();
   }
+  Serial.println();
 
   socket.begin(SERVER_CONNECTION, SERVER_PORT, "/ws");
   socket.onEvent(socketEvent);
@@ -70,6 +72,7 @@ void socketEvent(WStype_t type, uint8_t * payload, size_t lenght) {
 
 void executeInstruction(JsonObject& payload) {
   StaticJsonBuffer<200> responseBuffer;
+  char buff[200];
   switch ((int)payload["command"]) {
     case COMMAND_DELIVER_FOOD:
       {
@@ -77,12 +80,11 @@ void executeInstruction(JsonObject& payload) {
         int gramAmount = (int)payload["gram_amount"];
         int foodIndex = (int)payload["food_type"];
         deliverFood(gramAmount, foodIndex);
+        break;
       }
-      break;
     case COMMAND_GET_CARD:
       {
         Serial.println("Get card info");
-        char buff[200];
         JsonObject& root = responseBuffer.createObject();
         uint32_t cardId = 0;
         bool isPresent = false;
@@ -91,14 +93,33 @@ void executeInstruction(JsonObject& payload) {
         root["is_present"] = isPresent;
         root.printTo(buff, sizeof(buff));
         socket.sendTXT(buff);
+        break;
       }
-      break;
     case COMMAND_SET_TRUSTED_CARD:
       {
         Serial.println("Set trusted tag");
         long tagUID = (long)payload["tag_uid"];
         setTrustedTag(tagUID);
+        break;
       }
-      break;
+    case COMMAND_READ_WEIGHT:
+      {
+        Serial.println("Read weight");
+        int weight = getWeight();
+        JsonObject& root = responseBuffer.createObject();
+        root["weight"] = weight;
+        root.printTo(buff, sizeof(buff));
+        socket.sendTXT(buff);
+        break;
+      }
+    case COMMAND_TARE:
+      {
+        Serial.println("Tare scale");
+        int currentWeight = getWeight() - getGramOffset();
+        Serial.printf("Current weight: %d\n", currentWeight);
+        setGramOffset(-currentWeight);
+        break;
+      }
+
   }
 }

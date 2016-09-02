@@ -3,91 +3,106 @@ pages.manual = {
     init : false,
     foodTypeEl : null,
     amountEl : null,
-    timerId : 0,
     tagListEl : null,
+    weightDisplayEl : null,
+    tagTimer : 0,
+    weightTimer : 0,
     tagItemTemplate : '<div class="form-group">\n    <label class="col-sm-2 control-label">Tag</label>\n    <div class="input-group">\n        <span class="input-group-addon tag-uid"></span>\n        <input type="text" class="form-control tag-name" aria-label="New tag name" title="New tag name">\n        <div class="input-group-btn">\n            <button class="btn btn-warning auth">Set as authorised</button>\n            <button class="btn btn-primary save">Save</button>\n        </div>\n    </div>\n</div>',
     foundTags : [],
     renderCompleteCallback : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
-        var me = pages.manual;
-        me.initControls();
-        me.renderCompleteCallback = renderCompleteCallback;
+        this.initControls();
+        this.renderCompleteCallback = renderCompleteCallback;
         $('#manual-control-page.page').css({
             display : 'block'
         });
-        me.foodTypeEl.children().remove();
+        this.foodTypeEl.children().remove();
         $(app.getFeederInfo().foodTypes).each(function (i, element) {
-            me.foodTypeEl.append('<option value="' + element.id + '" data-default="' + element.defaultGramAmount + '">' + element.name + '</option>')
-        });
-        me.foodTypeEl.change();
-        me.timerId = setInterval(me.detectTags, 4000);
-        me.detectTags();
+            this.foodTypeEl.append('<option value="' + element.id + '" data-default="' + element.defaultGramAmount + '">' + element.name + '</option>')
+        }.bind(this));
+        this.foodTypeEl.change();
+        this.tagTimer = setInterval(this.detectTags.bind(this), 1000);
+        this.weightTimer = setInterval(this.updateWeightDisplay.bind(this), 500);
+        this.detectTags();
+        this.updateWeightDisplay(0);
     },
     unload : function () {
-        clearInterval(pages.manual.timerId);
+        clearInterval(this.tagTimer);
+        clearInterval(this.weightTimer);
+    },
+    updateWeightDisplay : function () {
+        readWeight(app.getCurrentFeederId(), function (response) {
+            var weight = response.weight;
+            this.weightDisplayEl.text(weight + " gram" + (weight != 1 ? "s" : ""));
+        }.bind(this));
     },
     detectTags : function () {
-        var me = pages.manual;
         getLastCardId(app.getCurrentFeederId(), function (response) {
             var tag = response.tag || {};
             if(!tag || !tag.tagUID || tag.tagUID == 0) {
                 return;
             }
-            if(me.foundTags.some(function (element) { return element.tagUID == tag.tagUID; })) {
+            if(this.foundTags.some(function (element) { return element.tagUID == tag.tagUID; })) {
                 return;
             }
-            var el = $(me.tagItemTemplate);
+            var el = $(this.tagItemTemplate);
             var uidEl = el.find('.tag-uid');
             var nameEl = el.find('.tag-name');
             uidEl.text("#" + tag.tagUID);
             nameEl.val(tag.tagName || "New tag #" + tag.tagUID);
 
-            el.find('button.save').click(me.updateCard.bind(this, tag, nameEl, null));
-            el.find('button.auth').click(me.setAuthorised.bind(this, tag, nameEl));
-            me.tagListEl.append(el);
-            me.foundTags.push(tag);
-            if(me.renderCompleteCallback == null) {
-                me.renderCompleteCallback();
+            el.find('button.save').click(this.updateCard.bind(this, tag, nameEl, null));
+            el.find('button.auth').click(this.setAuthorised.bind(this, tag, nameEl));
+            this.tagListEl.append(el);
+            this.foundTags.push(tag);
+            if(this.renderCompleteCallback == null) {
+                this.renderCompleteCallback();
             }
-        });
+        }.bind(this));
     },
     initControls : function () {
-        var me = pages.manual;
-        if(me.init) {
+        if(this.init) {
             return;
         }
-        me.init = true;
+        this.init = true;
 
-        me.tagListEl = $('#manual-found-tags');
-        $('#manual-deliver').click(me.deliverFood);
-        me.foodTypeEl = $('#manual-food-type');
-        me.amountEl = $('#manual-deliver-amount');
+        this.tagListEl = $('#manual-found-tags');
+        $('#manual-deliver').click(this.deliverFood.bind(this));
+        this.foodTypeEl = $('#manual-food-type');
+        this.amountEl = $('#manual-deliver-amount');
 
         var amountIndicator = $('#manual-amount-indicator');
-        me.amountEl.on('input', function () {
-            amountIndicator.text(me.amountEl.val() + " grams");
-        }).trigger('input');
+        this.amountEl.on('input', function () {
+            amountIndicator.text(this.amountEl.val() + " grams");
+        }.bind(this)).trigger('input');
 
-        me.foodTypeEl.change(function () {
+        let me = this;
+        this.foodTypeEl.change(function () {
             var defaultAmount = ($(this).find('option:selected').attr('data-default'));
             me.amountEl.val(defaultAmount);
             me.amountEl.trigger('input');
         });
+
+        this.weightDisplayEl = $('#weight-display');
+
+        $('.tare-button').click(this.tareScale.bind(this));
+    },
+    tareScale : function () {
+        console.log('here');
+        tareScale(app.getCurrentFeederId());
     },
     updateCard : function (tag, nameEl, callback) {
         tag.tagName = nameEl.val();
         saveTag(tag, callback);
     },
     setAuthorised : function (tag, nameEl) {
-        var me = pages.manual;
-        me.updateCard(tag, nameEl, function (response) {
+        this.updateCard(tag, nameEl, function (response) {
             setAuthenticatedTag(app.getCurrentFeederId(), response.tag.id);
         });
     },
     deliverFood : function () {
-        var me = pages.manual;
-        var amount = me.amountEl.val();
-        var type = me.foodTypeEl.val();
+        var amount = this.amountEl.val();
+        var type = this.foodTypeEl.val();
         var id = app.getCurrentFeederId();
         deliverFood(amount, type, id);
     }

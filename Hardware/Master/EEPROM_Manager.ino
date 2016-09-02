@@ -2,6 +2,7 @@
 #define ADDRESS_SSID            1
 #define ADDRESS_PASSWORD        101
 #define ADDRESS_AUTHORIZED_TAG  204
+#define ADDRESS_GRAM_OFFSET     208
 
 #define MASK_CONFIGURED     (1 << 0)
 #define MASK_VALID          (1 << 1)
@@ -50,6 +51,18 @@ void setTrustedTag(uint32_t tag) {
   EEPROM.commit();
 }
 
+void setGramOffset(int32_t gramOffset) {
+  *((int32_t *)(EEPROM.getDataPtr() + ADDRESS_GRAM_OFFSET)) = gramOffset;
+  EEPROM.commit();
+  
+}
+
+int32_t getGramOffset() {
+  return *(int32_t *)(EEPROM.getDataPtr() + ADDRESS_GRAM_OFFSET);
+}
+
+
+
 /**
    Sets the value of SSID. Validates that the length of SSID + the null termination is < 100 characters and is greater then 1.
    Returns: False if the validation failed
@@ -97,3 +110,6 @@ void setConfigured(bool configured) {
   EEPROM.write(ADDRESS_STATUS, value | (configured ? MASK_CONFIGURED : 0));
   EEPROM.commit();
 }
+
+
+

@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 @Secured
 @Path("/user")
-public class UserEntityEndpoint {
+public class UserEndpoint {
 
     @Context
     private SecurityContext context;

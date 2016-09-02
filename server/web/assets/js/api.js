@@ -309,3 +309,41 @@ function setAuthenticatedTag(feederHardwareId, tagId, successCallback, failCallb
         complete : finallyCallback || function () {}
     });
 }
+
+function readWeight(feederHardwareId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/status/weight', {
+        method : 'get',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}
+
+function tareScale(feederHardwareId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/tare', {
+        method : 'put',
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}

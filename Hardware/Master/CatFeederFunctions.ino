@@ -5,7 +5,6 @@
 #define CHECK_CARD_PERIOD 150
 #define DOOR_OPEN_TIMEOUT 5000
 
-#define TARE 27255
 #define SCALE 0.01
 
 int foodToDeliver[] = {0, 0};
@@ -30,7 +29,7 @@ void catFeederLoop() {
 
 
 int getWeight() {
-  int weight = (scale.read() - TARE) * SCALE;
+  int weight = (scale.read() * SCALE) + getGramOffset();
   Serial.print("Weight: ");
   Serial.println(weight);
   return weight;
