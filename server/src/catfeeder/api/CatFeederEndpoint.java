@@ -1,18 +1,18 @@
 package catfeeder.api;
 
-import catfeeder.api.annotations.Insecure;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
+import catfeeder.feeder.CatFeederConnection;
+import catfeeder.feeder.CatfeederSocketApplication;
 import catfeeder.mappers.CardInfoToTagResponseMapper;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
 import catfeeder.model.Tag;
 import catfeeder.model.User;
-import catfeeder.model.response.CardInfo;
+import catfeeder.model.CardInfo;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.CatfeederListResponse;
-import catfeeder.model.response.catfeeder.UrlResponse;
 import catfeeder.model.response.catfeeder.tag.ReadCardResponse;
 import catfeeder.util.First;
 
@@ -87,11 +87,20 @@ public class CatFeederEndpoint {
         return new GeneralResponse(true);
     }
 
-    @GET
+    @PUT
+    @Path("{feederId}/tare")
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/url")
-    @Insecure
-    public UrlResponse getConnectionDetails(@PathParam("id") int feederId) {
-        return new UrlResponse(UrlResponse.HOST, UrlResponse.PORT);
+    public GeneralResponse tareScale(@PathParam("feederId") int feederId) throws SQLException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        CatFeeder cf = DatabaseClient.getFeederDao().queryForId(feederId);
+        if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
+            throw new NotFoundException();
+        }
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(cf.getHardwareId());
+        if(connection == null) {
+            throw new ServiceUnavailableException();
+        }
+        connection.tare();
+        return new GeneralResponse(true);
     }
 }

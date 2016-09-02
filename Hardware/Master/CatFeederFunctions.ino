@@ -1,7 +1,11 @@
+#include <Q2HX711.h>
+
 #define NUMBER_OF_FEEDERS 2
 #define DELIVER_FOOD_PERIOD 1000
 #define CHECK_CARD_PERIOD 150
 #define DOOR_OPEN_TIMEOUT 5000
+
+#define SCALE 0.01
 
 int foodToDeliver[] = {0, 0};
 int lastWeight = 0;
@@ -10,6 +14,7 @@ long deliverFoodLastRun = 0;
 long checkCardLastRun = 0;
 long doorsOpenAt = 0;
 
+Q2HX711 scale(0, 5);
 
 void catFeederLoop() {
   if(millis() - deliverFoodLastRun > DELIVER_FOOD_PERIOD) {
@@ -24,7 +29,10 @@ void catFeederLoop() {
 
 
 int getWeight() {
-  return 0;
+  int weight = (scale.read() * SCALE) + getGramOffset();
+  Serial.print("Weight: ");
+  Serial.println(weight);
+  return weight;
 }
 
 void checkCard() {
