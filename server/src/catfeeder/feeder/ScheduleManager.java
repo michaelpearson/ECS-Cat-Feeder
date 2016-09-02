@@ -14,15 +14,14 @@ import java.util.stream.Collectors;
 
 public class ScheduleManager implements Iterable<ScheduledItem> {
 
-    private List<Schedule> filteredSchedules = new ArrayList<>();
     private List<ScheduledItem> scheduledItems;
 
     public ScheduleManager(Dao<Schedule, Integer> scheduleDao, CatFeeder cf, int month, int year) throws SQLException {
-        Dao<Schedule, Integer> scheduleDao1 = scheduleDao;
         List<Schedule> allSchedules = scheduleDao.queryForEq("feeder_id", cf);
 
         //If the scheduled event is not recurring and has a start date after now
-        filteredSchedules.addAll(allSchedules.stream().filter(s -> !s.isRecurring() && s.getStartDate().before(new Date())).collect(Collectors.toList()));
+        List<Schedule> filteredSchedules = new ArrayList<>();
+        filteredSchedules.addAll(allSchedules.stream().filter(s -> !s.isRecurring() && s.getStartDate().after(new Date())).collect(Collectors.toList()));
 
         //If any recurring event has no end date or has an end date in the future.
         filteredSchedules.addAll(allSchedules.stream().filter(s -> s.isRecurring() && (s.getEndDate() == null || s.getEndDate().after(new Date()))).collect(Collectors.toList()));

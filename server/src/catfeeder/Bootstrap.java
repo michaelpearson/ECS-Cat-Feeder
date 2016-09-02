@@ -1,6 +1,7 @@
 package catfeeder;
 
 import catfeeder.feeder.CatfeederSocketApplication;
+import com.j256.ormlite.logger.LocalLog;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.websockets.WebSocketAddOn;
@@ -17,39 +18,28 @@ import java.util.logging.Logger;
 
 public class Bootstrap {
     public static void main(String[] argv) throws IOException, InterruptedException {
-        setupLogging();
 
-        ResourceConfig rc = new ResourceConfig().packages("catfeeder.api");
-        rc.register(JacksonFeature.class);
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
+
         String port = System.getProperty("port");
         if(port == null) {
             port = "8080";
         }
-        String pathPrefix = System.getProperty("prefix");
-        if(pathPrefix == null) {
-            pathPrefix = "";
-        }
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), rc, false);
+        ResourceConfig resourceConfiguration = new ResourceConfig().packages("catfeeder.api");
+        resourceConfiguration.register(JacksonFeature.class);
+
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), resourceConfiguration, false);
 
         WebSocketEngine.getEngine().register("", "/ws", CatfeederSocketApplication.getInstance());
         server.getListener("grizzly").registerAddOn(new WebSocketAddOn());
 
-        StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
+        StaticHttpHandler staticHandler = new StaticHttpHandler("web/");
         staticHandler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(staticHandler);
 
         server.start();
+        //Block forever
         Thread.currentThread().join();
-        server.shutdown();
-    }
-
-    private static void setupLogging() {
-        Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
-        l.setLevel(Level.FINEST);
-        l.setUseParentHandlers(false);
-        ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(Level.ALL);
-        l.addHandler(ch);
     }
 }

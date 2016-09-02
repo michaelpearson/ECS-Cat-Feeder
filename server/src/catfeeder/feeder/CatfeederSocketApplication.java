@@ -7,16 +7,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CatfeederSocketApplication extends WebSocketApplication {
     private static CatfeederSocketApplication singleton;
 
-    static Map<WebSocket, CatFeederConnection> catFeeders = new HashMap<>();
+    private static Map<WebSocket, CatFeederConnection> catFeeders = new HashMap<>();
 
     private CatfeederSocketApplication() {}
 
@@ -44,9 +42,10 @@ public class CatfeederSocketApplication extends WebSocketApplication {
                 catFeeders.get(socket).onMessage(data);
             } else {
                 long feederId = (long)data.get("deviceId");
+                catFeeders.values().stream().filter(c -> c.getFeederHardwareId() == feederId).forEach(c -> c.getWebSocket().close());
                 catFeeders.put(socket, new CatFeederConnection(socket, (int)feederId));
             }
-        } catch (ParseException e) {
+        } catch (ParseException | SQLException e) {
             e.printStackTrace();
         }
     }

@@ -59,8 +59,9 @@ pages.schedule = {
         $('#schedule-days-of-week').find('input[type=checkbox]').each(function (index, element) {
             element.checked = data.daysOfWeek[index];
         });
-        $('#schedule-start-date').val(moment(data.startDate).format("YYYY-MM-DDThh:ss"));
-        $('#schedule-end-date').val(moment(data.endDate || '').format("YYYY-MM-DDThh:ss"));
+        console.log(moment(data.startDate));
+        $('#schedule-start-date').val(moment(data.startDate).format("YYYY-MM-DDTHH:mm:ss"));
+        $('#schedule-end-date').val(moment(data.endDate || '').format("YYYY-MM-DDTHH:mm:ss"));
 
 
         foodTypeEl.change(function () {

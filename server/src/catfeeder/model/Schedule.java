@@ -186,6 +186,7 @@ public class Schedule {
             ScheduledFoodDelivery d = new ScheduledFoodDelivery();
             d.setGramAmount(gramAmount);
             d.setDateTime(startDate);
+            d.setScheduledDelivery(this);
             r.add(d);
             this.derivedDeliveries = r;
             return;
@@ -201,6 +202,7 @@ public class Schedule {
                 ScheduledFoodDelivery delivery = new ScheduledFoodDelivery();
                 delivery.setDateTime(date);
                 delivery.setGramAmount(gramAmount);
+                delivery.setScheduledDelivery(this);
                 derivedDeliveries.add(delivery);
             }
         }
