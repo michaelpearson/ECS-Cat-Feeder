@@ -16,7 +16,7 @@ import java.net.URI;
 public class Bootstrap {
     public static void main(String[] argv) throws IOException, InterruptedException {
 
-        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
+        //System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
 
         String port = System.getProperty("port");
         if(port == null) {
