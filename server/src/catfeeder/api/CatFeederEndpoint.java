@@ -1,6 +1,5 @@
 package catfeeder.api;
 
-import catfeeder.api.annotations.Insecure;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
@@ -14,7 +13,6 @@ import catfeeder.model.User;
 import catfeeder.model.CardInfo;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.CatfeederListResponse;
-import catfeeder.model.response.catfeeder.UrlResponse;
 import catfeeder.model.response.catfeeder.tag.ReadCardResponse;
 import catfeeder.util.First;
 
@@ -87,14 +85,6 @@ public class CatFeederEndpoint {
         }
         cf.setTrustedTag(t);
         return new GeneralResponse(true);
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/url")
-    @Insecure
-    public UrlResponse getConnectionDetails(@PathParam("id") int feederId) {
-        return new UrlResponse(UrlResponse.HOST, UrlResponse.PORT);
     }
 
     @PUT
