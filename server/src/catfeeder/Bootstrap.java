@@ -31,7 +31,13 @@ public class Bootstrap {
         WebSocketEngine.getEngine().register("", "/ws", CatfeederSocketApplication.getInstance());
         server.getListener("grizzly").registerAddOn(new WebSocketAddOn());
 
-        StaticHttpHandler staticHandler = new StaticHttpHandler("web/");
+
+
+        String pathPrefix = System.getProperty("prefix");
+        if(pathPrefix == null) {
+            pathPrefix = "";
+        }
+        StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
         staticHandler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(staticHandler);
 
