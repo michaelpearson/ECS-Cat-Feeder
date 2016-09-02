@@ -17,12 +17,13 @@ public class CatFeederConnection {
     private final WebSocket socket;
     private final CatFeeder feeder;
 
-    private final Object cardInfoLock = new Object();
-    private CardInfo cardInfo = null;
+    private JSONObject lastMessage = null;
+    private final Object messageLock = new Object();
 
     private enum Commands {
-        DELIVER_FOOD (1),
-        GET_CARD (2);
+        DeliverFood(1),
+        GetLastCard(2),
+        SetTrustedTag(3);
 
         private int commandId;
 
@@ -52,17 +53,25 @@ public class CatFeederConnection {
 
     void onMessage(JSONObject data) {
         System.out.println("Got message: " + data);
+        lastMessage = data;
+        synchronized (messageLock) {
+            messageLock.notify();
+        }
+    }
 
-        cardInfo = new CardInfo((boolean)data.get("is_present"), (long)data.get("card_id"));
-        synchronized (cardInfoLock) {
-            cardInfoLock.notifyAll();
+    private JSONObject waitForMessage() throws InterruptedException {
+        synchronized (messageLock) {
+            messageLock.wait(5000);
+            JSONObject message = lastMessage;
+            lastMessage = null;
+            return message;
         }
     }
 
 
     public void deliverFood(int gramAmount, FoodType foodType) {
         JSONObject payload = new JSONObject();
-        payload.put("command", Commands.DELIVER_FOOD.getCommandId());
+        payload.put("command", Commands.DeliverFood.getCommandId());
         payload.put("gram_amount", gramAmount);
         payload.put("food_type", foodType.getFoodIndex());
         socket.send(payload.toJSONString());
@@ -70,33 +79,23 @@ public class CatFeederConnection {
 
     public CardInfo queryLastCardId() throws InterruptedException {
         JSONObject payload = new JSONObject();
-        payload.put("command", Commands.GET_CARD.getCommandId());
+        payload.put("command", Commands.GetLastCard.getCommandId());
         socket.send(payload.toJSONString());
 
-        synchronized (cardInfoLock) {
-            cardInfo = null;
-            cardInfoLock.wait(5000);
-        }
-        return cardInfo;
-
-        /*commandQueue.add((byte)0x02); //Query for last card id
-        pushNotification();
-        try {
-            long id = readI32() & 0xFFFFFFFFL;
-            boolean present = readI32() > 0;
-            return new CardInfo(present, id);
-        } catch (IOException e) {
+        JSONObject message = waitForMessage();
+        if(message == null) {
+            socket.close();
             return null;
         }
-        */
+        CardInfo cardInfo = new CardInfo((boolean)message.get("is_present"), (long)message.get("card_id"));;
+        return cardInfo;
     }
 
     public synchronized void setTrustedTag(Tag tag) {
-        /*
-        commandQueue.add((byte)0x04); //Set trusted tag
-        addIntToQueue(commandQueue, (int)tag.getTagUID());
-        pushNotification();
-        */
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.SetTrustedTag.getCommandId());
+        payload.put("tag_uid", tag.getTagUID());
+        socket.send(payload.toJSONString());
     }
 
     long getFeederHardwareId() {

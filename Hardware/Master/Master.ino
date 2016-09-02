@@ -15,22 +15,9 @@ bool configMode;
 
 void setup() {
   Serial.begin(115200);
-  Serial.print("\n");
+  Serial.println("\nInit...");
   EEPROM.begin(512);
-
-  delay(1000);
-
-  Serial.println("Init...\n");
-
-  Serial.println(WiFi.macAddress());
-
-  if(Serial.available()) {
-    while(Serial.available()) {
-      Serial.read();
-    }
-    setConfigValid(false);
-  }
-
+  
   if (isConfigured() && isConfigValid()) {
     configMode = false;
     runModeSetup();

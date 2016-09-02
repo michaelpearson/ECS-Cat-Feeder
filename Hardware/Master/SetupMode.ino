@@ -14,7 +14,7 @@ void setupModeSetup() {
 
   SPIFFS.begin();
 
-  //dnsServer.start(53, "*", ip);
+  dnsServer.start(53, "*", ip);
 
   server.on("/info", handleInfo);
   server.on("/save", handleSave);
