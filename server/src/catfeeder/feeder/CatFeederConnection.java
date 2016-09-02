@@ -1,151 +1,148 @@
 package catfeeder.feeder;
 
 import catfeeder.db.DatabaseClient;
-import catfeeder.feeder.response.CardInfo;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
+import catfeeder.model.ScheduledItem;
 import catfeeder.model.Tag;
+import catfeeder.model.response.CardInfo;
+import com.j256.ormlite.dao.Dao;
+import org.glassfish.grizzly.websockets.WebSocket;
+import org.json.simple.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Calendar;
+import java.util.Date;
+
+public class CatFeederConnection {
+    private final WebSocket socket;
+    private final CatFeeder feeder;
+    private final Object messageLock = new Object();
+    private final Calendar calendar = Calendar.getInstance();
+
+    private JSONObject lastMessage = null;
+    private ScheduleManager scheduleManager;
+
+    WebSocket getWebSocket() {
+        return socket;
+    }
+
+    private enum Commands {
+        DeliverFood(1),
+        GetLastCard(2),
+        SetTrustedTag(3);
+
+        private int commandId;
+
+        Commands(int commandId) {
+            this.commandId = commandId;
+        }
+
+        public int getCommandId() {
+            return commandId;
+        }
+    }
 
 
-public class CatFeederConnection extends Thread {
-    private Socket socket;
-    private InputStream inputStream;
-    private OutputStream outputStream;
-    private CatFeeder feeder;
-    private Queue<Byte> commandQueue = new LinkedList<>();
-
-    private final Object lock = new Object();
-
-    public CatFeederConnection(Socket socket) {
+    CatFeederConnection(WebSocket socket, int catFeederId) throws SQLException {
         this.socket = socket;
+        CatFeeder feeder = null;
         try {
-            socket.setSoTimeout(5000);
-            this.inputStream = socket.getInputStream();
-            this.outputStream = socket.getOutputStream();
-            int feederId = readI32();
-            this.feeder = DatabaseClient.getFeederDao().queryForId(feederId);
-            if(feeder != null) {
-                start();
-            } else {
-                System.out.printf("Unknown cat feeder %d", feederId);
-            }
-        } catch (IOException | SQLException ignore) {}
-    }
-
-
-    @Override
-    public void run() {
-        System.out.println("Accepted new connection");
-        try {
-            while(socket.isConnected() && !interrupted()) {
-                while (commandQueue.isEmpty()) {
-                    synchronized (lock) {
-                        lock.wait();
-                    }
-                    if (!socket.isConnected()) {
-                        throw new IOException();
-                    }
-                }
-                int i = 0;
-                Byte b;
-                while ((b = commandQueue.poll()) != null) {
-                    outputStream.write(b);
-                    i++;
-                }
-                System.out.println("Written " + i + " bytes");
-                outputStream.flush();
-            }
-        } catch(IOException | InterruptedException e) {}
-        System.err.println("Feeder thread dead");
-    }
-
-    synchronized boolean checkConnection() {
-        try {
-            outputStream.write(0x03);
-            if(inputStream.read() != 0x03) {
-                throw new IOException();
-            }
-        } catch (IOException e) {
-            shutdown();
-            return false;
-        }
-        return true;
-    }
-
-    public void shutdown() {
-        try {
-            socket.close();
-            interrupt();
-        } catch (IOException e) {
+            Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
+            feeder = feederDao.queryForId(catFeederId);
+            System.out.println("Connected to feeder: " + feeder);
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    private synchronized int readI32() throws IOException {
-        try {
-            int number = inputStream.read() & 0xFF;
-            number |= (inputStream.read() & 0xFF) << (1 * 8);
-            number |= (inputStream.read() & 0xFF) << (2 * 8);
-            number |= (inputStream.read() & 0xFF) << (3 * 8);
-            return number;
-        } catch (IOException e) {
             socket.close();
-            System.err.println("Socked closed due to read error");
-            throw e;
+        }
+        this.feeder = feeder;
+        updateAlarm();
+    }
+
+    void onMessage(JSONObject data) {
+        System.out.println("Got message: " + data);
+        if(data.containsKey("command")) {
+            handleCommand(data);
+        } else {
+            lastMessage = data;
+            synchronized (messageLock) {
+                messageLock.notify();
+            }
         }
     }
 
-    public synchronized void deliverFood(int gramAmount, FoodType foodType) {
-        commandQueue.add((byte)0x01); //Deliver food command
-        addIntToQueue(commandQueue, gramAmount);
-        addIntToQueue(commandQueue, foodType.getFoodIndex());
-        pushNotification();
-    }
+    private void handleCommand(JSONObject data) {}
 
-    private static void addIntToQueue(Queue<Byte> queue, int value) {
-        queue.add((byte)(value & 0xFF));
-        queue.add((byte)((value >> 8) & 0xFF));
-        queue.add((byte)((value >> 16) & 0xFF));
-        queue.add((byte)((value >> 24) & 0xFF));
-    }
-
-    /**
-     * Used to wakeup the sender thread to push the command queue to the socket
-     */
-    private void pushNotification() {
-        synchronized (lock) {
-            lock.notify();
-            System.out.println("Notified");
+    private JSONObject waitForMessage() throws InterruptedException {
+        synchronized (messageLock) {
+            messageLock.wait(5000);
+            JSONObject message = lastMessage;
+            lastMessage = null;
+            return message;
         }
     }
 
-    public synchronized CardInfo queryLastCardId() {
-        commandQueue.add((byte)0x02); //Query for last card id
-        pushNotification();
-        try {
-            long id = readI32() & 0xFFFFFFFFL;
-            boolean present = readI32() > 0;
-            return new CardInfo(present, id);
-        } catch (IOException e) {
+
+    public void deliverFood(int gramAmount, FoodType foodType) {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.DeliverFood.getCommandId());
+        payload.put("gram_amount", gramAmount);
+        payload.put("food_type", foodType.getFoodIndex());
+        socket.send(payload.toJSONString());
+    }
+
+    public CardInfo queryLastCardId() throws InterruptedException {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.GetLastCard.getCommandId());
+        socket.send(payload.toJSONString());
+
+        JSONObject message = waitForMessage();
+        if(message == null) {
+            socket.close();
             return null;
         }
+        return new CardInfo((boolean)message.get("is_present"), (long)message.get("card_id"));
     }
 
-    public synchronized void setTrustedTag(Tag tag) {
-        commandQueue.add((byte)0x04); //Set trusted tag
-        addIntToQueue(commandQueue, (int)tag.getTagUID());
-        pushNotification();
+    public void setTrustedTag(Tag tag) {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.SetTrustedTag.getCommandId());
+        payload.put("tag_uid", tag.getTagUID());
+        socket.send(payload.toJSONString());
     }
 
-    public long getFeederHardwareId() {
+    long getFeederHardwareId() {
         return feeder.getHardwareId();
     }
+
+    public void updateAlarm() throws SQLException {
+        calendar.setTime(new Date());
+        scheduleManager = new ScheduleManager(DatabaseClient.getScheduleDao(), feeder);
+        for(ScheduledItem item : scheduleManager) {
+            if(item.getDateTime().after(new Date())) {
+                AlarmManager.registerAlarm(item.getDateTime(), this::alarm);
+                return;
+            }
+        }
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+        AlarmManager.registerAlarm(calendar.getTime(), this::alarm);
+    }
+
+    private synchronized void alarm() {
+        if(scheduleManager == null || !getWebSocket().isConnected()) {
+            return;
+        }
+        for(ScheduledItem item : scheduleManager) {
+            if(item.getDateTime().getTime() - System.currentTimeMillis() > 0) {
+                return;
+            }
+            item.execute(this);
+        }
+        scheduleManager = null;
+    }
+
 }

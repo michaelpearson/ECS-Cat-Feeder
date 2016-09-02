@@ -1,6 +1,6 @@
 package catfeeder.api;
 
-import catfeeder.Passwords;
+import catfeeder.util.Passwords;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;

@@ -43,6 +43,35 @@
             <version>6.0.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.glassfish.grizzly</groupId>
+            <artifactId>grizzly-websockets</artifactId>
+            <version>2.3.27</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http-servlet -->
+        <dependency>
+            <groupId>org.glassfish.grizzly</groupId>
+            <artifactId>grizzly-http-servlet</artifactId>
+            <version>2.3.27</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+
+
+
+
     </dependencies>
 
     <build>

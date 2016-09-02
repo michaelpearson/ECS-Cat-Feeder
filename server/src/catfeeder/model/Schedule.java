@@ -186,20 +186,23 @@ public class Schedule {
             ScheduledFoodDelivery d = new ScheduledFoodDelivery();
             d.setGramAmount(gramAmount);
             d.setDateTime(startDate);
+            d.setScheduledDelivery(this);
             r.add(d);
             this.derivedDeliveries = r;
             return;
         }
         this.derivedDeliveries = new ArrayList<>();
+        calendar.setTime(getStartDate());
         for(DayOfWeek d : daysOfWeek) {
             List<Date> days = getAllDaysInMonth(d, year, month).stream()
                     .filter(date -> endDate == null || date.before(endDate))
-                    .filter(date -> date.after(startDate))
+                    .filter(date -> startDate.compareTo(date) < 1)
                     .collect(Collectors.toList());
             for(Date date : days) {
                 ScheduledFoodDelivery delivery = new ScheduledFoodDelivery();
                 delivery.setDateTime(date);
                 delivery.setGramAmount(gramAmount);
+                delivery.setScheduledDelivery(this);
                 derivedDeliveries.add(delivery);
             }
         }

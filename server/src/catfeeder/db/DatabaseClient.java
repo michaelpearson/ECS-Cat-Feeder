@@ -1,6 +1,6 @@
 package catfeeder.db;
 
-import catfeeder.Passwords;
+import catfeeder.util.Passwords;
 import catfeeder.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -9,7 +9,6 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
-import java.util.Date;
 
 public class DatabaseClient {
     private static ConnectionSource connectionSource = null;
@@ -95,7 +94,7 @@ public class DatabaseClient {
     }
 
     public static Dao<Schedule, Integer> getScheduleDao() throws SQLException {
-        return DaoManager.createDao(connectionSource, Schedule.class);
+        return new ScheduleDao(DaoManager.createDao(connectionSource, Schedule.class));
     }
 
     public static Dao<SessionToken, String> getSessionTokenDao() throws SQLException {

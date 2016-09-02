@@ -4,12 +4,12 @@ import catfeeder.api.annotations.Insecure;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
-import catfeeder.feeder.response.CardInfo;
 import catfeeder.mappers.CardInfoToTagResponseMapper;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
 import catfeeder.model.Tag;
 import catfeeder.model.User;
+import catfeeder.model.response.CardInfo;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.CatfeederListResponse;
 import catfeeder.model.response.catfeeder.UrlResponse;
@@ -60,7 +60,7 @@ public class CatFeederEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}/tags/available")
-    public ReadCardResponse getAvailableTag(@PathParam("id") int hardwareId) throws SQLException {
+    public ReadCardResponse getAvailableTag(@PathParam("id") int hardwareId) throws SQLException, InterruptedException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder query = new CatFeeder();
         query.setOwner(user);

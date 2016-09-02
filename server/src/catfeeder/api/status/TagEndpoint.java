@@ -40,7 +40,6 @@ public class TagEndpoint {
     }
 
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
     @POST
     public KnownTagResponse saveOrUpdateTag(@FormParam("tagUID") long tagUID, @FormParam("tagName") String name) throws SQLException {
         User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
