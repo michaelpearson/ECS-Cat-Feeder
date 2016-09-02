@@ -5,7 +5,10 @@ import catfeeder.model.SessionToken;
 import catfeeder.model.User;
 import catfeeder.model.response.auth.AuthenticationResponse;
 
-import javax.ws.rs.*;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.math.BigInteger;
 import java.security.SecureRandom;

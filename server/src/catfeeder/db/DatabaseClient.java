@@ -1,6 +1,6 @@
 package catfeeder.db;
 
-import catfeeder.Passwords;
+import catfeeder.util.Passwords;
 import catfeeder.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;

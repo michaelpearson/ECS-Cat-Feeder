@@ -30,6 +30,7 @@ void runModeSetup() {
       delay(100);
       ESP.restart();
     }
+    Serial.println();
   }
 
   socket.begin(SERVER_CONNECTION, SERVER_PORT, "/ws");
