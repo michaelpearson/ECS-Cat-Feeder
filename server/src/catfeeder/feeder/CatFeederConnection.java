@@ -21,7 +21,7 @@ public class CatFeederConnection {
     private final Calendar calendar = Calendar.getInstance();
 
     private JSONObject lastMessage = null;
-    private ScheduledItem nextScheduledEvent = null;
+    private ScheduleManager scheduleManager;
 
     WebSocket getWebSocket() {
         return socket;
@@ -117,11 +117,10 @@ public class CatFeederConnection {
 
     public void updateAlarm() throws SQLException {
         calendar.setTime(new Date());
-        ScheduleManager scheduleManager = new ScheduleManager(DatabaseClient.getScheduleDao(), feeder, calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        scheduleManager = new ScheduleManager(DatabaseClient.getScheduleDao(), feeder);
         for(ScheduledItem item : scheduleManager) {
             if(item.getDateTime().after(new Date())) {
-                nextScheduledEvent = item;
-                AlarmManager.registerAlarm(nextScheduledEvent.getDateTime(), this::alarm);
+                AlarmManager.registerAlarm(item.getDateTime(), this::alarm);
                 return;
             }
         }
@@ -134,13 +133,16 @@ public class CatFeederConnection {
     }
 
     private synchronized void alarm() {
-        if(!getWebSocket().isConnected() || nextScheduledEvent == null) {
+        if(scheduleManager == null || !getWebSocket().isConnected()) {
             return;
         }
-        if(nextScheduledEvent.getDateTime().getTime() - System.currentTimeMillis() <= 0) {
-            nextScheduledEvent.execute(this);
+        for(ScheduledItem item : scheduleManager) {
+            if(item.getDateTime().getTime() - System.currentTimeMillis() > 0) {
+                return;
+            }
+            item.execute(this);
         }
-        nextScheduledEvent = null;
+        scheduleManager = null;
     }
 
 }

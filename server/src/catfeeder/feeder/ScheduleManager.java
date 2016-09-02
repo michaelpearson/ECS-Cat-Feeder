@@ -6,17 +6,15 @@ import catfeeder.model.ScheduledItem;
 import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScheduleManager implements Iterable<ScheduledItem> {
 
     private List<ScheduledItem> scheduledItems;
+    private final Calendar calendar = Calendar.getInstance();
 
-    public ScheduleManager(Dao<Schedule, Integer> scheduleDao, CatFeeder cf, int month, int year) throws SQLException {
+    public ScheduleManager(Dao<Schedule, Integer> scheduleDao, CatFeeder cf) throws SQLException {
         List<Schedule> allSchedules = scheduleDao.queryForEq("feeder_id", cf);
 
         //If the scheduled event is not recurring and has a start date after now
@@ -25,6 +23,10 @@ public class ScheduleManager implements Iterable<ScheduledItem> {
 
         //If any recurring event has no end date or has an end date in the future.
         filteredSchedules.addAll(allSchedules.stream().filter(s -> s.isRecurring() && (s.getEndDate() == null || s.getEndDate().after(new Date()))).collect(Collectors.toList()));
+
+        calendar.setTime(new Date());
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
 
         scheduledItems = filteredSchedules.stream().flatMap(s -> {
             s.populateDeliveries(month, year);
