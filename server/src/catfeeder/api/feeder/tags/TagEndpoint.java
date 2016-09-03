@@ -68,7 +68,6 @@ public class TagEndpoint {
 
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    @Path("/")
     public KnownTagResponse saveOrUpdateTag(@PathParam("feederId") int feederId,
                                             @FormParam("tagUID") long tagUID,
                                             @FormParam("tagName") String name) throws SQLException {
