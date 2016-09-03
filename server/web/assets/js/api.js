@@ -15,7 +15,7 @@ function getProfileInformation(successCallback, failCallback, finallyCallback) {
     });
 }
 function updateProfileInformation(name, password, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/user', {
+    return $.ajax('/api/user/information', {
         method : 'post',
         data : {
             name : name,
@@ -38,7 +38,7 @@ function updateProfileInformation(name, password, successCallback, failCallback,
 }
 
 function getAllFeeders(successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/feeder/list', {
+    return $.ajax('/api/feeders/list', {
         method : 'get',
         data : {},
         beforeSend : addRequestHeader,
@@ -197,7 +197,7 @@ function updateFoodType(foodTypeId, defaultAmount, name, successCallback, failCa
     });
 }
 function getLastCardId(hardwareId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/feeder/' + hardwareId + '/tags/available', {
+    return $.ajax('/api/feeder/' + hardwareId + '/tag/lastTag', {
         method : 'get',
         beforeSend : addRequestHeader,
         success : function (response) {
@@ -233,8 +233,8 @@ function getLogOfEvents(hardwareId, maxNumberOfItems, successCallback, failCallb
         complete : finallyCallback || function () {}
     });
 }
-function saveTag(tag, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag', {
+function saveTag(feederId, tag, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederId + '/tag', {
         method : 'post',
         data : tag,
         beforeSend : addRequestHeader,
@@ -252,8 +252,8 @@ function saveTag(tag, successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
-function deleteTag(tagId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag/' + tagId, {
+function deleteTag(feederId, tagId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederId + '/tag/' + tagId, {
         method : 'delete',
         beforeSend : addRequestHeader,
         success : function (response) {
@@ -270,8 +270,8 @@ function deleteTag(tagId, successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
-function listAllKnownTags(tag, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag/list', {
+function listAllKnownTags(feederId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederId + '/tag/list', {
         method : 'get',
         beforeSend : addRequestHeader,
         success : function (response) {
@@ -311,7 +311,7 @@ function setAuthenticatedTag(feederHardwareId, tagId, successCallback, failCallb
 }
 
 function readWeight(feederHardwareId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/feeder/' + feederHardwareId + '/status/weight', {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/weight', {
         method : 'get',
         beforeSend : addRequestHeader,
         success : function (response) {

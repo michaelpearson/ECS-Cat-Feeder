@@ -1,5 +1,6 @@
 package catfeeder.db;
 
+import catfeeder.feeder.CatFeederConnection;
 import catfeeder.util.Passwords;
 import catfeeder.model.*;
 import com.j256.ormlite.dao.Dao;
@@ -38,9 +39,7 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, FoodType.class);
                 TableUtils.createTable(connectionSource, LogEntry.class);
                 TableUtils.createTable(connectionSource, Tag.class);
-
-                User user = createUser("test@test.com", "Test User", "password");
-                userDao.create(user);
+                TableUtils.createTable(connectionSource, FeederUserConnection.class);
 
                 CatFeeder cf = new CatFeeder();
                 //This is the id of the esp we have
@@ -48,7 +47,6 @@ public class DatabaseClient {
                 cf.setHardwareId(feederId);
                 cf.setName("Test cat feeder");
                 cf.setLastConnectionAt(null);
-                cf.setOwner(user);
                 feederDao.create(cf);
 
                 FoodType type = new FoodType();
@@ -66,6 +64,17 @@ public class DatabaseClient {
                 Tag tag = new Tag();
                 tag.setTagName("Test Tag");
                 tagDao.create(tag);
+
+
+                User user = createUser("test@test.com", "Test User", "password");
+                userDao.create(user);
+
+
+                FeederUserConnection feederUserConnection = new FeederUserConnection();
+                feederUserConnection.setUser(user);
+                feederUserConnection.setFeeder(cf);
+                getFeederUserConnectionDao().create(feederUserConnection);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,6 +120,10 @@ public class DatabaseClient {
 
     public static Dao<FoodDelivery, Integer> getFoodDeliveryDao() throws SQLException {
         return DaoManager.createDao(connectionSource, FoodDelivery.class);
+    }
+
+    public static Dao<FeederUserConnection, Integer> getFeederUserConnectionDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, FeederUserConnection.class);
     }
 
     public static Dao<Tag, Integer> getTagDao() throws SQLException {

@@ -37,7 +37,7 @@ pages.settings = {
     },
     updateTagList : function () {
         var me = pages.settings;
-        listAllKnownTags(1, function(data) {
+        listAllKnownTags(app.getCurrentFeederId(), function(data) {
                 me.renderTagElements(data.tags || []);
             }, function(err) {
             }, function () {
@@ -67,7 +67,7 @@ pages.settings = {
             return;
         }
         me.init = true;
-        $('.settings-tag-forget').click(me.forgetTag);
+        $('.settings-tag-forget').click(me.forgetTag.bind(this));
 
     },
     updateFood : function (element) {
@@ -79,7 +79,8 @@ pages.settings = {
     forgetTag : function(tag){
         var me = pages.settings;
         var id = $('.settings-tag-list').val();
-        deleteTag(id, me.updateTagList);
+        deleteTag(app.getCurrentFeederId(), id, me.updateTagList);
+        this.updateTagList();
     },
     generateHandler: function(list, j){
         return function(){

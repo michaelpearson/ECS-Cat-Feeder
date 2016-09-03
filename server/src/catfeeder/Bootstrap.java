@@ -12,11 +12,15 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Bootstrap {
     public static void main(String[] argv) throws IOException, InterruptedException {
 
-        //System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
+        setupLogging();
 
         String port = System.getProperty("port");
         if(port == null) {
@@ -44,5 +48,14 @@ public class Bootstrap {
         server.start();
         //Block forever
         Thread.currentThread().join();
+    }
+
+    private static void setupLogging() {
+        Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
+        l.setLevel(Level.FINEST);
+        l.setUseParentHandlers(false);
+        ConsoleHandler ch = new ConsoleHandler();
+        ch.setLevel(Level.ALL);
+        l.addHandler(ch);
     }
 }

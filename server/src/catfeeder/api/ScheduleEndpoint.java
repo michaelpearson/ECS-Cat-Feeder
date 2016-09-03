@@ -70,7 +70,7 @@ public class ScheduleEndpoint {
     public ScheduleResponse getScheduledDelivery(@PathParam("id") int id) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         Schedule s = DatabaseClient.getScheduleDao().queryForId(id);
-        if(s == null || !s.getFeeder().getOwner().getEmail().equals(user.getEmail())) {
+        if(s == null || !user.doesUserOwnCatfeeder(s.getFeeder())) {
             throw new NotFoundException("Could not find schedule");
         }
         return new ScheduleResponse(s);
@@ -94,7 +94,7 @@ public class ScheduleEndpoint {
         FoodType foodType = DatabaseClient.getFoodTypeDao().queryForId(type);
         Dao<Schedule, Integer> scheduleDao = DatabaseClient.getScheduleDao();
         Schedule s = scheduleDao.queryForId(scheduleId);
-        if(s == null || !s.getFeeder().getOwner().getEmail().equals(user.getEmail())) {
+        if(s == null || !user.doesUserOwnCatfeeder(s.getFeeder())) {
             throw new NotFoundException("Could not find schedule");
         }
         if(feeder == null || !user.doesUserOwnCatfeeder(feeder)) {
