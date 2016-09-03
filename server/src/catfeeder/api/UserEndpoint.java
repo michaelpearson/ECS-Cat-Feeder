@@ -73,13 +73,15 @@ public class UserEndpoint {
 
         Dao<User, String> userDao = DatabaseClient.getUserDao();
         User user = userDao.queryForId(emailAddress);
-        if(user == null) {
-            user = new User();
-            user.setEmail(emailAddress);
-            user.setPassword(Passwords.getHash(password));
-            user.setName(name);
-            userDao.create(user);
+        if(user != null) {
+            return new GeneralResponse(false, "Email address in use");
         }
+
+        user = new User();
+        user.setEmail(emailAddress);
+        user.setPassword(Passwords.getHash(password));
+        user.setName(name);
+        userDao.create(user);
 
         FeederUserConnection connection = new FeederUserConnection();
         connection.setFeeder(feeder);

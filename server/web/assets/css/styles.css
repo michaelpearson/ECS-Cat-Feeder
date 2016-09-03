@@ -1,16 +1,16 @@
-body.login {
+body.login, body.signup {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #eee; }
-  body.login .form-signin {
-    max-width: 330px;
+  body.login .form-signin, body.login .form-signup, body.signup .form-signin, body.signup .form-signup {
+    max-width: 630px;
     padding: 15px;
     margin: 0 auto; }
-    body.login .form-signin .form-signin-heading, body.login .form-signin .form-signin .checkbox {
+    body.login .form-signin .form-signin-heading, body.login .form-signin .checkbox, body.login .form-signup .form-signin-heading, body.login .form-signup .checkbox, body.signup .form-signin .form-signin-heading, body.signup .form-signin .checkbox, body.signup .form-signup .form-signin-heading, body.signup .form-signup .checkbox {
       margin-bottom: 10px; }
-    body.login .form-signin .checkbox {
+    body.login .form-signin .checkbox, body.login .form-signup .checkbox, body.signup .form-signin .checkbox, body.signup .form-signup .checkbox {
       font-weight: normal; }
-    body.login .form-signin .form-control {
+    body.login .form-signin .form-control, body.login .form-signup .form-control, body.signup .form-signin .form-control, body.signup .form-signup .form-control {
       position: relative;
       height: auto;
       -webkit-box-sizing: border-box;
@@ -18,16 +18,18 @@ body.login {
       box-sizing: border-box;
       padding: 10px;
       font-size: 16px; }
-    body.login .form-signin input[type="email"] {
-      margin-bottom: -1px;
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0; }
-    body.login .form-signin input[type="password"] {
-      margin-bottom: 10px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0; }
-    body.login .form-signin .form-control:focus {
+    body.login .form-signin .form-control:focus, body.login .form-signup .form-control:focus, body.signup .form-signin .form-control:focus, body.signup .form-signup .form-control:focus {
       z-index: 2; }
+  body.login .form-signin input[type="email"], body.signup .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0; }
+  body.login .form-signin input[type="password"], body.signup .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0; }
+  body.login .form-signup input, body.signup .form-signup input {
+    margin: 10px; }
 
 body {
   min-width: 390px; }

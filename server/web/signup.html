@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="assets/lib/css/font-awesome.css" rel="stylesheet">
+    <link href="assets/css/styles.css" rel="stylesheet">
+    <script src="assets/lib/js/jquery-2.2.3.js"></script>
+    <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script>
+        function isLocal(l) {
+            if(l.indexOf("127.0.0.1") > -1) {
+                return true;
+            }
+            return l.indexOf("localhost") > -1;
+        }
+        if (window.location.protocol != "https:" && !isLocal(window.location.href)) {
+            window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+        }
+
+        $(function () {
+
+            var feederId = parseInt(window.location.hash.substr(1));
+            if(feederId == feederId) {
+                $('#feederId').val(feederId);
+            }
+
+            $('.form-signup input[type=submit]').click(function () {
+                var email = $('#email').val();
+                var password = $('#password').val();
+                var name = $('#name').val();
+                var feederId = parseInt($('#feederId').val());
+                var feederName = $('#feeder-name').val();
+
+                function newUser() {
+                    createNewUser(feederId, email, name, password, function () {
+                        window.location.href = "/";
+                    });
+                }
+                createNewFeeder(feederId, feederName, newUser, newUser);
+            });
+        });
+    </script>
+</head>
+<body class="signup">
+    <div class="container">
+        <div class="form-signup">
+            <input type="text" id="name" class="form-control" placeholder="Full Name" required autofocus>
+            <input type="email" id="email" class="form-control" placeholder="Email address" required>
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
+            <input type="text" id="feeder-name" class="form-control" placeholder="Feeder Nickname" required>
+            <input type="number" id="feederId" class="form-control" placeholder="Feeder Id" required>
+            <div class="error alert alert-danger" style="display: none;" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Invalid username or password
+            </div>
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in" />
+        </div>
+    </div>
+</body>
+</html>

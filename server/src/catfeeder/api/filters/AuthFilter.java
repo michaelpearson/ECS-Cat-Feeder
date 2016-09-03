@@ -45,6 +45,10 @@ public class AuthFilter implements ContainerRequestFilter {
             e.printStackTrace();
             throw new RuntimeException("Could not connect to db");
         }
+
+        if(resourceInfo.getResourceMethod().getAnnotation(Insecure.class) != null) {
+            return;
+        }
         throw new NotAuthorizedException("Authorization failed");
     }
 }

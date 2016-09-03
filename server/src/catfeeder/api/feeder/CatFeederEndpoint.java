@@ -43,13 +43,14 @@ public class CatFeederEndpoint {
     @POST
     @Path("/new")
     @Insecure
+    @Produces(MediaType.APPLICATION_JSON)
     public GeneralResponse createCatFeeder(@FormParam("hardwareId") int hardwareId,
                                            @FormParam("name") String name) throws SQLException {
         Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
         CatFeeder newFeeder = new CatFeeder();
         newFeeder.setHardwareId(hardwareId);
         if(feederDao.queryForMatching(newFeeder).size() > 0) {
-            return new GeneralResponse(false);
+            return new GeneralResponse(false, "Feeder already exists");
         }
         newFeeder.setName(name);
         DatabaseClient.getFeederDao().create(newFeeder);
