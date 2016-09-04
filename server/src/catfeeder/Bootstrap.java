@@ -7,40 +7,45 @@ import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.grizzly.websockets.WebSocketAddOn;
 import org.glassfish.grizzly.websockets.WebSocketEngine;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Bootstrap {
-    public static void main(String[] argv) throws IOException, InterruptedException {
 
-        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
+
+    public static void main(String[] argv) throws IOException, InterruptedException, URISyntaxException {
         setupLogging();
 
-        String port = System.getProperty("port");
-        if(port == null) {
-            port = "8080";
+        //Get the port for heroku or default to port 8080
+        int port;
+        String portProperty = System.getProperty("port");
+        if(portProperty == null) {
+            port = 8080;
+        } else {
+            port = Integer.valueOf(portProperty);
         }
 
+        //Create a resource configuration for Grizzly & create the server
         ResourceConfig resourceConfiguration = new ResourceConfig().packages("catfeeder.api");
-        resourceConfiguration.register(JacksonFeature.class);
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(new URI(String.format("http://0.0.0.0:%d/api", port)), resourceConfiguration, false);
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create("http://0.0.0.0:" + port + "/api/"), resourceConfiguration, false);
-
+        //Create websocket server for feeders to connect to
         WebSocketEngine.getEngine().register("", "/ws", CatfeederSocketApplication.getInstance());
         server.getListener("grizzly").registerAddOn(new WebSocketAddOn());
 
-
-
+        //Heroku setup needs a prefix to web asset files because it starts in a different working directory
         String pathPrefix = System.getProperty("prefix");
         if(pathPrefix == null) {
             pathPrefix = "";
         }
+
+        //Setup the static file handler to server the frontend
         StaticHttpHandler staticHandler = new StaticHttpHandler(pathPrefix + "web/");
         staticHandler.setFileCacheEnabled(false);
         server.getServerConfiguration().addHttpHandler(staticHandler);
@@ -51,6 +56,7 @@ public class Bootstrap {
     }
 
     private static void setupLogging() {
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
         Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
         l.setLevel(Level.FINEST);
         l.setUseParentHandlers(false);

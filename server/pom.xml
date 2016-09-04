@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>catfeeder</groupId>
     <artifactId>catfeeder-project</artifactId>
@@ -6,71 +7,68 @@
     <version>1.0</version>
     <name>catfeeder</name>
 
+    <properties>
+        <ormlite.version>5.0</ormlite.version>
+        <h2.version>1.4.192</h2.version>
+        <mysql.version>6.0.3</mysql.version>
+        <jsonsimple.version>1.1.1</jsonsimple.version>
+        <jackson.version>2.23.2</jackson.version>
+        <grizzly.version>2.3.27</grizzly.version>
+        <jersey.version>2.23.2</jersey.version>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-grizzly2-http</artifactId>
-            <version>2.23.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>2.23.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.192</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.j256.ormlite</groupId>
-            <artifactId>ormlite-jdbc</artifactId>
-            <version>5.0</version>
-        </dependency>
-
+        <!-- Database ORM -->
         <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-core</artifactId>
-            <version>5.0</version>
+            <version>${ormlite.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-jdbc</artifactId>
+            <version>${ormlite.version}</version>
         </dependency>
 
+        <!-- Database connectors -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.3</version>
+            <version>${mysql.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-websockets</artifactId>
-            <version>2.3.27</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http-servlet -->
-        <dependency>
-            <groupId>org.glassfish.grizzly</groupId>
-            <artifactId>grizzly-http-servlet</artifactId>
-            <version>2.3.27</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+        <!-- Json encoding and decoding -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <version>${jsonsimple.version}</version>
         </dependency>
 
+        <!-- JSON resource marshalling and unmarshalling -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
+        <!-- Jersey & the http container to bind Jersey to Grizzly -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+            <version>2.23.2</version>
+        </dependency>
 
-
+        <!-- Grizzly websocket server -->
+        <dependency>
+            <groupId>org.glassfish.grizzly</groupId>
+            <artifactId>grizzly-websockets-server</artifactId>
+            <version>${grizzly.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -121,7 +119,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>
