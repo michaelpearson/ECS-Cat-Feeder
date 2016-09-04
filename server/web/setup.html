@@ -14,6 +14,9 @@
             if(l.indexOf("127.0.0.1") > -1) {
                 return true;
             }
+            if(l.indexOf("192.168.0.23") > -1) {
+                return true;
+            }
             return l.indexOf("localhost") > -1;
         }
         if (window.location.protocol != "https:" && !isLocal(window.location.href)) {

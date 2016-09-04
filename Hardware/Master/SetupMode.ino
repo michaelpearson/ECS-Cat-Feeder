@@ -23,7 +23,7 @@ void setupModeSetup() {
   server.on("/setup", handleSetup);
   server.on("/jquery.js", handleJquery);
   server.on("/loading.svg", handleLoading);
-  server.on("/wifi.png", handleWifi);
+  server.on("/wifi.jpg", handleWifi);
 
   server.onNotFound(handleRedirect);
   server.begin();
@@ -45,7 +45,7 @@ void handleJquery() {
 }
 
 void handleWifi() {
-  sendFile("/wifi.png.gz", "image/png");
+  sendFile("/wifi.jpg.gz", "image/png");
 }
 
 void handleLoading() {
@@ -84,7 +84,18 @@ void handleSave() {
   setSSID(buff);
   setConfigValid(true);
   setConfigured(true);
-  sendFile("/saved.html.gz", "text/html");
+  
+  StaticJsonBuffer<100> jsonBuffer;
+  JsonObject&  root = jsonBuffer.createObject();
+
+  root["success"] = true;
+  root["host"] = SERVER_CONNECTION;
+  root["port"] = SERVER_PORT;
+  root["device_id"] = ESP.getChipId();
+  
+  root.printTo(buff, sizeof(buff));
+  
+  server.send(200, "application/json", buff);
   delay(100);
   ESP.restart();
 }

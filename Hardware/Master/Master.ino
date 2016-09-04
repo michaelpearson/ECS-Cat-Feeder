@@ -1,3 +1,4 @@
+#define DEBUG_SETUP_MODE true
 #include <WebSockets.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
@@ -17,8 +18,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println("\nInit...");
   EEPROM.begin(512);
-  
-  if (isConfigured() && isConfigValid()) {
+
+  if (!DEBUG_SETUP_MODE && isConfigured() && isConfigValid()) {
     configMode = false;
     runModeSetup();
   } else {
