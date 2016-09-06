@@ -26,6 +26,8 @@
         $(function () {
 
             var feederId = parseInt(window.location.hash.substr(1));
+            var haveAcc = false;
+            var nameInput = $('#name');
             if(feederId == feederId) {
                 $('#feederId').val(feederId);
             }
@@ -33,7 +35,7 @@
             $('.form-signup input[type=submit]').click(function () {
                 var email = $('#email').val();
                 var password = $('#password').val();
-                var name = $('#name').val();
+                var name = nameInput.val();
                 var feederId = parseInt($('#feederId').val());
                 var feederName = $('#feeder-name').val();
 
@@ -42,25 +44,47 @@
                         window.location.href = "/";
                     });
                 }
+
+                function signIn () {
+                    //sign in from here or could redirect to sign in page
+                }
+
+//                var feederCallBack = haveAcc ? signIn:newUser;
                 createNewFeeder(feederId, feederName, newUser, newUser);
+            });
+
+            var haveAccButton = $('#setup-have-acc');
+
+            haveAccButton.click(function () {
+                haveAcc = !haveAcc;
+                if(haveAcc){
+                    nameInput.hide();
+                    haveAccButton.val("Don't have an account?");
+                }
+                else{
+                    nameInput.show();
+                    haveAccButton.val('Already have an account?');
+                }
             });
         });
     </script>
 </head>
 <body class="signup">
     <div class="container">
-        <div class="form-signup">
+        <div class="form-signup" style="padding: 10px 50px; border: 1px solid #ccc; background-color: #f7f7f7;">
+            <h2 style="text-align: center; margin-bottom: 30px;">Register New Feeder</h2>
             <input type="text" id="name" class="form-control" placeholder="Full Name" required autofocus>
             <input type="email" id="email" class="form-control" placeholder="Email address" required>
             <input type="password" id="password" class="form-control" placeholder="Password" required>
             <input type="text" id="feeder-name" class="form-control" placeholder="Feeder Nickname" required>
-            <input type="number" id="feederId" class="form-control" placeholder="Feeder Id" required>
+            <input type="number" id="feederId" style="display: none;" class="form-control" placeholder="Feeder Id" required>
             <div class="error alert alert-danger" style="display: none;" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
                 Invalid username or password
             </div>
-            <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in" />
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="Register" />
+            <input class="btn-block btn btn-link" type="submit" id="setup-have-acc" value="Already have an account?" />
         </div>
     </div>
 </body>
