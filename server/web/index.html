@@ -23,9 +23,13 @@
         }
 
         $(function () {
-            $('.form-signin input[type=submit]').click(function () {
+            var errorEl = $('.error');
+            var submitButtonEl = $('.form-signin input[type=submit]');
+            submitButtonEl.click(function () {
                 var email = $('#email').val();
                 var password = $('#password').val();
+                submitButtonEl.prop('disabled', true);
+                errorEl.hide();
                 $.ajax('/api/authentication/login', {
                     method: 'post',
                     data : {
@@ -37,8 +41,12 @@
                             localStorage.setItem("token", response.token);
                             window.location.href = "/admin.html"
                         } else {
-                            $('.error').show();
+                            errorEl.show();
+                            submitButtonEl.prop('disabled', false);
                         }
+                    },
+                    error : function () {
+                        submitButtonEl.prop('disabled', false);
                     }
                 });
             });
