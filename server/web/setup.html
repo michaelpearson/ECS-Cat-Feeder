@@ -46,11 +46,11 @@
                 }
 
                 function signIn () {
-                    //sign in from here or could redirect to sign in page
+                    window.location.href = '/';
                 }
 
-//                var feederCallBack = haveAcc ? signIn:newUser;
-                createNewFeeder(feederId, feederName, newUser, newUser);
+                var feederCallBack = haveAcc ? signIn:newUser;
+                createNewFeeder(feederId, feederName, feederCallBack, feederCallBack);
             });
 
             var haveAccButton = $('#setup-have-acc');
@@ -84,7 +84,7 @@
                 Invalid username or password
             </div>
             <input class="btn btn-lg btn-primary btn-block" type="submit" value="Register" />
-            <input class="btn-block btn btn-link" type="submit" id="setup-have-acc" value="Already have an account?" />
+            <input class="btn-block btn btn-link" id="setup-have-acc" value="Already have an account?" />
         </div>
     </div>
 </body>
