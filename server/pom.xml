@@ -71,6 +71,14 @@
             <version>${grizzly.version}</version>
         </dependency>
 
+        <!-- Email notifications (sendgrid for emails) -->
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
