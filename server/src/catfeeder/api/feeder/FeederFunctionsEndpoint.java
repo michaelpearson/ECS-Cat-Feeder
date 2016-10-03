@@ -8,8 +8,7 @@ import catfeeder.feeder.CatfeederSocketApplication;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
 import catfeeder.model.User;
-import catfeeder.model.learnStage;
-import catfeeder.model.CardInfo;
+import catfeeder.model.LearnStage;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.status.WeightResponse;
 import com.j256.ormlite.dao.Dao;
@@ -103,7 +102,7 @@ public class FeederFunctionsEndpoint {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}/learningStage")
-    public GeneralResponse setLearningStage(@PathParam("id") int feederId, @FormParam("learningStage") learnStage learningStage) throws SQLException {
+    public GeneralResponse setLearningStage(@PathParam("id") int feederId, @FormParam("learningStage") LearnStage learningStage) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder cf = DatabaseClient.getFeederDao().queryForId(feederId);
         if(cf == null || !user.doesUserOwnCatfeeder(cf)) {

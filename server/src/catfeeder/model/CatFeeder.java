@@ -34,7 +34,7 @@ public class CatFeeder {
 
     @XmlElement
     @DatabaseField
-    private learnStage learningStage;
+    private LearnStage learningStage;
 
     @ForeignCollectionField
     @XmlTransient
@@ -85,9 +85,9 @@ public class CatFeeder {
         this.lastConnectionAt = lastConnectionAt;
     }
 
-    public learnStage getLearningStage(){ return learningStage;}
+    public LearnStage getLearningStage(){ return learningStage;}
 
-    public void setLearningStage(learnStage stage){ learningStage = stage;}
+    public void setLearningStage(LearnStage stage){ learningStage = stage;}
 
     public ForeignCollection<Schedule> getScheduledDeliveries() {
         return scheduledDeliveries;
