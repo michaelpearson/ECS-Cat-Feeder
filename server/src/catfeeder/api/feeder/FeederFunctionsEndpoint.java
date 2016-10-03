@@ -106,7 +106,7 @@ public class FeederFunctionsEndpoint {
     public GeneralResponse setLearningStage(@PathParam("id") int feederId, @FormParam("learningStage") learnStage learningStage) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder cf = DatabaseClient.getFeederDao().queryForId(feederId);
-        if(cf == null || !user.isSame(cf.getOwner())) {
+        if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
             throw new NotFoundException();
         }
         cf.setLearningStage(learningStage);
