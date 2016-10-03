@@ -90,6 +90,7 @@ public class CatFeederConnection {
         payload.put("command", Commands.DeliverFood.getCommandId());
         payload.put("gram_amount", gramAmount);
         payload.put("food_type", foodType.getFoodIndex());
+        payload.put("max_amount", foodType.getCatfeeder().getFoodLimit());
         socket.send(payload.toJSONString());
     }
 
