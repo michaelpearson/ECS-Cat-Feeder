@@ -19,7 +19,7 @@ public class Tag {
     private long tagUID;
 
     @DatabaseField(foreign = true)
-    private User user;
+    private CatFeeder catFeeder;
 
     @XmlElement
     @DatabaseField
@@ -49,12 +49,12 @@ public class Tag {
         this.tagName = tagName;
     }
 
-    public User getUser() {
-        return user;
+    public CatFeeder getUser() {
+        return catFeeder;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setFeeder(CatFeeder catFeeder) {
+        this.catFeeder = catFeeder;
     }
 
     public void setId(int id) {

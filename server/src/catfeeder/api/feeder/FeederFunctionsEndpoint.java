@@ -1,20 +1,15 @@
-package catfeeder.api;
+package catfeeder.api.feeder;
 
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
 import catfeeder.feeder.CatFeederConnection;
 import catfeeder.feeder.CatfeederSocketApplication;
-import catfeeder.mappers.CardInfoToTagResponseMapper;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
-import catfeeder.model.Tag;
 import catfeeder.model.User;
-import catfeeder.model.CardInfo;
 import catfeeder.model.response.GeneralResponse;
-import catfeeder.model.response.catfeeder.CatfeederListResponse;
-import catfeeder.model.response.catfeeder.tag.ReadCardResponse;
-import catfeeder.util.First;
+import catfeeder.model.response.catfeeder.status.WeightResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -23,24 +18,34 @@ import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
 
 @Secured
-@Path("/feeder")
-public class CatFeederEndpoint {
+@Path("/feeder/{feederId}")
+public class FeederFunctionsEndpoint {
 
     @Context
     private SecurityContext context;
 
     @GET
+    @Path("/weight")
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/list")
-    public CatfeederListResponse getAllCatFeeders() {
+    public WeightResponse getCurrentWeight(@PathParam("feederId") int feederId) throws SQLException, InterruptedException {
         User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        return new CatfeederListResponse(u.getFeeders());
+        CatFeeder feeder = DatabaseClient.getFeederDao().queryForId(feederId);
+        if(feeder == null || !u.doesUserOwnCatfeeder(feeder)) {
+            throw new NotFoundException("Could not find the specified cat feeder");
+        }
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(feeder.getHardwareId());
+        if(connection == null) {
+            throw new ServiceUnavailableException("Sorry, the catfeeder is currently unavailable");
+        }
+        return new WeightResponse(connection.readWeight());
     }
 
     @POST
+    @Path("/deliverFood")
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/deliverFood")
-    public GeneralResponse deliverFood(@PathParam("id") int hardwareId, @FormParam("amount") int gramAmount, @FormParam("type") int foodTypeId) throws SQLException {
+    public GeneralResponse deliverFood(@PathParam("feederId") int hardwareId,
+                                       @FormParam("amount") int gramAmount,
+                                       @FormParam("type") int foodTypeId) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder feeder = DatabaseClient.getFeederDao().queryForId(hardwareId);
         FoodType foodType = DatabaseClient.getFoodTypeDao().queryForId(foodTypeId);
@@ -57,38 +62,8 @@ public class CatFeederEndpoint {
         return new GeneralResponse(true);
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/tags/available")
-    public ReadCardResponse getAvailableTag(@PathParam("id") int hardwareId) throws SQLException, InterruptedException {
-        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        CatFeeder query = new CatFeeder();
-        query.setOwner(user);
-        query.setHardwareId(hardwareId);
-        CatFeeder cf = First.orNull(DatabaseClient.getFeederDao().queryForMatching(query));
-        CardInfo info = cf.getLastCardInfo();
-        if(info == null) {
-            return new ReadCardResponse();
-        }
-        return CardInfoToTagResponseMapper.mapCardToTagResponse(info);
-    }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/tag/setTrusted")
-    public GeneralResponse setTrustedTag(@PathParam("id") int feederId, @FormParam("tagId") int tagId) throws SQLException {
-        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        Tag t = DatabaseClient.getTagDao().queryForId(tagId);
-        CatFeeder cf = DatabaseClient.getFeederDao().queryForId(feederId);
-        if(t == null || cf == null || !user.isSame(t.getUser()) || !user.isSame(cf.getOwner())) {
-            throw new NotFoundException();
-        }
-        cf.setTrustedTag(t);
-        return new GeneralResponse(true);
-    }
-
     @PUT
-    @Path("{feederId}/tare")
+    @Path("/tare")
     @Produces(MediaType.APPLICATION_JSON)
     public GeneralResponse tareScale(@PathParam("feederId") int feederId) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
@@ -103,4 +78,5 @@ public class CatFeederEndpoint {
         connection.tare();
         return new GeneralResponse(true);
     }
+
 }

@@ -23,9 +23,13 @@
         }
 
         $(function () {
-            $('.form-signin input[type=submit]').click(function () {
+            var errorEl = $('.error');
+            var submitButtonEl = $('.form-signin input[type=submit]');
+            submitButtonEl.click(function () {
                 var email = $('#email').val();
                 var password = $('#password').val();
+                submitButtonEl.prop('disabled', true);
+                errorEl.hide();
                 $.ajax('/api/authentication/login', {
                     method: 'post',
                     data : {
@@ -37,8 +41,12 @@
                             localStorage.setItem("token", response.token);
                             window.location.href = "/admin.html"
                         } else {
-                            $('.error').show();
+                            errorEl.show();
+                            submitButtonEl.prop('disabled', false);
                         }
+                    },
+                    error : function () {
+                        submitButtonEl.prop('disabled', false);
                     }
                 });
             });
@@ -47,7 +55,8 @@
 </head>
 <body class="login">
     <div class="container">
-        <div class="form-signin">
+        <div class="form-signin" style="background-color: #f7f7f7; border: 1px solid #ccc; padding: 10px 50px 50px 50px;">
+            <h2 style="text-align: center; margin: 20px 0 30px 0;">Electronic Cat Superfeeder</h2>
             <input type="email" id="email" class="form-control" placeholder="Email address" required autofocus>
             <input type="password" id="password" class="form-control" placeholder="Password" required>
             <div class="error alert alert-danger" style="display: none;" role="alert">

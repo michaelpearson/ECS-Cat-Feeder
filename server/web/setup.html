@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="assets/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="assets/lib/css/font-awesome.css" rel="stylesheet">
+    <link href="assets/css/styles.css" rel="stylesheet">
+    <script src="assets/lib/js/jquery-2.2.3.js"></script>
+    <script src="assets/lib/bootstrap/js/bootstrap.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script>
+        function isLocal(l) {
+            if(l.indexOf("127.0.0.1") > -1) {
+                return true;
+            }
+            if(l.indexOf("192.168.0.23") > -1) {
+                return true;
+            }
+            return l.indexOf("localhost") > -1;
+        }
+        if (window.location.protocol != "https:" && !isLocal(window.location.href)) {
+            window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+        }
+
+        $(function () {
+
+            var feederId = parseInt(window.location.hash.substr(1));
+            var haveAcc = false;
+            var invalidForm = $('#invalid-form');
+            var errorMessage = $('#error-message');
+            var nameInput = $('#name');
+            if(feederId == feederId) {
+                $('#feederId').val(feederId);
+            }
+
+            $('.form-signup input[type=submit]').click(function () {
+                var email = $('#email').val();
+                var password = $('#password').val();
+                var name = nameInput.val();
+                var feederId = parseInt($('#feederId').val());
+                var feederName = $('#feeder-name').val();
+
+                function newUser(data) {
+                    console.log(data);
+                    if(data.success){
+                        hideError();
+                        createNewUser(feederId, email, name, password,
+                                function (data) {
+                                    hideError();
+                                    console.log(data);
+                                    window.location.href = "/";
+                                },
+                                function(err){//err
+                                    showError(err.message);
+                                    console.log(err);
+                                }
+                        );
+                    }
+                    else{
+                        showError(data.message);
+                    }
+                }
+
+                function signIn (data) {
+                    console.log(data);
+                    window.location.href = '/';
+                }
+
+                var feederCallBack = haveAcc ? signIn:newUser;
+                if(validForm()){
+                    createNewFeeder(feederId, feederName, feederCallBack, feederCallBack);
+                }
+            });
+
+            var haveAccButton = $('#setup-have-acc');
+
+            haveAccButton.click(function () {
+                haveAcc = !haveAcc;
+                if(haveAcc){
+                    nameInput.hide();
+                    haveAccButton.val("Don't have an account?");
+                }
+                else{
+                    nameInput.show();
+                    haveAccButton.val('Already have an account?');
+                }
+            });
+
+            function validForm(){
+                if(($('#email').val() && $('#password').val() && $('#feeder-name').val()
+                    && (haveAcc || $('#name').val()))){
+                    hideError();
+                    return true;
+                }
+                else{
+                    showError('Invalid Form');
+                    return false;
+                }
+            }
+
+            function showError(message){
+                errorMessage.text(message);
+                invalidForm.show();
+            }
+
+            function hideError(){
+                invalidForm.hide();
+            }
+        });
+    </script>
+</head>
+<body class="signup">
+    <div class="container">
+        <div class="form-signup" style="padding: 10px 50px; border: 1px solid #ccc; background-color: #f7f7f7;">
+            <h2 style="text-align: center; margin-bottom: 30px;">Register New Feeder</h2>
+            <input type="text" id="name" class="form-control" placeholder="Full Name" required autofocus>
+            <input type="email" id="email" class="form-control" placeholder="Email address" required>
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
+            <input type="text" id="feeder-name" class="form-control" placeholder="Feeder Nickname" required>
+            <input type="number" id="feederId" style="display: none;" class="form-control" placeholder="Feeder Id" required>
+            <div class="error alert alert-danger" id="invalid-form" style="display: none;" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                <span id="error-message">Invalid username or password</span>
+            </div>
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="Register" />
+            <input class="btn-block btn btn-link" id="setup-have-acc" value="Already have an account?" />
+        </div>
+    </div>
+</body>
+</html>

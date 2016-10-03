@@ -75,7 +75,7 @@ public class CatFeederConnection {
 
     private void handleCommand(JSONObject data) {}
 
-    private JSONObject waitForMessage() throws InterruptedException {
+    private synchronized JSONObject waitForMessage() throws InterruptedException {
         synchronized (messageLock) {
             messageLock.wait(5000);
             JSONObject message = lastMessage;
@@ -85,7 +85,7 @@ public class CatFeederConnection {
     }
 
 
-    public void deliverFood(int gramAmount, FoodType foodType) {
+    public synchronized void deliverFood(int gramAmount, FoodType foodType) {
         JSONObject payload = new JSONObject();
         payload.put("command", Commands.DeliverFood.getCommandId());
         payload.put("gram_amount", gramAmount);
@@ -93,7 +93,7 @@ public class CatFeederConnection {
         socket.send(payload.toJSONString());
     }
 
-    public CardInfo queryLastCardId() throws InterruptedException {
+    public synchronized CardInfo queryLastCardId() throws InterruptedException {
         JSONObject payload = new JSONObject();
         payload.put("command", Commands.GetLastCard.getCommandId());
         socket.send(payload.toJSONString());
@@ -106,7 +106,7 @@ public class CatFeederConnection {
         return new CardInfo((boolean)message.get("is_present"), (long)message.get("card_id"));
     }
 
-    public void setTrustedTag(Tag tag) {
+    public synchronized void setTrustedTag(Tag tag) {
         JSONObject payload = new JSONObject();
         payload.put("command", Commands.SetTrustedTag.getCommandId());
         payload.put("tag_uid", tag.getTagUID());
@@ -117,12 +117,12 @@ public class CatFeederConnection {
         return feeder.getHardwareId();
     }
 
-    public int readWeight() throws InterruptedException {
+    public synchronized int readWeight() throws InterruptedException {
         JSONObject payload = new JSONObject();
         payload.put("command", Commands.ReadWeight.getCommandId());
         socket.send(payload.toJSONString());
         JSONObject response = waitForMessage();
-        if(response == null) {
+        if(response == null || response.get("weight") == null) {
             return 0;
         }
         return (int)(long)response.get("weight");
@@ -145,7 +145,7 @@ public class CatFeederConnection {
         AlarmManager.registerAlarm(calendar.getTime(), this::alarm);
     }
 
-    public void tare() {
+    public synchronized void tare() {
         JSONObject payload = new JSONObject();
         payload.put("command", Commands.TareSensor.getCommandId());
         socket.send(payload.toJSONString());

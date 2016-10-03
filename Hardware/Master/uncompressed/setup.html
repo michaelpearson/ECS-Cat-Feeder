@@ -6,27 +6,25 @@
     <script>
         var wifiList = [];
         $(function () {
-
             $('.warning').hide();
             $('input, select').attr('disabled', true);
+
+            var wifiListEl = $('#wifi_list');
+            var passwordEl = $('input[type=password]');
+            var saveButtonEl = $('input[type=submit]');
+
             $.ajax('/info', {
                 success: function (response) {
-                    $('.loading').animate({
-                        opacity: 0
-                    }, {
-                        complete : function () {
-                            $('.loading').hide();
-                        },
-                        duration: 500
-                    });
                     wifiList = response.scan;
+                    wifiListEl.children().remove();
                     for (var a = 0; a < wifiList.length; a++) {
                         if ([4, 7].indexOf(wifiList[a].encryption) >= 0) {
-                            $('#wifi_list').append('<option value="' + wifiList[a].network + '">' + wifiList[a].network + ", RSSI: " + wifiList[a].RSSI + '</option>');
+                            wifiListEl.append('<option value="' + wifiList[a].network + '">' + wifiList[a].network + ", RSSI: " + wifiList[a].RSSI + '</option>');
                         }
                         $('input, select').attr('disabled', false);
                     }
-                    $('#wifi_list').change();
+                    wifiListEl.change();
+
                     if(response.status.configFailed) {
                         $('.warning').show();
                     } else {
@@ -38,14 +36,48 @@
                     //alert("There was an error getting a list of networks");
                 }
             });
-            $('#wifi_list').change(function (newValue) {
+
+            wifiListEl.change(function (newValue) {
                 var network = wifiList[$('#wifi_list').prop('selectedIndex')];
                 if(!network || network.encryption == 7) {
-                    $('input[type=password]').attr('disabled', true);
+                    passwordEl.attr('disabled', true);
                 } else {
-                    $('input[type=password]').attr('disabled', false);
+                    passwordEl.attr('disabled', false);
                 }
             }).change();
+
+
+            saveButtonEl.click(function () {
+                saveButtonEl.val("Saving...");
+                saveButtonEl.addClass('disabled');
+                $.ajax('/save', {
+                    method: "post",
+                    data : {
+                        password: passwordEl.val(),
+                        ssid: wifiListEl.val()
+                    },
+                    success : function (response) {
+                        var el = $('.inner.setup');
+                        el.children().remove();
+                        el.append("<p>Please connect your computer back to your wifi network</p>");
+                        setTimeout(function () {
+                            el.children().remove();
+                            el.append("<p>Setup failed. Please reboot the device.</p>");
+                        }, 60000);
+                        setInterval(function () {
+                            $.ajax("http://" + response.host + ":" + response.port + "/api/health", {
+                                success : function () {
+                                    window.location.href = "http://" + response.host + ":" + response.port + "/setup.html#" + response.device_id;
+                                }
+                            });
+                        }, 5000);
+                    },
+                    complete : function () {
+                        saveButtonEl.val("Save Network");
+                        saveButtonEl.removeClass("disabled")
+                    }
+                });
+            });
         });
     </script>
     <style>
@@ -92,6 +124,9 @@
             border: 1px solid transparent;
             border-radius: 4px;
         }
+        input[type=submit].disabled {
+            opacity: 0.65;
+        }
         table {
             width: 100%;
             padding: 15px;
@@ -136,30 +171,6 @@
         .submit-outer {
             padding-top: 20px;
         }
-
-        .loading {
-            position: absolute;
-            width: 100%;
-            background-color: #D5D7D9;
-            opacity: 1;
-            height: 100%;
-            border-radius: 5px;
-        }
-        .loading p {
-            color: white;
-        }
-        .loading div {
-            display: inline-block;
-            -webkit-filter: invert(1);
-            filter: invert(1);
-            max-width: 250px;
-            vertical-align: middle;
-        }
-        .helper {
-            display: inline-block;
-            height: 100%;
-            vertical-align: middle;
-        }
         form {
             position: relative;
         }
@@ -171,25 +182,22 @@
     </style>
 </head>
 <body>
-
-<div class="outer">
-    <div class="middle">
-        <div class="inner">
-            <h1>ECS Cat Feeder Wifi Setup</h1>
-            <form action="/save" method="post">
-                <div class="loading">
-                    <span class="helper"></span><div><img src="loading.svg"><p>Loading...</p></div>
-                </div>
+    <div class="outer">
+        <div class="middle">
+            <div class="inner setup">
+                <h1>ECS Cat Feeder Wifi Setup</h1>
                 <table>
                     <tr>
                         <td class="wifi-icon-outer" rowspan="4">
-                            <img src="wifi.png"/>
+                            <img src="wifi.jpg"/>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <p><label for="wifi_list">Wireless network:</label></p>
-                            <select id="wifi_list" name="ssid"></select>
+                            <select id="wifi_list" name="ssid">
+                                <option selected>Loading...</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -205,9 +213,8 @@
                         </td>
                     </tr>
                 </table>
-            </form>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>

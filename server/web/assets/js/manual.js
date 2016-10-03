@@ -93,7 +93,7 @@ pages.manual = {
     },
     updateCard : function (tag, nameEl, callback) {
         tag.tagName = nameEl.val();
-        saveTag(tag, callback);
+        saveTag(app.getCurrentFeederId(), tag, callback);
     },
     setAuthorised : function (tag, nameEl) {
         this.updateCard(tag, nameEl, function (response) {

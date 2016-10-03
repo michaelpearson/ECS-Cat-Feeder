@@ -1,50 +1,49 @@
 function addRequestHeader(xhr) {
     xhr.setRequestHeader ("Authorization", "Bearer " + localStorage.getItem("token"));
 }
+function successHandler(successCallback, failCallback) {
+    return function (response) {
+        if(response.success) {
+            if(successCallback) {
+                successCallback(response);
+            }
+        } else {
+            if(failCallback) {
+                failCallback(response);
+            }
+        }
+    }
+}
 
 function getProfileInformation(successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/user', {
         method : 'get',
         data : {},
         beforeSend : addRequestHeader,
-        success : function (response) {
-            successCallback(response);
-        },
+        success : successHandler(successCallback, failCallback),
         error : failCallback,
         complete : finallyCallback || function () {}
     });
 }
 function updateProfileInformation(name, password, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/user', {
+    return $.ajax('/api/user/information', {
         method : 'post',
         data : {
             name : name,
             password : password
         },
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
 
 function getAllFeeders(successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/feeder/list', {
+    return $.ajax('/api/feeders/list', {
         method : 'get',
         data : {},
         beforeSend : addRequestHeader,
-        success : function (response) {
-            successCallback(response);
-        },
+        success : successHandler(successCallback, failCallback),
         error : failCallback,
         complete : finallyCallback || function () {}
     });
@@ -58,17 +57,7 @@ function deliverFood(amount, type, hardwareId, successCallback, failCallback, fi
             type : type
         },
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -78,17 +67,7 @@ function scheduleFoodDelivery(options, successCallback, failCallback, finallyCal
         method : 'post',
         data : options,
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -98,17 +77,7 @@ function updateScheduledFoodDelivery(id, options, successCallback, failCallback,
         method : 'post',
         data : options,
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -118,11 +87,7 @@ function deleteScheduledFoodDelivery(id, successCallback, failCallback, finallyC
     return $.ajax('/api/schedule/' + id, {
         method : 'delete',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if (successCallback) {
-                successCallback(response);
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         error : function (response) {
             if(failCallback) {
                 failCallback(response);
@@ -136,17 +101,7 @@ function getScheduledDelivery(id, successCallback, failCallback, finallyCallback
     return $.ajax('/api/schedule/' + id, {
         method : 'get',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         error : failCallback || function () {},
         complete : finallyCallback || function () {}
     });
@@ -160,17 +115,7 @@ function getAllScheduledDeliveries(month, year, successCallback, failCallback, f
             year : year
         },
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -182,35 +127,15 @@ function updateFoodType(foodTypeId, defaultAmount, name, successCallback, failCa
             name : name
         },
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
 function getLastCardId(hardwareId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/feeder/' + hardwareId + '/tags/available', {
+    return $.ajax('/api/feeder/' + hardwareId + '/tag/lastTag', {
         method : 'get',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -219,72 +144,32 @@ function getLogOfEvents(hardwareId, maxNumberOfItems, successCallback, failCallb
     return $.ajax('/api/status/log/' + hardwareId + "/list?maxItems=" + maxNumberOfItems, {
         method : 'get',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
-function saveTag(tag, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag', {
+function saveTag(feederId, tag, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederId + '/tag', {
         method : 'post',
         data : tag,
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
-function deleteTag(tagId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag/' + tagId, {
+function deleteTag(feederId, tagId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederId + '/tag/' + tagId, {
         method : 'delete',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
-function listAllKnownTags(tag, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/status/tag/list', {
+function listAllKnownTags(feederId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederId + '/tag/list', {
         method : 'get',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -295,36 +180,16 @@ function setAuthenticatedTag(feederHardwareId, tagId, successCallback, failCallb
             tagId : tagId
         },
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
 
 function readWeight(feederHardwareId, successCallback, failCallback, finallyCallback) {
-    return $.ajax('/api/feeder/' + feederHardwareId + '/status/weight', {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/weight', {
         method : 'get',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
-        },
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }
@@ -333,17 +198,35 @@ function tareScale(feederHardwareId, successCallback, failCallback, finallyCallb
     return $.ajax('/api/feeder/' + feederHardwareId + '/tare', {
         method : 'put',
         beforeSend : addRequestHeader,
-        success : function (response) {
-            if(response.success) {
-                if(successCallback) {
-                    successCallback(response);
-                }
-            } else {
-                if(failCallback) {
-                    failCallback(response);
-                }
-            }
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}
+
+function createNewFeeder(feederHardwareId, name, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeders/new', {
+        method : 'post',
+        data : {
+            hardwareId : feederHardwareId,
+            name : name
         },
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}
+
+function createNewUser(feederHardwareId, email, name, password, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/user', {
+        method : 'post',
+        data : {
+            feederId : feederHardwareId,
+            email : email,
+            name : name,
+            password : password
+        },
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}
     });
 }

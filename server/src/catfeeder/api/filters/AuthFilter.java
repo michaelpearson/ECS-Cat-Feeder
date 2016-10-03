@@ -27,11 +27,11 @@ public class AuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        if(resourceInfo.getResourceMethod().getAnnotation(Insecure.class) != null) {
-            return;
-        }
         String authorizationHeader = containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            if(resourceInfo.getResourceMethod().getAnnotation(Insecure.class) != null) {
+                return;
+            }
             throw new NotAuthorizedException("Authorization header must be provided");
         }
         String token = authorizationHeader.substring("Bearer".length()).trim();
@@ -44,6 +44,10 @@ public class AuthFilter implements ContainerRequestFilter {
         } catch(SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Could not connect to db");
+        }
+
+        if(resourceInfo.getResourceMethod().getAnnotation(Insecure.class) != null) {
+            return;
         }
         throw new NotAuthorizedException("Authorization failed");
     }

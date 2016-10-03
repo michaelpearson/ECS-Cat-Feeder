@@ -37,8 +37,8 @@ public class CatFeeder {
     private ForeignCollection<Schedule> scheduledDeliveries;
 
     @XmlTransient
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private User owner;
+    @ForeignCollectionField
+    private Collection<FeederUserConnection> owners;
 
     @ForeignCollectionField
     @XmlElement
@@ -49,6 +49,9 @@ public class CatFeeder {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Tag trustedTag;
+
+    @ForeignCollectionField
+    private Collection<Tag> tags;
 
     public int getHardwareId() {
         return hardwareId;
@@ -80,14 +83,6 @@ public class CatFeeder {
 
     public void setScheduledDeliveries(ForeignCollection<Schedule> scheduledDeliveries) {
         this.scheduledDeliveries = scheduledDeliveries;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
     }
 
     public Collection<FoodType> getFoodTypes() {
@@ -168,5 +163,17 @@ public class CatFeeder {
     @Override
     public String toString() {
         return String.format("Cat feeder: %d", getHardwareId());
+    }
+
+    public Collection<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Collection<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Collection<FeederUserConnection> getOwners() {
+        return owners;
     }
 }

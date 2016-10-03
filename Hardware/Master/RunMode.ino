@@ -1,4 +1,7 @@
-#define SERVER_CONNECTION "catfeeder.herokuapp.com"
+//#define SERVER_CONNECTION "catfeeder.herokuapp.com"
+//#define SERVER_PORT 80
+
+#define SERVER_CONNECTION "192.168.0.23"
 #define SERVER_PORT 8080
 
 #define COMMAND_DELIVER_FOOD          1
@@ -34,6 +37,7 @@ void runModeSetup() {
     }
   }
   Serial.println();
+  Serial.println("Connected!");
 
   socket.begin(SERVER_CONNECTION, SERVER_PORT, "/ws");
   socket.onEvent(socketEvent);
