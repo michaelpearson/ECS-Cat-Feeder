@@ -53,6 +53,10 @@ public class CatFeeder {
     @ForeignCollectionField
     private Collection<Tag> tags;
 
+    @DatabaseField
+    @XmlElement
+    private int foodLimit = 500;
+
     public int getHardwareId() {
         return hardwareId;
     }
@@ -175,5 +179,13 @@ public class CatFeeder {
 
     public Collection<FeederUserConnection> getOwners() {
         return owners;
+    }
+
+    public int getFoodLimit() {
+        return foodLimit;
+    }
+
+    public void setFoodLimit(int foodLimit) {
+        this.foodLimit = foodLimit;
     }
 }

@@ -10,6 +10,7 @@ import catfeeder.model.FoodType;
 import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.status.WeightResponse;
+import com.j256.ormlite.dao.Dao;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -79,4 +80,21 @@ public class FeederFunctionsEndpoint {
         return new GeneralResponse(true);
     }
 
+    @POST
+    @Path("/foodLimit")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GeneralResponse setFoodLimit(@PathParam("feederId") int feederId, @FormParam("maxFoodAmount") int maxAmount) throws SQLException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
+        CatFeeder cf = feederDao.queryForId(feederId);
+        if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
+            throw new NotFoundException();
+        }
+        if(maxAmount >= 0 && maxAmount < 1000) {
+            cf.setFoodLimit(maxAmount);
+            feederDao.update(cf);
+            return new GeneralResponse(true);
+        }
+        return new GeneralResponse(false);
+    }
 }

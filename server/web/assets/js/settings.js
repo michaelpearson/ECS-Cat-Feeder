@@ -1,24 +1,23 @@
 var pages = window.pages || {};
 pages.settings = {
-    editFoodTemplate : '<div class="col-lg-8 col-md-12">\n    <div class="form-horizontal">\n        <hr/>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Name</label>\n            <div class="col-sm-10">\n                <input class="form-control settings-food-name" type="text" />\n            </div>\n        </div>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Default Delivery Amount</label>\n            <div class="col-sm-10">\n                <input class="settings-food-default" type="range" value="" min="1" max="500" style="margin-top: 7px;">\n                <p id="settings-food-indicator"></p>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-sm-offset-2 col-sm-10">\n                <button type="submit" class="btn btn-default settings-food-update">Update</button>\n            </div>       \n        </div>\n    </div>\n</div>',
+    editFoodTemplate : '<div class="col-lg-8 col-md-12">\n    <div class="form-horizontal">\n        <hr/>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Name</label>\n            <div class="col-sm-10">\n                <input class="form-control settings-food-name" type="text" />\n            </div>\n        </div>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Default Delivery Amount</label>\n            <div class="col-sm-10">\n                <input class="settings-food-default" type="range" value="" min="1" max="500" style="margin-top: 7px;">\n                <p class="settings-food-indicator"></p>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-sm-offset-2 col-sm-10">\n                <button type="submit" class="btn btn-default settings-food-update">Update</button>\n            </div>       \n        </div>\n    </div>\n</div>',
     init : false,
     knownTags : [],
     renderCompleteCallback : null,
+    maxFoodSlider : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
-        var me = pages.settings;
-
         $('#settings-page.page').css({
             display : 'block'
         });
-        me.renderCompleteCallback = renderCompleteCallback;
-        me.renderFoodElements();
-        me.updateTagList();
-        me.initControls();
+        this.renderCompleteCallback = renderCompleteCallback;
+        this.initControls();
+        this.renderFoodElements();
+        this.updateTagList();
+        this.maxFoodSlider.val(app.getFeederInfo().foodLimit).trigger('input');
     },
     renderFoodElements : function () {
         var me = pages.settings;
         var knownFoodTypes = app.getFeederInfo().foodTypes;
-        var foodElements = [];
         var foodContainerEl = $('.food-container');
         foodContainerEl.children().remove();
         for(var a = 0;a < knownFoodTypes.length;a++) {
@@ -32,6 +31,9 @@ pages.settings = {
             }));
             foodNameEl.val(knownFoodTypes[a].name);
             defaultAmountEl.val(knownFoodTypes[a].defaultGramAmount);
+            defaultAmountEl.on('input', function (indicator, slider) {
+                indicator.text(slider.val() + " grams");
+            }.bind(this, el.find('.settings-food-indicator'), defaultAmountEl)).trigger('input');
             foodContainerEl.append(el);
         }
     },
@@ -62,13 +64,21 @@ pages.settings = {
         }
     },
     initControls : function () {
-        var me = pages.settings;
-        if(me.init) {
+        var me = this;
+        if(this.init) {
             return;
         }
-        me.init = true;
-        $('.settings-tag-forget').click(me.forgetTag.bind(this));
-
+        this.init = true;
+        $('.settings-tag-forget').click(this.forgetTag.bind(this));
+        var maxFoodIndicator = $('.settings-max-food-indicator');
+        this.maxFoodSlider = $('.max-food-amount');
+        this.maxFoodSlider.on('input', function () {
+            maxFoodIndicator.text(me.maxFoodSlider.val() + " grams");
+        }).trigger('input');
+        $('.save-max-food-amount').click(function () {
+            var maxAmount = parseInt(me.maxFoodSlider.val());
+            setMaxFoodAmount(app.getCurrentFeederId(), maxAmount, app.invalidateFeederInfo);
+        });
     },
     updateFood : function (element) {
         var id = element.id;
@@ -82,9 +92,4 @@ pages.settings = {
         deleteTag(app.getCurrentFeederId(), id, me.updateTagList);
         this.updateTagList();
     },
-    generateHandler: function(list, j){
-        return function(){
-            $('#settings-food-indicator'+list[j].id).text($('#settings-food-default'+list[j].id).val() + 'grams')
-        }
-    }
 };
