@@ -101,8 +101,8 @@ public class FeederFunctionsEndpoint {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id}/learningStage")
-    public GeneralResponse setLearningStage(@PathParam("id") int feederId, @FormParam("learningStage") LearnStage learningStage) throws SQLException {
+    @Path("/learningStage")
+    public GeneralResponse setLearningStage(@PathParam("feederId") int feederId, @FormParam("learningStage") LearnStage learningStage) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         CatFeeder cf = DatabaseClient.getFeederDao().queryForId(feederId);
         if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
