@@ -32,6 +32,10 @@ public class CatFeeder {
     @DatabaseField
     private Date lastConnectionAt;
 
+    @XmlElement
+    @DatabaseField
+    private learnStage learningStage;
+
     @ForeignCollectionField
     @XmlTransient
     private ForeignCollection<Schedule> scheduledDeliveries;
@@ -80,6 +84,10 @@ public class CatFeeder {
     public void setLastConnectionAt(Date lastConnectionAt) {
         this.lastConnectionAt = lastConnectionAt;
     }
+
+    public learnStage getLearningStage(){ return learningStage;}
+
+    public void setLearningStage(learnStage stage){ learningStage = stage;}
 
     public ForeignCollection<Schedule> getScheduledDeliveries() {
         return scheduledDeliveries;
