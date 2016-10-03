@@ -83,7 +83,8 @@ void executeInstruction(JsonObject& payload) {
         Serial.println("Deliver food");
         int gramAmount = (int)payload["gram_amount"];
         int foodIndex = (int)payload["food_type"];
-        deliverFood(gramAmount, foodIndex);
+        int maxAmount = (int)payload["max_amount"];
+        deliverFood(gramAmount, foodIndex, maxAmount);
         break;
       }
     case COMMAND_GET_CARD:
@@ -126,4 +127,8 @@ void executeInstruction(JsonObject& payload) {
       }
 
   }
+}
+
+void sendMaxFoodNotification() {
+  
 }
