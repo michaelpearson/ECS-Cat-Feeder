@@ -58,6 +58,17 @@ body {
     float: right;
     margin-top: 30px; }
 
+.settings-learning-form label {
+  font-size: 16px; }
+
+.settings-learning-form input {
+  height: 16px;
+  width: 16px; }
+
+.settings-learning-form span {
+  font-size: px;
+  color: #999; }
+
 .feeder-menu li {
   cursor: pointer; }
 

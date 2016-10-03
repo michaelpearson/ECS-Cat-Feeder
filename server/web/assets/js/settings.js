@@ -79,6 +79,7 @@ pages.settings = {
             var maxAmount = parseInt(me.maxFoodSlider.val());
             setMaxFoodAmount(app.getCurrentFeederId(), maxAmount, app.invalidateFeederInfo);
         });
+        $('.settings-learning-form input').click(me.selectLearningStage);
     },
     updateFood : function (element) {
         var id = element.id;
@@ -92,4 +93,7 @@ pages.settings = {
         deleteTag(app.getCurrentFeederId(), id, me.updateTagList);
         this.updateTagList();
     },
+    selectLearningStage: function(event){
+        console.log($(this).val());
+    }
 };
