@@ -87,7 +87,7 @@ public class CatFeederConnection {
             case "max_food_notification":
                 notificationService.sendNotification("The maximum amount of food in the bowl has been reached", NOTIFICATION_SUBJECT);
                 break;
-            case "":
+            case "food_timout_notification":
                 long index = (long)data.get("food_index");
                 FoodType foodType = feeder.getFoodTypes().stream().filter(ft -> ft.getFoodIndex() == index).findFirst().orElse(null);
                 String foodName = "unknown";
