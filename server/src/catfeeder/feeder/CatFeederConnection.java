@@ -6,6 +6,7 @@ import catfeeder.model.FoodType;
 import catfeeder.model.ScheduledItem;
 import catfeeder.model.Tag;
 import catfeeder.model.CardInfo;
+import catfeeder.notifications.NotificationService;
 import com.j256.ormlite.dao.Dao;
 import org.glassfish.grizzly.websockets.WebSocket;
 import org.json.simple.JSONObject;
@@ -15,16 +16,22 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class CatFeederConnection {
+    private static final String NOTIFICATION_SUBJECT = "Catfeeder notification";
     private final WebSocket socket;
     private final CatFeeder feeder;
     private final Object messageLock = new Object();
     private final Calendar calendar = Calendar.getInstance();
+    private NotificationService notificationService;
 
     private JSONObject lastMessage = null;
     private ScheduleManager scheduleManager;
 
     WebSocket getWebSocket() {
         return socket;
+    }
+
+    public void disconnected() {
+        notificationService.sendNotification("Catfeeder disconnected!", NOTIFICATION_SUBJECT);
     }
 
     private enum Commands {
@@ -52,6 +59,8 @@ public class CatFeederConnection {
         try {
             Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
             feeder = feederDao.queryForId(catFeederId);
+            notificationService = new NotificationService(feeder);
+            notificationService.sendNotification("Catfeeder connected!", NOTIFICATION_SUBJECT);
             System.out.println("Connected to feeder: " + feeder);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,7 +82,24 @@ public class CatFeederConnection {
         }
     }
 
-    private void handleCommand(JSONObject data) {}
+    private void handleCommand(JSONObject data) {
+        switch((String)data.get("command")) {
+            case "max_food_notification":
+                notificationService.sendNotification("The maximum amount of food in the bowl has been reached", NOTIFICATION_SUBJECT);
+                break;
+            case "food_timeout_notification":
+                long index = (long)data.get("food_index");
+                FoodType foodType = feeder.getFoodTypes().stream().filter(ft -> ft.getFoodIndex() == index).findFirst().orElse(null);
+                String foodName = "unknown";
+                if(foodType != null) {
+                    foodName = foodType.getName();
+                }
+                notificationService.sendNotification("The feeder timed out while delivering " + foodName, NOTIFICATION_SUBJECT);
+                break;
+            default:
+                throw new RuntimeException("Unknown command");
+        }
+    }
 
     private synchronized JSONObject waitForMessage() throws InterruptedException {
         synchronized (messageLock) {

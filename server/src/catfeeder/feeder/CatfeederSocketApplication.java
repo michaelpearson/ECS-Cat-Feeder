@@ -52,6 +52,7 @@ public class CatfeederSocketApplication extends WebSocketApplication {
 
     @Override
     public void onClose(WebSocket socket, DataFrame frame) {
+        catFeeders.get(socket).disconnected();
         catFeeders.remove(socket);
     }
 }

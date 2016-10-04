@@ -231,6 +231,14 @@ function createNewUser(feederHardwareId, email, name, password, successCallback,
     });
 }
 
+function sendTestEmail(successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/test/email', {
+        method : 'get',
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}
 function setMaxFoodAmount(feederHardwareId, maxFoodAmount, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/' + feederHardwareId + '/foodLimit', {
         method : 'post',

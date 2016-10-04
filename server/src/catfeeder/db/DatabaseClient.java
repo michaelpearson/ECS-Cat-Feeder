@@ -40,6 +40,7 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, LogEntry.class);
                 TableUtils.createTable(connectionSource, Tag.class);
                 TableUtils.createTable(connectionSource, FeederUserConnection.class);
+                TableUtils.createTable(connectionSource, Notification.class);
 
                 CatFeeder cf = new CatFeeder();
                 //This is the id of the esp we have
@@ -67,6 +68,7 @@ public class DatabaseClient {
 
 
                 User user = createUser("test@test.com", "Test User", "password");
+                user.addNotificationMethod(User.NotificationType.EMAIL);
                 userDao.create(user);
 
 
@@ -128,5 +130,9 @@ public class DatabaseClient {
 
     public static Dao<Tag, Integer> getTagDao() throws SQLException {
         return DaoManager.createDao(connectionSource, Tag.class);
+    }
+
+    public static Dao<Notification, Integer> getNotificationDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, Notification.class);
     }
 }

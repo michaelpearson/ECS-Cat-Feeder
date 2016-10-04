@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script src="assets/lib/js/jquery-2.2.3.js"></script>
+        <script type="application/javascript">
+            $(function () {
+                var socketOpen = false;
+                var socket = new WebSocket("ws://127.0.0.1:8080/ws");
+                socket.onopen = function () {
+                    socketOpen = true;
+                    socket.send(JSON.stringify({deviceId : 9240906}));
+                }
+                $('#send-notification-button').click(function () {
+                    if(!socketOpen)
+                        return;
+                    socket.send(JSON.stringify({
+                        command : "max_food_notification"
+                    }));
+                });
+            })
+        </script>
+    </head>
+    <body>
+        <button id="send-notification-button">Send Notification</button>
+    </body>
+
+
+</html>

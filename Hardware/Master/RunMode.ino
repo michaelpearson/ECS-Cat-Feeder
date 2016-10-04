@@ -130,5 +130,21 @@ void executeInstruction(JsonObject& payload) {
 }
 
 void sendMaxFoodNotification() {
-  
+  StaticJsonBuffer<50> jsonBuffer;
+  char buff[50];
+  JsonObject&  root = jsonBuffer.createObject();
+  root["command"] = "max_food_notification";
+  root.printTo(buff, sizeof(buff));
+  socket.sendTXT(buff);
 }
+
+void sendTimeoutNotification(int foodIndex) {
+  StaticJsonBuffer<50> jsonBuffer;
+  char buff[50];
+  JsonObject&  root = jsonBuffer.createObject();
+  root["command"] = "food_timeout_notification";
+  root["food_index"] = foodIndex;
+  root.printTo(buff, sizeof(buff));
+  socket.sendTXT(buff);
+}
+
