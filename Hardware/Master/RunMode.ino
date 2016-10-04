@@ -137,3 +137,13 @@ void sendMaxFoodNotification() {
   root.printTo(buff, sizeof(buff));
   socket.sendTXT(buff);
 }
+
+void sendTimeoutNotification() {
+  StaticJsonBuffer<50> jsonBuffer;
+  char buff[50];
+  JsonObject&  root = jsonBuffer.createObject();
+  root["command"] = "food_timout_notification";
+  root.printTo(buff, sizeof(buff));
+  socket.sendTXT(buff);
+}
+
