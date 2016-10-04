@@ -87,6 +87,15 @@ public class CatFeederConnection {
             case "max_food_notification":
                 notificationService.sendNotification("The maximum amount of food in the bowl has been reached", NOTIFICATION_SUBJECT);
                 break;
+            case "":
+                long index = (long)data.get("food_index");
+                FoodType foodType = feeder.getFoodTypes().stream().filter(ft -> ft.getFoodIndex() == index).findFirst().orElse(null);
+                String foodName = "unknown";
+                if(foodType != null) {
+                    foodName = foodType.getName();
+                }
+                notificationService.sendNotification("The feeder timed out while delivering " + foodName, NOTIFICATION_SUBJECT);
+                break;
             default:
                 throw new RuntimeException("Unknown command");
         }

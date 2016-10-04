@@ -16,7 +16,7 @@ long deliverFoodLastRun = 0;
 long checkCardLastRun = 0;
 long doorsOpenAt = 0;
 bool deliveringFood = false;
-long deliveringFoodStartedAt = 0;
+long startedDeliveringAt = 0;
 
 Q2HX711 scale(0, 5);
 
@@ -62,14 +62,14 @@ void checkCard() {
 void deliverFoodLoop() {
   bool shouldDeliverFood = false;
   int a;
-  
+
   for (a = 0; a < NUMBER_OF_FEEDERS; a++) {
     if (foodToDeliver[a] > 0) {
       shouldDeliverFood = true;
       break;
     }
   }
-  
+
   if (!shouldDeliverFood) {
     if (deliveringFood) {
       deliveringFood = false;
@@ -81,7 +81,7 @@ void deliverFoodLoop() {
   int weight = getWeight();
   foodToDeliver[a] -= weight - lastWeight;
   lastWeight = weight;
-  
+
   if (weight >= maxAmountOfFood) {
     if (deliveringFood) {
       stopAllConveyers();
@@ -91,8 +91,19 @@ void deliverFoodLoop() {
     }
   }
 
-  deliveringFood = true;
-  runConveyer(a, true);
+  if (!deliveringFood) {
+    startedDeliveringAt = millis();
+    deliveringFood = true;
+    runConveyer(a, true);
+  }
+
+  if (millis() - startedDeliveringAt > DELIVERY_TIMOUT) {
+    foodToDeliver[a] = 0;
+    sendTimeoutNotification(a);
+    stopAllConveyers();
+    deliveringFood = false;
+  }
+
 }
 
 void stopAllConveyers() {
