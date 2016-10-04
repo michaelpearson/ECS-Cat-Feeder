@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class CatFeederConnection {
+    private static final String NOTIFICATION_SUBJECT = "Catfeeder notification";
     private final WebSocket socket;
     private final CatFeeder feeder;
     private final Object messageLock = new Object();
@@ -27,6 +28,10 @@ public class CatFeederConnection {
 
     WebSocket getWebSocket() {
         return socket;
+    }
+
+    public void disconnected() {
+        notificationService.sendNotification("Catfeeder disconnected!", NOTIFICATION_SUBJECT);
     }
 
     private enum Commands {
@@ -55,6 +60,7 @@ public class CatFeederConnection {
             Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
             feeder = feederDao.queryForId(catFeederId);
             notificationService = new NotificationService(feeder);
+            notificationService.sendNotification("Catfeeder connected!", NOTIFICATION_SUBJECT);
             System.out.println("Connected to feeder: " + feeder);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,7 +85,7 @@ public class CatFeederConnection {
     private void handleCommand(JSONObject data) {
         switch((String)data.get("command")) {
             case "max_food_notification":
-                notificationService.sendNotification("The maximum amount of food in the bowl has been reached", "Catfeeder notification");
+                notificationService.sendNotification("The maximum amount of food in the bowl has been reached", NOTIFICATION_SUBJECT);
                 break;
             default:
                 throw new RuntimeException("Unknown command");
