@@ -244,7 +244,7 @@ function setLearningStage(feederHardwareId, learningStage, successCallback, fail
     return $.ajax('/api/feeder/' + feederHardwareId + '/learningStage', {
         method : 'post',
         data : {
-            learningStage : learningStage
+            stage : learningStage
         },
         beforeSend : addRequestHeader,
         success : function (response) {

@@ -93,7 +93,18 @@ pages.settings = {
         deleteTag(app.getCurrentFeederId(), id, me.updateTagList);
         this.updateTagList();
     },
-    selectLearningStage: function(event){
+    selectLearningStage: function(){
         console.log($(this).val());
+
+        var me = pages.settings;
+        var stage = $(this).val();
+        setLearningStage(app.getCurrentFeederId(), stage,
+            function(data){//success
+                console.log(data);
+            },
+            function(err){//err
+                console.log(err);
+            }
+        );
     }
 };

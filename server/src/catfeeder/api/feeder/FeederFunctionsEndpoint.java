@@ -102,14 +102,14 @@ public class FeederFunctionsEndpoint {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/learningStage")
-    public GeneralResponse setLearningStage(@PathParam("feederId") int feederId, @FormParam("learningStage") LearnStage learningStage) throws SQLException {
+    public GeneralResponse setLearningStage(@PathParam("feederId") int feederId, @FormParam("stage") String learningStage) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
         CatFeeder cf = feederDao.queryForId(feederId);
         if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
             throw new NotFoundException();
         }
-        cf.setLearningStage(learningStage);
+        cf.setLearningStage(LearnStage.getLearnStage(learningStage));
         feederDao.update(cf);
 
         return new GeneralResponse(true);
