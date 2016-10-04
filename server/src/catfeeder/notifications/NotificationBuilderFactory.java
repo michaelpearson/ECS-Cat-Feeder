@@ -8,7 +8,14 @@ import java.sql.SQLException;
 
 public class NotificationBuilderFactory {
 
-    public static abstract class NotificationBuilder {
+    public interface NotificationBuilder {
+        NotificationBuilder setMessageBody(String message);
+        NotificationBuilder setMessageSubject(String subject);
+        NotificationBuilder setRecipient(User user);
+        Notification build() throws RuntimeException, SQLException;
+    }
+
+    public static class NotificationBuilderImpl implements NotificationBuilder {
 
         protected String message, subject;
         protected User user;
@@ -28,36 +35,15 @@ public class NotificationBuilderFactory {
             return this;
         }
 
-        public abstract Notification build() throws RuntimeException, SQLException;
-    }
-
-    private static class SmsNotification extends NotificationBuilder {
-        @Override
         public Notification build() throws RuntimeException, SQLException {
-            Notification notification = new Notification(message, user, subject, Notification.NotificationType.SMS);
+            Notification notification = new Notification(message, user, subject);
             DatabaseClient.getNotificationDao().create(notification);
             return notification;
         }
     }
 
-    private static class EmailNotification extends NotificationBuilder {
-        @Override
-        public Notification build() throws RuntimeException, SQLException {
-            Notification notification = new Notification(message, user, subject, Notification.NotificationType.EMAIL);
-            DatabaseClient.getNotificationDao().create(notification);
-            return notification;
-        }
-    }
-
-    public static NotificationBuilder getInstance(Notification.NotificationType notificationType) {
-        switch(notificationType) {
-            default:
-                throw new RuntimeException("Notification type not supported");
-            case EMAIL:
-                return new EmailNotification();
-            case SMS:
-                return new SmsNotification();
-        }
+    public static NotificationBuilder getInstance() {
+        return new NotificationBuilderImpl();
     }
 
 }

@@ -68,6 +68,7 @@ public class DatabaseClient {
 
 
                 User user = createUser("test@test.com", "Test User", "password");
+                user.addNotificationMethod(User.NotificationType.EMAIL);
                 userDao.create(user);
 
 

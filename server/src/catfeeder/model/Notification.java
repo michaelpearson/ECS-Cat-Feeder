@@ -12,15 +12,6 @@ import java.util.Date;
 @DatabaseTable(tableName = "notifications")
 public class Notification {
 
-    public enum NotificationType {
-        SMS,
-        EMAIL
-    }
-
-    @DatabaseField
-    @XmlElement
-    private NotificationType notificationType;
-
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -40,18 +31,22 @@ public class Notification {
     @DatabaseField
     private boolean sent;
 
+    @XmlElement
+    @DatabaseField
+    private boolean seen;
+
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     protected User user;
 
     public Notification() {}
 
-    public Notification(String notificationBody, User user, String subject, NotificationType type) {
+    public Notification(String notificationBody, User user, String subject) {
         this.notificationBody = notificationBody;
         this.user = user;
         this.subject = subject;
         this.date = new Date();
         this.sent = false;
-        this.notificationType = type;
+        this.seen = false;
     }
 
 
@@ -75,7 +70,15 @@ public class Notification {
         sent = true;
     }
 
-    public NotificationType getNotificationType() {
-        return notificationType;
+    public void setSeen() {
+        seen = true;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public boolean isSent() {
+        return sent;
     }
 }

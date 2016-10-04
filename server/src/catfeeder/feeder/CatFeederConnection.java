@@ -6,6 +6,7 @@ import catfeeder.model.FoodType;
 import catfeeder.model.ScheduledItem;
 import catfeeder.model.Tag;
 import catfeeder.model.CardInfo;
+import catfeeder.notifications.NotificationService;
 import com.j256.ormlite.dao.Dao;
 import org.glassfish.grizzly.websockets.WebSocket;
 import org.json.simple.JSONObject;
@@ -19,6 +20,7 @@ public class CatFeederConnection {
     private final CatFeeder feeder;
     private final Object messageLock = new Object();
     private final Calendar calendar = Calendar.getInstance();
+    private NotificationService notificationService;
 
     private JSONObject lastMessage = null;
     private ScheduleManager scheduleManager;
@@ -52,6 +54,7 @@ public class CatFeederConnection {
         try {
             Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
             feeder = feederDao.queryForId(catFeederId);
+            notificationService = new NotificationService(feeder);
             System.out.println("Connected to feeder: " + feeder);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,7 +76,15 @@ public class CatFeederConnection {
         }
     }
 
-    private void handleCommand(JSONObject data) {}
+    private void handleCommand(JSONObject data) {
+        switch((String)data.get("command")) {
+            case "max_food_notification":
+                notificationService.sendNotification("The maximum amount of food in the bowl has been reached", "Catfeeder notification");
+                break;
+            default:
+                throw new RuntimeException("Unknown command");
+        }
+    }
 
     private synchronized JSONObject waitForMessage() throws InterruptedException {
         synchronized (messageLock) {

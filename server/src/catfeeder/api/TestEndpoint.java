@@ -4,8 +4,8 @@ import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.model.Notification;
 import catfeeder.model.User;
+import catfeeder.notifications.EmailSender;
 import catfeeder.notifications.NotificationBuilderFactory;
-import catfeeder.notifications.NotificationSender;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -24,13 +24,13 @@ public class TestEndpoint {
     @Path("email")
     public boolean sendMeAnEmail() throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        Notification notification = NotificationBuilderFactory.getInstance(Notification.NotificationType.EMAIL)
+        Notification notification = NotificationBuilderFactory.getInstance()
                 .setMessageBody("Test email!")
                 .setMessageSubject("Test subject!")
                 .setRecipient(user)
                 .build();
 
-        return new NotificationSender(notification).sendNotification();
+        return new EmailSender().sendNotification(notification);
     }
 
 }
