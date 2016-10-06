@@ -5,28 +5,27 @@ pages.dashboard = {
     renderCompleteCallback : null,
     logTableEl : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
-        var me = pages.dashboard;
-        me.renderCompleteCallback = renderCompleteCallback;
+        this.renderCompleteCallback = renderCompleteCallback;
         $('#dashboard-page.page').css({
             display : 'block'
         });
-        me.init();
-        getLogOfEvents(app.getCurrentFeederId(), 10, me.displayLog);
+        this.init();
+        getLogOfEvents(app.getCurrentFeederId(), 10, this.displayLog.bind(this));
+        //getFutureEvents(app.getCurrentFeederId(), 10, this.displayUpcoming.bind(this));
+        //getActivitySummary(app.getCurrentFeederId(), this.displayActivity.bind(this));
+        //getWeightGraph(app.getCurrentFeederId(), this.displayWeightGraph.bind(this));
     },
     init : function () {
-        var me = pages.dashboard;
-        if(me.initComplete) {
+        if(this.initComplete) {
             return;
         }
-        me.initComplete = true;
-        me.logTableEl = $('#log-body');
+        this.initComplete = true;
+        this.logTableEl = $('#log-body');
     },
     displayLog : function (log) {
-        var me = pages.dashboard;
-
-        if(me.renderCompleteCallback != null) {
-            me.renderCompleteCallback();
-            me.renderCompleteCallback = null;
+        if(this.renderCompleteCallback != null) {
+            this.renderCompleteCallback();
+            this.renderCompleteCallback = null;
         }
 
         for(var a = 0; a < log.logEntries.length;a++) {
@@ -43,8 +42,7 @@ pages.dashboard = {
             }
             var row = $('<tr>');
             row.append([number, date, type, foodType, amount]);
-            me.logTableEl.append(row);
-            console.log(log.logEntries[a]);
+            this.logTableEl.append(row);
         }
     }
 };
