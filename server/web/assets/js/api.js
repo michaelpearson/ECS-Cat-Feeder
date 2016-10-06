@@ -250,3 +250,15 @@ function setMaxFoodAmount(feederHardwareId, maxFoodAmount, successCallback, fail
         complete : finallyCallback || function () {}
     });
 }
+
+function runConveyors(feederHardwareId, run, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/clean', {
+        method : 'post',
+        data : {
+            run : run || false
+        },
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}

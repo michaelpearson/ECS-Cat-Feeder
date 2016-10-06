@@ -1,7 +1,7 @@
 //#define SERVER_CONNECTION "catfeeder.herokuapp.com"
 //#define SERVER_PORT 80
 
-#define SERVER_CONNECTION "192.168.0.23"
+#define SERVER_CONNECTION "10.140.80.10"
 #define SERVER_PORT 8080
 
 #define COMMAND_DELIVER_FOOD          1
@@ -9,6 +9,8 @@
 #define COMMAND_SET_TRUSTED_CARD      3
 #define COMMAND_READ_WEIGHT           4
 #define COMMAND_TARE                  5
+#define COMMAND_RUN_CONVEYOR          6
+#define COMMAND_STOP_CONVEYOR         7
 
 WebSocketsClient socket;
 
@@ -125,6 +127,18 @@ void executeInstruction(JsonObject& payload) {
         setGramOffset(-currentWeight);
         break;
       }
+    case COMMAND_RUN_CONVEYOR:
+    {
+      Serial.println("Running");
+      runAllConveyers();
+      break;
+    }
+    case COMMAND_STOP_CONVEYOR:
+    {
+      Serial.println("Stopping");
+      stopAllConveyers();
+      break;
+    }
 
   }
 }
