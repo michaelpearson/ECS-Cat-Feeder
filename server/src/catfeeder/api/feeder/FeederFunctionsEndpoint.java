@@ -97,4 +97,22 @@ public class FeederFunctionsEndpoint {
         }
         return new GeneralResponse(false);
     }
+
+    @POST
+    @Path("/clean")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GeneralResponse clean(@PathParam("feederId") int feederId, @FormParam("run") boolean run) throws SQLException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
+        CatFeeder cf = feederDao.queryForId(feederId);
+        if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
+            throw new NotFoundException();
+        }
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(cf.getHardwareId());
+        if(connection == null) {
+            throw new ServiceUnavailableException();
+        }
+        connection.run(run);
+        return new GeneralResponse(true);
+    }
 }

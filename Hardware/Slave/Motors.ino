@@ -17,7 +17,7 @@ void stopStepper(int index) {
 }
 
 void setStepperRunning(int index, bool run) {
-  analogWrite(motorPins[index], run ? 127 : 0);
+  analogWrite(motorPins[index], run ? 255 : 0);
 }
 
 

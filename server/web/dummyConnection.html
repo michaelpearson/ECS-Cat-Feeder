@@ -2,13 +2,40 @@
     <head>
         <script src="assets/lib/js/jquery-2.2.3.js"></script>
         <script type="application/javascript">
+             var DeliverFood = 1,
+             GetLastCard = 2,
+             SetTrustedTag = 3,
+             ReadWeight = 4,
+             TareSensor = 5,
+             RunConveyors = 6,
+             StopConveyors = 7;
             $(function () {
                 var socketOpen = false;
                 var socket = new WebSocket("ws://127.0.0.1:8080/ws");
                 socket.onopen = function () {
                     socketOpen = true;
                     socket.send(JSON.stringify({deviceId : 9240906}));
-                }
+                };
+                socket.onmessage = function (data) {
+                    var payload = JSON.parse(data.data);
+                    switch(payload.command) {
+                        case GetLastCard:
+                            socket.send(JSON.stringify({
+                                is_present : false,
+                                card_id : parseInt(Math.random() * 4)
+                            }));
+                            break;
+                        case SetTrustedTag:
+                            break;
+                        case ReadWeight:
+                            socket.send(JSON.stringify({
+                                weight: parseInt(Math.random() * 100 + 1)
+                            }));
+                            break;
+                        default:
+                            console.log(payload);
+                    }
+                };
                 $('#send-notification-button').click(function () {
                     if(!socketOpen)
                         return;
@@ -22,6 +49,4 @@
     <body>
         <button id="send-notification-button">Send Notification</button>
     </body>
-
-
 </html>

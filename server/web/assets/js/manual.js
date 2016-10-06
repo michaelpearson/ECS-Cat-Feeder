@@ -21,8 +21,8 @@ pages.manual = {
             this.foodTypeEl.append('<option value="' + element.id + '" data-default="' + element.defaultGramAmount + '">' + element.name + '</option>')
         }.bind(this));
         this.foodTypeEl.change();
-        this.tagTimer = setInterval(this.detectTags.bind(this), 1000);
-        this.weightTimer = setInterval(this.updateWeightDisplay.bind(this), 500);
+        this.tagTimer = setInterval(this.detectTags.bind(this), 3000);
+        this.weightTimer = setInterval(this.updateWeightDisplay.bind(this), 1000);
         this.detectTags();
         this.updateWeightDisplay(0);
     },
@@ -76,7 +76,7 @@ pages.manual = {
             amountIndicator.text(this.amountEl.val() + " grams");
         }.bind(this)).trigger('input');
 
-        let me = this;
+        var me = this;
         this.foodTypeEl.change(function () {
             var defaultAmount = ($(this).find('option:selected').attr('data-default'));
             me.amountEl.val(defaultAmount);
@@ -86,6 +86,14 @@ pages.manual = {
         this.weightDisplayEl = $('#weight-display');
 
         $('.tare-button').click(this.tareScale.bind(this));
+        $('.run-button').click(this.run.bind(this));
+        $('.stop-button').click(this.stop.bind(this));
+    },
+    run : function () {
+        runConveyors(app.getCurrentFeederId(), true);
+    },
+    stop : function () {
+        runConveyors(app.getCurrentFeederId(), false);
     },
     tareScale : function () {
         console.log('here');

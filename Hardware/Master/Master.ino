@@ -1,4 +1,4 @@
-#define DEBUG_SETUP_MODE true
+#define DEBUG_SETUP_MODE false
 #include <WebSockets.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>

@@ -188,4 +188,5 @@ public class CatFeeder {
     public void setFoodLimit(int foodLimit) {
         this.foodLimit = foodLimit;
     }
+
 }

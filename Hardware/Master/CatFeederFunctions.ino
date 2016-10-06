@@ -6,7 +6,7 @@
 #define DOOR_OPEN_TIMEOUT 5000
 #define DELIVERY_TIMOUT 60000 //1 Minute
 
-#define SCALE 0.01
+#define SCALE 0.0006
 
 int foodToDeliver[] = {0, 0};
 int maxAmountOfFood = 0;
@@ -21,7 +21,7 @@ long startedDeliveringAt = 0;
 Q2HX711 scale(0, 5);
 
 void catFeederLoop() {
-  if (millis() - deliverFoodLastRun > DELIVER_FOOD_PERIOD) {
+  if (millis() - deliverFoodLastRun M> DELIVER_FOOD_PERIOD) {
     deliverFoodLoop();
     deliverFoodLastRun = millis();
   }
@@ -112,6 +112,12 @@ void stopAllConveyers() {
   }
 }
 
+void runAllConveyers() {
+  for (int a = 0; a < NUMBER_OF_FEEDERS; a++) {
+    runConveyer(a, true);
+  }
+}
+
 void deliverFood(int gramAmount, int foodType, int maxAmountOfFood) {
   Serial.printf("Deliver %d grams of food %d\n", gramAmount, foodType);
   if (!(foodType >= 0 && foodType < 2)) {
@@ -127,7 +133,7 @@ void runConveyer(int index, bool run) {
   Wire.write(index & 0xFF);
   Wire.write(run ? 0x01 : 0x00);
   Wire.endTransmission();
-  //Serial.printf("Conveyer %d is %s.\n", index, run ? "running" : "stopped");
+  Serial.printf("Conveyer %d is %s.\n", index, run ? "running" : "stopped");
 }
 
 void getCardInfo(uint32_t * cardId, bool * isPresent) {

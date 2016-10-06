@@ -34,12 +34,21 @@ public class CatFeederConnection {
         notificationService.sendNotification("Catfeeder disconnected!", NOTIFICATION_SUBJECT);
     }
 
+    public void run(boolean run) {
+        JSONObject payload = new JSONObject();
+        Commands command = run ? Commands.RunConveyors : Commands.StopConveyors;
+        payload.put("command", command.getCommandId());
+        socket.send(payload.toJSONString());
+    }
+
     private enum Commands {
         DeliverFood(1),
         GetLastCard(2),
         SetTrustedTag(3),
         ReadWeight(4),
-        TareSensor(5);
+        TareSensor(5),
+        RunConveyors(6),
+        StopConveyors(7);
 
         private int commandId;
 
