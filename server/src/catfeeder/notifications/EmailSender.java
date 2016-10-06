@@ -9,6 +9,9 @@ public class EmailSender implements NotificationSendStrategy {
 
     @Override
     public boolean sendNotification(Notification notification) {
+        if(System.getenv("DEV") != null && System.getenv("DEV").equals("true")) {
+            return true;
+        }
         Email from = new Email("catfeeder@catfeeder.herokuapp.com");
         Email to = new Email(notification.getUser().getEmail());
         Content content = new Content("text/plain", notification.getNotificationBody());
