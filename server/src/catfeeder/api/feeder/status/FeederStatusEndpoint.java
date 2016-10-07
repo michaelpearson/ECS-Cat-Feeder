@@ -35,7 +35,7 @@ public class FeederStatusEndpoint {
             throw new NotFoundException("Could not find the specified cat feeder");
         }
 
-        Dao<FoodRemainingLog, Integer> dao = DatabaseClient.getFoodRemaningLogDao();
+        Dao<FoodRemainingLog, Integer> dao = DatabaseClient.getFoodRemainingLogDao();
         QueryBuilder<FoodRemainingLog, Integer> queryBuilder = dao.queryBuilder();
         queryBuilder.setWhere(queryBuilder.where().eq("feeder_id", feeder));
         queryBuilder.limit(50L);

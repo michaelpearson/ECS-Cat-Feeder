@@ -3,6 +3,7 @@ package catfeeder.api;
 import catfeeder.api.annotations.Insecure;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FeederUserConnection;
+import catfeeder.model.NotificationRegistrations;
 import catfeeder.model.response.catfeeder.CatFeederResponse;
 import catfeeder.util.Passwords;
 import catfeeder.api.annotations.Secured;
@@ -12,6 +13,7 @@ import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.user.UserResponse;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.DatabaseConnection;
 
 import javax.ws.rs.*;
@@ -33,6 +35,16 @@ public class UserEndpoint {
     public UserResponse getProfileInformation() {
         User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         return new UserResponse(u);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/notifications/registerPush")
+    public GeneralResponse saveRegistrationId(@FormParam("registrationId") String registrationId) throws SQLException {
+        User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        Dao<NotificationRegistrations, String> dao = DatabaseClient.getNotificationRegistrationsDao();
+        dao.createOrUpdate(new NotificationRegistrations(registrationId, u));
+        return new GeneralResponse(true);
     }
 
     @POST

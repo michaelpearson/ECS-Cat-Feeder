@@ -293,3 +293,15 @@ function getWeightGraph(feederHardwareId, successCallback, failCallback, finally
         complete : finallyCallback || function () {}
     });
 }
+
+function saveRegistrationId(registrationId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/user/notifications/registerPush', {
+        method : 'post',
+        data : {
+            registrationId : registrationId
+        },
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}

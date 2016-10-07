@@ -1,0 +1,7 @@
+{
+  "name": "ECS Cat feeder",
+  "short_name": "Cat feeder",
+  "start_url": "/admin.html",
+  "display": "standalone",
+  "gcm_sender_id": "1071690412873"
+}

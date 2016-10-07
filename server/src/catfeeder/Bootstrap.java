@@ -1,6 +1,9 @@
 package catfeeder;
 
+import catfeeder.db.DatabaseClient;
 import catfeeder.feeder.CatfeederSocketApplication;
+import catfeeder.model.NotificationRegistrations;
+import catfeeder.util.SendNotificationPush;
 import com.j256.ormlite.logger.LocalLog;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
@@ -12,6 +15,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,8 +55,19 @@ public class Bootstrap {
         server.getServerConfiguration().addHttpHandler(staticHandler);
 
         server.start();
+
+        while(true) {
+            System.in.read();
+            try {
+                NotificationRegistrations registration = DatabaseClient.getNotificationRegistrationsDao().queryForAll().iterator().next();
+                SendNotificationPush.sendNotificationPush(registration);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         //Block forever
-        Thread.currentThread().join();
+        //Thread.currentThread().join();
     }
 
     private static void setupLogging() {

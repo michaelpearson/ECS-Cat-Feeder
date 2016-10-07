@@ -129,7 +129,7 @@ public class CatFeederConnection {
             case "log_weight": {
                 int weight = Math.toIntExact((long) data.get("weight"));
                 FoodRemainingLog entry = new FoodRemainingLog(feeder, new Date(), weight);
-                DatabaseClient.getFoodRemaningLogDao().create(entry);
+                DatabaseClient.getFoodRemainingLogDao().create(entry);
                 break;
             }
             case "log_doors": {
