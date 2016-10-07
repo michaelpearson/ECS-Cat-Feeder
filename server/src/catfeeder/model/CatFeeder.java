@@ -33,7 +33,7 @@ public class CatFeeder {
     private Date lastConnectionAt;
 
     @XmlElement
-    @DatabaseField
+    @DatabaseField(persisterClass = LearnStage.Persister.class)
     private LearnStage learningStage;
 
     @ForeignCollectionField

@@ -102,7 +102,7 @@ public class FeederFunctionsEndpoint {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/learningStage")
-    public GeneralResponse setLearningStage(@PathParam("feederId") int feederId, @FormParam("stage") String learningStage) throws SQLException {
+    public GeneralResponse setLearningStage(@PathParam("feederId") int feederId, @FormParam("stage") int learningStage) throws SQLException {
         User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
         CatFeeder cf = feederDao.queryForId(feederId);
