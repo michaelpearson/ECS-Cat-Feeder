@@ -5,46 +5,52 @@ pages.dashboard = {
     renderCompleteCallback : null,
     logTableEl : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
-        var me = pages.dashboard;
-        me.renderCompleteCallback = renderCompleteCallback;
+        this.renderCompleteCallback = renderCompleteCallback;
         $('#dashboard-page.page').css({
             display : 'block'
         });
-        me.init();
-        getLogOfEvents(app.getCurrentFeederId(), 10, me.displayLog);
+        this.init();
+        getLogOfEvents(app.getCurrentFeederId(), 10, this.displayLog.bind(this));
+        //getFutureEvents(app.getCurrentFeederId(), 10, this.displayUpcoming.bind(this));
+        getWeightGraph(app.getCurrentFeederId(), this.displayWeightGraph.bind(this));
     },
     init : function () {
-        var me = pages.dashboard;
-        if(me.initComplete) {
+        if(this.initComplete) {
             return;
         }
-        me.initComplete = true;
-        me.logTableEl = $('#log-body');
+        this.initComplete = true;
+        this.logTableEl = $('#log-body');
     },
     displayLog : function (log) {
-        var me = pages.dashboard;
-
-        if(me.renderCompleteCallback != null) {
-            me.renderCompleteCallback();
-            me.renderCompleteCallback = null;
+        if(this.renderCompleteCallback != null) {
+            this.renderCompleteCallback();
+            this.renderCompleteCallback = null;
         }
 
         for(var a = 0; a < log.logEntries.length;a++) {
             var date = $('<td>' + moment(log.logEntries[a].eventGeneratedAt).fromNow() + '</td>');
             var type = $('<td>' + log.logEntries[a].eventType + '</td>');
             var number = $('<td>' + log.logEntries[a].eventId + '</td>');
-            var foodType = $('<td>');
-            var amount = $('<td>');
-            switch(log.logEntries[a].eventType) {
-                case 'One off delivery':
-                    foodType.text(log.logEntries[a].event.foodType.name);
-                    amount.text(log.logEntries[a].event.gramAmount + "g");
-                    break;
-            }
             var row = $('<tr>');
-            row.append([number, date, type, foodType, amount]);
-            me.logTableEl.append(row);
-            console.log(log.logEntries[a]);
+            row.append([number, date, type]);
+            this.logTableEl.append(row);
         }
+    },
+    displayWeightGraph : function (data) {
+        $('#morris-area-chart').children().remove();
+        if(data.weights.length == 0) {
+            $('#morris-area-chart').append("<h2 style='margin: 50px 0; text-align: center'>No data available...</h2>");
+            return;
+        }
+        Morris.Area({
+            element: 'morris-area-chart',
+            data: data.weights,
+            resize: true,
+            xkey: 'time',
+            ykeys: ['weight'],
+            labels: ['Remaining food'],
+            pointSize: 2,
+            hideHover: 'auto'
+        });
     }
 };

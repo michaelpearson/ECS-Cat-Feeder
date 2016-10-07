@@ -1,6 +1,7 @@
 package catfeeder.notifications;
 
 import catfeeder.db.DatabaseClient;
+import catfeeder.model.LogEntry;
 import catfeeder.model.Notification;
 import catfeeder.model.User;
 
@@ -12,13 +13,15 @@ public class NotificationBuilderFactory {
         NotificationBuilder setMessageBody(String message);
         NotificationBuilder setMessageSubject(String subject);
         NotificationBuilder setRecipient(User user);
+        NotificationBuilder setLogEntry(LogEntry logEntry);
         Notification build() throws RuntimeException, SQLException;
     }
 
     public static class NotificationBuilderImpl implements NotificationBuilder {
 
-        protected String message, subject;
+        String message, subject;
         protected User user;
+        LogEntry logEntry;
 
         public NotificationBuilder setMessageBody(String message) {
             this.message = message;
@@ -35,8 +38,14 @@ public class NotificationBuilderFactory {
             return this;
         }
 
+        @Override
+        public NotificationBuilder setLogEntry(LogEntry logEntry) {
+            this.logEntry = logEntry;
+            return this;
+        }
+
         public Notification build() throws RuntimeException, SQLException {
-            Notification notification = new Notification(message, user, subject);
+            Notification notification = new Notification(message, user, subject, logEntry);
             DatabaseClient.getNotificationDao().create(notification);
             return notification;
         }

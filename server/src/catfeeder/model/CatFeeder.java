@@ -4,6 +4,7 @@ import catfeeder.db.DatabaseClient;
 import catfeeder.exceptions.FeederNotConnected;
 import catfeeder.feeder.CatFeederConnection;
 import catfeeder.feeder.CatfeederSocketApplication;
+import catfeeder.feeder.EventLogger;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -48,7 +49,7 @@ public class CatFeeder {
     @XmlElement
     private Collection<FoodType> foodTypes;
 
-    @ForeignCollectionField(orderColumnName = "eventGeneratedAt")
+    @ForeignCollectionField(orderColumnName = "eventGeneratedAt", orderAscending = false)
     private Collection<LogEntry> logEntries;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -112,11 +113,7 @@ public class CatFeeder {
         }
         connection.deliverFood(amount, foodType);
 
-        LogEntry entry = new LogEntry();
-        entry.setFeeder(this);
-        entry.setEventGeneratedAt(new Date());
-        entry.setEventType(schedule == null ? LogEntry.EventType.FoodDelivery : LogEntry.EventType.ScheduledFoodDelivery);
-        DatabaseClient.getLogEntryDao().create(entry);
+        LogEntry entry = getEventLogger().logEvent(schedule == null ? LogEntry.EventType.FoodDelivery : LogEntry.EventType.ScheduledFoodDelivery);
 
         if(schedule != null) {
             ScheduledFoodDelivery delivery = new ScheduledFoodDelivery();
@@ -139,6 +136,17 @@ public class CatFeeder {
 
     public boolean deliverFood(int amount, Schedule schedule) throws SQLException, FeederNotConnected {
         return deliverFood(amount, schedule.getFoodType(), schedule);
+    }
+
+    public EventLogger getEventLogger() {
+        return eventType -> {
+            LogEntry entry = new LogEntry();
+            entry.setFeeder(CatFeeder.this);
+            entry.setEventGeneratedAt(new Date());
+            entry.setEventType(eventType);
+            DatabaseClient.getLogEntryDao().create(entry);
+            return entry;
+        };
     }
 
     public boolean deliverFood(int amount, FoodType foodType) throws SQLException, FeederNotConnected {

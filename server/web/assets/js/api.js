@@ -1,6 +1,7 @@
 function addRequestHeader(xhr) {
     xhr.setRequestHeader ("Authorization", "Bearer " + localStorage.getItem("token"));
 }
+
 function successHandler(successCallback, failCallback) {
     return function (response) {
         if(response.success) {
@@ -278,6 +279,15 @@ function runConveyors(feederHardwareId, run, successCallback, failCallback, fina
         data : {
             run : run || false
         },
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}
+
+function getWeightGraph(feederHardwareId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/status/weightGraph', {
+        method : 'get',
         beforeSend : addRequestHeader,
         success : successHandler(successCallback, failCallback),
         complete : finallyCallback || function () {}

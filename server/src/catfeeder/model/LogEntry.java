@@ -8,6 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -36,15 +37,29 @@ public class LogEntry {
     private EventType eventType;
 
     public enum EventType {
-        ScheduledFoodDelivery("Scheduled delivery"),
-        FoodDelivery("One off delivery"),
-        Disconnection("Device disconnected"),
-        Connection("Device connected");
+        ScheduledFoodDelivery(0, "Scheduled delivery"),
+        FoodDelivery(1, "One off delivery"),
+        Disconnection(2, "Device disconnected"),
+        Connection(3, "Device connected"),
+        DoorsOpen(4, "Door opened"),
+        UnauthorizedAccessAttempt(5, "Unauthorized access attempt"),
+        FoodDeliveryTimeout(6, "Delivery timed out"),
+        MaxWeightReached(7, "Maximum weight in bowl reached");
 
         private String jsonString;
+        private int eventId;
 
-        EventType(String value) {
+        EventType(int eventId, String value) {
             this.jsonString = value;
+            this.eventId = eventId;
+        }
+
+        public static EventType fromEventId(int eventId) {
+            return Arrays.stream(values()).filter(e -> e.eventId == eventId).findFirst().orElse(null);
+        }
+
+        public int getEventId() {
+            return eventId;
         }
 
         @JsonValue
@@ -53,13 +68,9 @@ public class LogEntry {
         }
     }
 
-    @XmlElement
+    @XmlElement(name = "information")
     public Object getEvent() {
         switch(eventType) {
-            case Connection:
-                return null;
-            case Disconnection:
-                return null;
             case ScheduledFoodDelivery:
                 return scheduledFoodDeliveries.iterator().next();
             case FoodDelivery:

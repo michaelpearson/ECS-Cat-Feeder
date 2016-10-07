@@ -5,6 +5,7 @@
 #define CHECK_CARD_PERIOD 150
 #define DOOR_OPEN_TIMEOUT 5000
 #define DELIVERY_TIMOUT 60000 //1 Minute
+#define LOG_WEIGHT_PERIOD 10000 //10 seconds for testing!
 
 #define SCALE 0.0006
 
@@ -14,6 +15,8 @@ int lastWeight = 0;
 
 long deliverFoodLastRun = 0;
 long checkCardLastRun = 0;
+long lastLogRun = 0;
+
 long doorsOpenAt = 0;
 bool deliveringFood = false;
 long startedDeliveringAt = 0;
@@ -34,6 +37,10 @@ void catFeederLoop() {
   if (millis() - checkCardLastRun > CHECK_CARD_PERIOD) {
     checkCard();
     checkCardLastRun = millis();
+  }
+  if(millis() - lastLogRun > LOG_WEIGHT_PERIOD) {
+    sendLogWeightCommand(getWeight());
+    lastLogRun = millis();
   }
 }
 
@@ -56,6 +63,9 @@ void checkCard() {
       doorsOpenAt = millis();
       Serial.println("Opening doors");
       openDoors(true);
+      logAccess(true);
+    } else {
+      logAccess(false);
     }
   }
   if (doorsOpenAt != 0 && millis() - doorsOpenAt > DOOR_OPEN_TIMEOUT) {
