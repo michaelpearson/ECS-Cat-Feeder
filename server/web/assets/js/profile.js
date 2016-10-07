@@ -18,8 +18,28 @@ pages.profile = {
     initPage : function () {
         getProfileInformation(function (response) {
             this.passwordElement.val("");
-            this.emailElement.val(response.email);
-            this.nameElement.val(response.name);
+            this.emailElement.val(response.user.email);
+            this.nameElement.val(response.user.name);
+            var notificationTypes = response.user.preferredNotificationTypes;
+
+
+            var elements = $('.notification-checkbox');
+            var email = elements[0];
+            var browser = elements[1];
+
+            notificationTypes.forEach(el => {
+                switch(el) {
+                    default:
+                    case 0:
+                        console.log(email);
+                        email.checked = true;
+                        break;
+                    case 1:
+                        browser.checked = true;
+                        break;
+                }
+            });
+
         }.bind(this), function (response) {
             console.error("There was an error getting profile information; " + response.message);
         }, function () {
@@ -59,9 +79,16 @@ pages.profile = {
     },
     saveNotificationSettings : function () {
         var elements = $('.notification-checkbox');
-        var email = elements[0].checked;
-        var browser = elements[1].checked;
-
+        var types = [];
+        //Email -> 0
+        if(elements[0].checked) {
+            types.push(0);
+        }
+        //Browser -> 1
+        if(elements[1].checked) {
+            types.push(1);
+        }
+        saveNotificationPreferences(types);
     },
     doesHaveNotificationPermissions : function () {
         return (window.Notification || {}).permission === 'granted';

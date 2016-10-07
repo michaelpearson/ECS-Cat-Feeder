@@ -22,4 +22,8 @@ public class NotificationRegistrations {
     public String getRegistrationId() {
         return registrationId;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

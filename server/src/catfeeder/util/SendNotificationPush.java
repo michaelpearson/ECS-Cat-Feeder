@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class SendNotificationPush {
 
@@ -21,16 +22,17 @@ public class SendNotificationPush {
         }
     }
 
-    public static void sendNotificationPush(NotificationRegistrations registration) throws IOException {
+    public static void sendNotificationPush(List<NotificationRegistrations> registrations) throws IOException {
         HttpURLConnection connection = (HttpURLConnection)GMS_URL.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Authorization", String.format("key= %s", System.getenv("GCM_API_KEY")));
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
-
         JSONObject payload = new JSONObject();
         JSONArray registrationIds = new JSONArray();
-        registrationIds.add(registration.getRegistrationId());
+        for(NotificationRegistrations registration : registrations) {
+            registrationIds.add(registration.getRegistrationId());
+        }
         payload.put("registration_ids", registrationIds);
         byte[] payloadBytes = payload.toJSONString().getBytes();
         connection.setRequestProperty("Content-Length", String.format("%d", payloadBytes.length));

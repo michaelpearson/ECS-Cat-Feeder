@@ -1,8 +1,10 @@
 package catfeeder.model;
 
+import catfeeder.notifications.ChromeNotificationSender;
 import catfeeder.notifications.EmailSender;
 import catfeeder.notifications.NotificationSendStrategy;
 import catfeeder.util.Passwords;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -13,6 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,16 +25,28 @@ import java.util.stream.Collectors;
 public class User {
 
     public enum NotificationType {
-        EMAIL(new EmailSender());
+        EMAIL(new EmailSender(), 0),
+        BROWSER(new ChromeNotificationSender(), 1);
 
         private final NotificationSendStrategy sendStrategy;
+        private final int id;
 
-        NotificationType(NotificationSendStrategy strategy) {
+        NotificationType(NotificationSendStrategy strategy, int id) {
             this.sendStrategy = strategy;
+            this.id = id;
         }
 
         public NotificationSendStrategy getSendStrategy() {
             return sendStrategy;
+        }
+
+        @JsonValue
+        public int getValue() {
+            return id;
+        }
+
+        public static NotificationType fromId(int type) {
+            return Arrays.stream(values()).filter(nt -> nt.id == type).findFirst().orElse(EMAIL);
         }
     }
 
@@ -107,5 +122,9 @@ public class User {
             return;
         }
         preferredNotificationTypes.add(notificationType);
+    }
+
+    public void removeAllNotificationMethods() {
+        preferredNotificationTypes.clear();
     }
 }

@@ -56,18 +56,8 @@ public class Bootstrap {
 
         server.start();
 
-        while(true) {
-            System.in.read();
-            try {
-                NotificationRegistrations registration = DatabaseClient.getNotificationRegistrationsDao().queryForAll().iterator().next();
-                SendNotificationPush.sendNotificationPush(registration);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
         //Block forever
-        //Thread.currentThread().join();
+        Thread.currentThread().join();
     }
 
     private static void setupLogging() {

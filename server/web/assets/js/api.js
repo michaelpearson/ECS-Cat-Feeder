@@ -305,3 +305,15 @@ function saveRegistrationId(registrationId, successCallback, failCallback, final
         complete : finallyCallback || function () {}
     });
 }
+
+function saveNotificationPreferences(types, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/user/notifications/savePreferences', {
+        method : 'post',
+        data : {
+            types : types || []
+        },
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}
