@@ -3,12 +3,13 @@
         <script src="assets/lib/js/jquery-2.2.3.js"></script>
         <script type="application/javascript">
              var DeliverFood = 1,
-             GetLastCard = 2,
-             SetTrustedTag = 3,
-             ReadWeight = 4,
-             TareSensor = 5,
-             RunConveyors = 6,
-             StopConveyors = 7;
+                     GetLastCard = 2,
+                     SetTrustedTag = 3,
+                     ReadWeight = 4,
+                     TareSensor = 5,
+                     RunConveyors = 6,
+                     StopConveyors = 7,
+                     SetLearningMode = 8;
             $(function () {
                 var socketOpen = false;
                 var socket = new WebSocket("ws://127.0.0.1:8080/ws");

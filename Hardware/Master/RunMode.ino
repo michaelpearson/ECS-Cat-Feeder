@@ -11,6 +11,7 @@
 #define COMMAND_TARE                  5
 #define COMMAND_RUN_CONVEYOR          6
 #define COMMAND_STOP_CONVEYOR         7
+#define COMMAND_SET_LEARNING_MODE     8
 
 WebSocketsClient socket;
 
@@ -137,6 +138,13 @@ void executeInstruction(JsonObject& payload) {
     {
       Serial.println("Stopping");
       stopAllConveyers();
+      break;
+    }
+    case COMMAND_SET_LEARNING_MODE:
+    {
+      int mode = (int)payload["mode"];
+      Serial.printf("Setting mode: %d\n", mode);
+      setLearningMode(mode);
       break;
     }
 

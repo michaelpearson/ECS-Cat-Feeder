@@ -1,11 +1,7 @@
 package catfeeder.feeder;
 
 import catfeeder.db.DatabaseClient;
-import catfeeder.model.CatFeeder;
-import catfeeder.model.FoodType;
-import catfeeder.model.ScheduledItem;
-import catfeeder.model.Tag;
-import catfeeder.model.CardInfo;
+import catfeeder.model.*;
 import catfeeder.notifications.NotificationService;
 import com.j256.ormlite.dao.Dao;
 import org.glassfish.grizzly.websockets.WebSocket;
@@ -48,7 +44,8 @@ public class CatFeederConnection {
         ReadWeight(4),
         TareSensor(5),
         RunConveyors(6),
-        StopConveyors(7);
+        StopConveyors(7),
+        SetMode(8);
 
         private int commandId;
 
@@ -71,6 +68,7 @@ public class CatFeederConnection {
             notificationService = new NotificationService(feeder);
             notificationService.sendNotification("Catfeeder connected!", NOTIFICATION_SUBJECT);
             System.out.println("Connected to feeder: " + feeder);
+            setMode(feeder.getLearningStage());
         } catch (SQLException e) {
             e.printStackTrace();
             socket.close();
@@ -88,6 +86,15 @@ public class CatFeederConnection {
             synchronized (messageLock) {
                 messageLock.notify();
             }
+        }
+    }
+
+    private synchronized JSONObject waitForMessage() throws InterruptedException {
+        synchronized (messageLock) {
+            messageLock.wait(5000);
+            JSONObject message = lastMessage;
+            lastMessage = null;
+            return message;
         }
     }
 
@@ -109,16 +116,6 @@ public class CatFeederConnection {
                 throw new RuntimeException("Unknown command");
         }
     }
-
-    private synchronized JSONObject waitForMessage() throws InterruptedException {
-        synchronized (messageLock) {
-            messageLock.wait(5000);
-            JSONObject message = lastMessage;
-            lastMessage = null;
-            return message;
-        }
-    }
-
 
     public synchronized void deliverFood(int gramAmount, FoodType foodType) {
         JSONObject payload = new JSONObject();
@@ -164,6 +161,19 @@ public class CatFeederConnection {
         return (int)(long)response.get("weight");
     }
 
+    public synchronized void tare() {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.TareSensor.getCommandId());
+        socket.send(payload.toJSONString());
+    }
+
+    public synchronized void setMode(LearnStage mode) {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.SetMode.getCommandId());
+        payload.put("mode", mode.getStageId());
+        socket.send(payload.toJSONString());
+    }
+
     public void updateAlarm() throws SQLException {
         calendar.setTime(new Date());
         scheduleManager = new ScheduleManager(DatabaseClient.getScheduleDao(), feeder);
@@ -179,12 +189,6 @@ public class CatFeederConnection {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
         AlarmManager.registerAlarm(calendar.getTime(), this::alarm);
-    }
-
-    public synchronized void tare() {
-        JSONObject payload = new JSONObject();
-        payload.put("command", Commands.TareSensor.getCommandId());
-        socket.send(payload.toJSONString());
     }
 
     private synchronized void alarm() {

@@ -109,9 +109,13 @@ public class FeederFunctionsEndpoint {
         if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
             throw new NotFoundException();
         }
-        cf.setLearningStage(LearnStage.getLearnStage(learningStage));
+        LearnStage stage = LearnStage.getLearnStage(learningStage);
+        cf.setLearningStage(stage);
         feederDao.update(cf);
-
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(cf.getHardwareId());
+        if(connection != null) {
+            connection.setMode(stage);
+        }
         return new GeneralResponse(true);
     }
 
