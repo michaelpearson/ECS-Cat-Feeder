@@ -4,10 +4,14 @@ pages.schedule = {
     highlightedDay : null,
     rendered : false,
     pageArguments : null,
+    schedulePanel : null,
+    isFirstRender : true,
     renderPage : function (pageArguments, renderCompleteCallback) {
         var me = pages.schedule;
         me.pageArguments = pageArguments;
         me.renderCompleteCallback = renderCompleteCallback;
+
+        me.initControls();
 
         if(pageArguments.date) {
             me.renderSchedulePage({startDate : moment(pageArguments.date)});
@@ -16,14 +20,16 @@ pages.schedule = {
         } else {
             me.renderCalendarPage();
         }
-
-        me.initControls();
     },
     renderCalendarPage : function () {
         $('#schedule-page.page').css({
             display : 'block'
         });
         $('.fc-today-button').click();
+        if(!this.isFirstRender) {
+            this.schedulePanel.fullCalendar('refetchEvents');
+        }
+        this.isFirstRender = false;
     },
     renderSchedulePageFromId : function (id) {
         var me = pages.schedule;
@@ -59,7 +65,7 @@ pages.schedule = {
         $('#schedule-days-of-week').find('input[type=checkbox]').each(function (index, element) {
             element.checked = data.daysOfWeek[index];
         });
-        console.log(moment(data.startDate));
+
         $('#schedule-start-date').val(moment(data.startDate).format("YYYY-MM-DDTHH:mm:ss"));
         $('#schedule-end-date').val(moment(data.endDate || '').format("YYYY-MM-DDTHH:mm:ss"));
 
@@ -78,20 +84,21 @@ pages.schedule = {
 
         foodTypeEl.val((data.foodType || {}).id);
         $('#schedule-notes').val(data.notes);
+
+        this.renderCompleteCallback();
     },
     initControls : function () {
-        var me = pages.schedule;
-        if(me.rendered) {
+        if(this.rendered) {
             return;
         }
-        me.rendered = true;
+        this.rendered = true;
 
-        var schedulePanel = $('.schedule-panel');
+        this.schedulePanel = $('.schedule-panel');
 
-        schedulePanel.fullCalendar({
-            events: me.getEvents,
-            eventClick : me.eventClick,
-            dayClick : me.dayClick
+        this.schedulePanel.fullCalendar({
+            events: this.getEvents,
+            eventClick : this.eventClick,
+            dayClick : this.dayClick
         });
 
         var scheduleAmountIndicator = $('#schedule-amount-indicator');
@@ -101,23 +108,23 @@ pages.schedule = {
             scheduleAmountIndicator.text(scheduleAmount.val() + ' grams');
         }).trigger('input');
 
-        $('#schedule-add-new-event').click(me.saveSchedule);
-        $('#schedule-update-event').click(me.updateSchedule);
+        $('#schedule-add-new-event').click(this.saveSchedule);
+        $('#schedule-update-event').click(this.updateSchedule);
         $('#schedule-cancel-event').click(function () {
             window.location.hash = "#/schedule";
         });
         $('#schedule-delete-event').click(function () {
-            deleteScheduledFoodDelivery(me.pageArguments.id, function () {
+            deleteScheduledFoodDelivery(this.pageArguments.id, function () {
                 window.location.hash = "#/schedule";
-                schedulePanel.fullCalendar('refetchEvents');
-            });
-        });
+                this.schedulePanel.fullCalendar('refetchEvents');
+            }.bind(this));
+        }.bind(this));
 
         $(document).click(function (event) {
-            if(!$.contains(schedulePanel[0], event.toElement)) {
-                me.highlightDay(null);
+            if(!$.contains(this.schedulePanel[0], event.toElement)) {
+                this.highlightDay(null);
             }
-        });
+        }.bind(this));
     },
     updateSchedule : function () {
         var me = pages.schedule;
