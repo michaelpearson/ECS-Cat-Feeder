@@ -239,7 +239,28 @@ function sendTestEmail(successCallback, failCallback, finallyCallback) {
         complete : finallyCallback || function () {}
     });
 }
-function setMaxFoodAmount(feederHardwareId, maxFoodAmount, successCallback, failCallback, finallyCallback) {
+
+function setLearningStage(feederHardwareId, learningStage, successCallback, failCallback, finallyCallback){
+    return $.ajax('/api/feeder/' + feederHardwareId + '/learningStage', {
+        method : 'post',
+        data : {
+            stage : learningStage
+        },
+        beforeSend : addRequestHeader,
+        success : function (response) {
+            if(response.success) {
+                if(successCallback) {
+                    successCallback(response);
+                }
+            } else {
+                if(failCallback) {
+                    failCallback(response);
+                }
+            }
+        },
+        complete : finallyCallback || function () {}
+    });
+}function setMaxFoodAmount(feederHardwareId, maxFoodAmount, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/' + feederHardwareId + '/foodLimit', {
         method : 'post',
         data : {

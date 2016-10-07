@@ -6,15 +6,9 @@ void setupServos() {
   door2.attach(9);
 }
 
-void openDoors(bool open) {
-  Serial.print("Opening doors: ");
-  Serial.println(open ? "true" : "false");
-  if(open) {
-    door1.write(0);
-    door2.write(180);
-  } else {
-    door1.write(180);
-    door2.write(0);
-  }
+void openDoors(int position) {
+  Serial.printf("Opening doors to: %d\n", position);
+  door1.write(position);
+  door2.write(180 - position);
 }
 

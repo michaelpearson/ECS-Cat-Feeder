@@ -30,7 +30,7 @@ void receiveEvent(int howMany) {
       break;
     //Open the doors
     case 0x03:
-      openDoors(Wire.read() > 0);
+      openDoors(Wire.read());
       break;
   }
 }

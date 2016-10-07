@@ -1,6 +1,6 @@
 var pages = window.pages || {};
 pages.settings = {
-    editFoodTemplate : '<div class="col-lg-8 col-md-12">\n    <div class="form-horizontal">\n        <hr/>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Name</label>\n            <div class="col-sm-10">\n                <input class="form-control settings-food-name" type="text" />\n            </div>\n        </div>\n        <div class="form-group">\n            <label class="col-sm-2 control-label">Default Delivery Amount</label>\n            <div class="col-sm-10">\n                <input class="settings-food-default" type="range" value="" min="1" max="500" style="margin-top: 7px;">\n                <p class="settings-food-indicator"></p>\n            </div>\n        </div>\n        <div class="form-group">\n            <div class="col-sm-offset-2 col-sm-10">\n                <button type="submit" class="btn btn-default settings-food-update">Update</button>\n            </div>       \n        </div>\n    </div>\n</div>',
+    editFoodTemplate : '<div class="form-horizontal">\n    <hr/>\n    <div class="form-group">\n        <label class="col-sm-2 control-label">Name</label>\n        <div class="col-sm-10">\n            <input class="form-control settings-food-name" type="text" />\n        </div>\n    </div>\n    <div class="form-group">\n        <label class="col-sm-2 control-label">Default Delivery Amount</label>\n        <div class="col-sm-10">\n            <input class="settings-food-default" type="range" value="" min="1" max="500" style="margin-top: 7px;">\n            <p class="settings-food-indicator"></p>\n        </div>\n    </div>\n    <div class="form-group">\n        <div class="col-sm-offset-2 col-sm-10">\n            <button type="submit" class="btn btn-default settings-food-update">Update</button>\n        </div>       \n    </div>\n</div>',
     init : false,
     knownTags : [],
     renderCompleteCallback : null,
@@ -51,8 +51,7 @@ pages.settings = {
         );
     },
     renderTagElements : function (tags) {
-        var me = pages.settings;
-        me.knownTags = tags;
+        this.knownTags = tags;
         var tagListEl = $('.settings-tag-list');
 
         tagListEl.children().remove();
@@ -62,6 +61,24 @@ pages.settings = {
             el.text(tags[a].tagName);
             tagListEl.append(el);
         }
+
+        var stage = app.getFeederInfo().learningStage;
+        switch(stage) {
+            case 'STAGE_ONE':
+                stage = 1;
+                break;
+            case 'STAGE_TWO':
+                stage = 2;
+                break;
+            case 'STAGE_THREE':
+                stage = 3;
+                break;
+            default:
+                stage = 0;
+                break;
+        }
+        $('.settings-learning-form input[value=' + stage + ']').prop('checked', 'true');
+
     },
     initControls : function () {
         var me = this;
@@ -79,6 +96,7 @@ pages.settings = {
             var maxAmount = parseInt(me.maxFoodSlider.val());
             setMaxFoodAmount(app.getCurrentFeederId(), maxAmount, app.invalidateFeederInfo);
         });
+        $('.settings-learning-form input').click(me.selectLearningStage.bind(this));
     },
     updateFood : function (element) {
         var id = element.id;
@@ -86,10 +104,22 @@ pages.settings = {
         var amount = element.amount.val();
         updateFoodType(id, amount, name, app.invalidateFeederInfo);
     },
-    forgetTag : function(tag){
+    forgetTag : function(tag) {
         var me = pages.settings;
         var id = $('.settings-tag-list').val();
         deleteTag(app.getCurrentFeederId(), id, me.updateTagList);
         this.updateTagList();
     },
+    selectLearningStage : function() {
+        var stage = parseInt($('.settings-learning-form input:checked').val());
+
+        setLearningStage(app.getCurrentFeederId(), stage,
+            function(data){
+                console.log(data);
+            },
+            function(err){
+                console.log(err);
+            }
+        );
+    }
 };

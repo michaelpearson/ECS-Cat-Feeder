@@ -18,10 +18,16 @@ long doorsOpenAt = 0;
 bool deliveringFood = false;
 long startedDeliveringAt = 0;
 
+int learningMode = 0;
+
 Q2HX711 scale(0, 5);
 
+void setLearningMode(int mode) {
+  learningMode = mode;
+}
+
 void catFeederLoop() {
-  if (millis() - deliverFoodLastRun M> DELIVER_FOOD_PERIOD) {
+  if (millis() - deliverFoodLastRun > DELIVER_FOOD_PERIOD) {
     deliverFoodLoop();
     deliverFoodLastRun = millis();
   }
@@ -148,9 +154,24 @@ void getCardInfo(uint32_t * cardId, bool * isPresent) {
 }
 
 void openDoors(bool open) {
+  int position = 0;
+
+  switch (learningMode) {
+    case 0:
+    default:
+      position = open ? 180 : 0;
+      break;
+    case 1:
+      position = open ? 180 : 170;
+      break;
+    case 2:
+      position = open ? 180 : 120;
+      break;
+  }
+
   Wire.beginTransmission(8);
   Wire.write(0x03);
-  Wire.write(open ? 0x01 : 0x00);
+  Wire.write(position);
   Wire.endTransmission();
 }
 

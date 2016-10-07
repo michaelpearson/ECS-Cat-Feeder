@@ -8,6 +8,7 @@ import catfeeder.feeder.CatfeederSocketApplication;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FoodType;
 import catfeeder.model.User;
+import catfeeder.model.LearnStage;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.status.WeightResponse;
 import com.j256.ormlite.dao.Dao;
@@ -96,6 +97,26 @@ public class FeederFunctionsEndpoint {
             return new GeneralResponse(true);
         }
         return new GeneralResponse(false);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/learningStage")
+    public GeneralResponse setLearningStage(@PathParam("feederId") int feederId, @FormParam("stage") int learningStage) throws SQLException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
+        CatFeeder cf = feederDao.queryForId(feederId);
+        if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
+            throw new NotFoundException();
+        }
+        LearnStage stage = LearnStage.getLearnStage(learningStage);
+        cf.setLearningStage(stage);
+        feederDao.update(cf);
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(cf.getHardwareId());
+        if(connection != null) {
+            connection.setMode(stage);
+        }
+        return new GeneralResponse(true);
     }
 
     @POST
