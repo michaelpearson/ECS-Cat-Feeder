@@ -12,7 +12,7 @@
                      SetLearningMode = 8;
             $(function () {
                 var socketOpen = false;
-                var socket = new WebSocket("ws://127.0.0.1:8080/ws");
+                var socket = new WebSocket("ws://" + document.location.host + "/ws");
                 socket.onopen = function () {
                     socketOpen = true;
                     socket.send(JSON.stringify({deviceId : 9240906}));
@@ -37,6 +37,9 @@
                             console.log(payload);
                     }
                 };
+                socket.onclose = function () {
+                    console.log("socket closed");
+                }
                 $('#notification-1').click(function () {
                     socket.send(JSON.stringify({
                         command : "max_food_notification"
@@ -45,7 +48,8 @@
 
                 $('#notification-2').click(function () {
                     socket.send(JSON.stringify({
-                        command : "food_timeout_notification"
+                        command : "food_timeout_notification",
+                        food_index : 0
                     }));
                 });
 
@@ -53,6 +57,20 @@
                     socket.send(JSON.stringify({
                         command : "log_weight",
                         weight : parseInt(Math.random() * 100) + 1
+                    }));
+                });
+
+                $('#notification-4').click(function () {
+                    socket.send(JSON.stringify({
+                        command : "log_doors",
+                        access : true
+                    }));
+                });
+
+                $('#notification-5').click(function () {
+                    socket.send(JSON.stringify({
+                        command : "log_doors",
+                        access : false
                     }));
                 });
 
@@ -73,6 +91,12 @@
         </div>
         <div>
             <button id="notification-3">Log weight</button>
+        </div>
+        <div>
+            <button id="notification-4">Log valid access</button>
+        </div>
+        <div>
+            <button id="notification-5">Log in-valid access</button>
         </div>
     </body>
 </html>

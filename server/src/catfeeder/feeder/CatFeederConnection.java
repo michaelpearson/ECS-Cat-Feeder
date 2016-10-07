@@ -27,7 +27,12 @@ public class CatFeederConnection {
     }
 
     public void disconnected() {
-        notificationService.sendNotification("Catfeeder disconnected!", NOTIFICATION_SUBJECT);
+        try {
+            LogEntry event = feeder.getEventLogger().logEvent(LogEntry.EventType.Disconnection);
+            notificationService.sendNotification("Catfeeder disconnected!", NOTIFICATION_SUBJECT, event);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void run(boolean run) {
@@ -65,8 +70,9 @@ public class CatFeederConnection {
         try {
             Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
             feeder = feederDao.queryForId(catFeederId);
+            LogEntry event = feeder.getEventLogger().logEvent(LogEntry.EventType.Connection);
             notificationService = new NotificationService(feeder);
-            notificationService.sendNotification("Catfeeder connected!", NOTIFICATION_SUBJECT);
+            notificationService.sendNotification("Catfeeder connected!", NOTIFICATION_SUBJECT, event);
             System.out.println("Connected to feeder: " + feeder);
             setMode(feeder.getLearningStage());
         } catch (SQLException e) {
@@ -80,7 +86,11 @@ public class CatFeederConnection {
     void onMessage(JSONObject data) {
         System.out.println("Got message: " + data);
         if(data.containsKey("command")) {
-            handleCommand(data);
+            try {
+                handleCommand(data);
+            } catch(SQLException e) {
+                e.printStackTrace();
+            }
         } else {
             lastMessage = data;
             synchronized (messageLock) {
@@ -98,27 +108,35 @@ public class CatFeederConnection {
         }
     }
 
-    private void handleCommand(JSONObject data) {
+    private void handleCommand(JSONObject data) throws SQLException {
         switch((String)data.get("command")) {
-            case "max_food_notification":
-                notificationService.sendNotification("The maximum amount of food in the bowl has been reached", NOTIFICATION_SUBJECT);
+            case "max_food_notification": {
+                LogEntry event = feeder.getEventLogger().logEvent(LogEntry.EventType.MaxWeightReached);
+                notificationService.sendNotification("The maximum amount of food in the bowl has been reached", NOTIFICATION_SUBJECT, event);
                 break;
-            case "food_timeout_notification":
-                long index = (long)data.get("food_index");
+            }
+            case "food_timeout_notification": {
+                long index = (long) data.get("food_index");
                 FoodType foodType = feeder.getFoodTypes().stream().filter(ft -> ft.getFoodIndex() == index).findFirst().orElse(null);
                 String foodName = "unknown";
-                if(foodType != null) {
+                if (foodType != null) {
                     foodName = foodType.getName();
                 }
-                notificationService.sendNotification("The feeder timed out while delivering " + foodName, NOTIFICATION_SUBJECT);
+                LogEntry event = feeder.getEventLogger().logEvent(LogEntry.EventType.FoodDeliveryTimeout);
+                notificationService.sendNotification("The feeder timed out while delivering " + foodName, NOTIFICATION_SUBJECT, event);
                 break;
-            case "log_weight":
-                int weight = Math.toIntExact((long)data.get("weight"));
+            }
+            case "log_weight": {
+                int weight = Math.toIntExact((long) data.get("weight"));
                 FoodRemainingLog entry = new FoodRemainingLog(feeder, new Date(), weight);
-                try {
-                    DatabaseClient.getFoodRemaningLogDao().create(entry);
-                } catch (SQLException ignore) {ignore.printStackTrace();} //Lets hope this doesn't happen. :) 🤞
+                DatabaseClient.getFoodRemaningLogDao().create(entry);
                 break;
+            }
+            case "log_doors": {
+                LogEntry.EventType type = (boolean)data.get("access") ? LogEntry.EventType.DoorsOpen : LogEntry.EventType.UnauthorizedAccessAttempt;
+                feeder.getEventLogger().logEvent(type);
+                break;
+            }
             default:
                 throw new RuntimeException("Unknown command");
         }

@@ -13,10 +13,18 @@ public class LogEntryResponse extends GeneralResponse {
     @XmlElement
     private List<LogEntry> logEntries;
 
+    @XmlElement
+    private int totalSize;
+
+    @XmlElement
+    private int offset;
+
     public LogEntryResponse() {}
 
-    public LogEntryResponse(List<LogEntry> logEntries) {
+    public LogEntryResponse(List<LogEntry> logEntries, int totalSize, int offset) {
         this.logEntries = logEntries;
+        this.totalSize = totalSize;
+        this.offset = offset;
         this.success = true;
     }
 

@@ -38,15 +38,20 @@ public class Notification {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     protected User user;
 
+    @XmlElement
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private LogEntry logEntry;
+
     public Notification() {}
 
-    public Notification(String notificationBody, User user, String subject) {
+    public Notification(String notificationBody, User user, String subject, LogEntry logEntry) {
         this.notificationBody = notificationBody;
         this.user = user;
         this.subject = subject;
         this.date = new Date();
         this.sent = false;
         this.seen = false;
+        this.logEntry = logEntry;
     }
 
 

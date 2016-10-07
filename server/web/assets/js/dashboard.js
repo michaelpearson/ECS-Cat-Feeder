@@ -12,7 +12,6 @@ pages.dashboard = {
         this.init();
         getLogOfEvents(app.getCurrentFeederId(), 10, this.displayLog.bind(this));
         //getFutureEvents(app.getCurrentFeederId(), 10, this.displayUpcoming.bind(this));
-        //getActivitySummary(app.getCurrentFeederId(), this.displayActivity.bind(this));
         getWeightGraph(app.getCurrentFeederId(), this.displayWeightGraph.bind(this));
     },
     init : function () {
@@ -32,21 +31,17 @@ pages.dashboard = {
             var date = $('<td>' + moment(log.logEntries[a].eventGeneratedAt).fromNow() + '</td>');
             var type = $('<td>' + log.logEntries[a].eventType + '</td>');
             var number = $('<td>' + log.logEntries[a].eventId + '</td>');
-            var foodType = $('<td>');
-            var amount = $('<td>');
-            switch(log.logEntries[a].eventType) {
-                case 'One off delivery':
-                    foodType.text(log.logEntries[a].event.foodType.name);
-                    amount.text(log.logEntries[a].event.gramAmount + "g");
-                    break;
-            }
             var row = $('<tr>');
-            row.append([number, date, type, foodType, amount]);
+            row.append([number, date, type]);
             this.logTableEl.append(row);
         }
     },
     displayWeightGraph : function (data) {
         $('#morris-area-chart').children().remove();
+        if(data.weights.length == 0) {
+            $('#morris-area-chart').append("<h2 style='margin: 50px 0; text-align: center'>No data available...</h2>");
+            return;
+        }
         Morris.Area({
             element: 'morris-area-chart',
             data: data.weights,

@@ -63,6 +63,9 @@ void checkCard() {
       doorsOpenAt = millis();
       Serial.println("Opening doors");
       openDoors(true);
+      logAccess(true);
+    } else {
+      logAccess(false);
     }
   }
   if (doorsOpenAt != 0 && millis() - doorsOpenAt > DOOR_OPEN_TIMEOUT) {

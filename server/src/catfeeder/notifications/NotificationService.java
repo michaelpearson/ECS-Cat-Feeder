@@ -1,6 +1,7 @@
 package catfeeder.notifications;
 
 import catfeeder.model.CatFeeder;
+import catfeeder.model.LogEntry;
 import catfeeder.model.Notification;
 import catfeeder.model.User;
 
@@ -14,12 +15,13 @@ public class NotificationService {
         this.feeder = feeder;
     }
 
-    public void sendNotification(String message, String subject) {
+    public void sendNotification(String message, String subject, LogEntry logEntry) {
         feeder.getOwners().stream().forEach(owner -> {
             try {
                 Notification n =  NotificationBuilderFactory.getInstance()
                         .setMessageBody(message)
                         .setMessageSubject(subject)
+                        .setLogEntry(logEntry)
                         .setRecipient(owner.getUser())
                         .build();
                 dispatchNotification(n);
