@@ -12,7 +12,8 @@
                      SetLearningMode = 8;
             $(function () {
                 var socketOpen = false;
-                var socket = new WebSocket("ws://" + document.location.host + "/ws");
+                var protocol = document.location.protocol.startsWith("https") ? "wss://" : "ws://";
+                var socket = new WebSocket(protocol + document.location.host + "/ws");
                 socket.onopen = function () {
                     socketOpen = true;
                     socket.send(JSON.stringify({deviceId : 9240906}));
