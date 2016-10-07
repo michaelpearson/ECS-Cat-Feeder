@@ -13,7 +13,7 @@ pages.dashboard = {
         getLogOfEvents(app.getCurrentFeederId(), 10, this.displayLog.bind(this));
         //getFutureEvents(app.getCurrentFeederId(), 10, this.displayUpcoming.bind(this));
         //getActivitySummary(app.getCurrentFeederId(), this.displayActivity.bind(this));
-        //getWeightGraph(app.getCurrentFeederId(), this.displayWeightGraph.bind(this));
+        getWeightGraph(app.getCurrentFeederId(), this.displayWeightGraph.bind(this));
     },
     init : function () {
         if(this.initComplete) {
@@ -44,5 +44,18 @@ pages.dashboard = {
             row.append([number, date, type, foodType, amount]);
             this.logTableEl.append(row);
         }
+    },
+    displayWeightGraph : function (data) {
+        $('#morris-area-chart').children().remove();
+        Morris.Area({
+            element: 'morris-area-chart',
+            data: data.weights,
+            resize: true,
+            xkey: 'time',
+            ykeys: ['weight'],
+            labels: ['Remaining food'],
+            pointSize: 2,
+            hideHover: 'auto'
+        });
     }
 };
