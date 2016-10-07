@@ -170,3 +170,13 @@ void sendTimeoutNotification(int foodIndex) {
   socket.sendTXT(buff);
 }
 
+void sendLogWeightCommand(int weight) {
+  StaticJsonBuffer<50> jsonBuffer;
+  char buff[50];
+  JsonObject&  root = jsonBuffer.createObject();
+  root["command"] = "log_weight";
+  root["weight"] = weight;
+  root.printTo(buff, sizeof(buff));
+  socket.sendTXT(buff);
+}
+

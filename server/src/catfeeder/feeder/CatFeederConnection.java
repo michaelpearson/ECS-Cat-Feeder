@@ -112,6 +112,13 @@ public class CatFeederConnection {
                 }
                 notificationService.sendNotification("The feeder timed out while delivering " + foodName, NOTIFICATION_SUBJECT);
                 break;
+            case "log_weight":
+                int weight = Math.toIntExact((long)data.get("weight"));
+                FoodRemainingLog entry = new FoodRemainingLog(feeder, new Date(), weight);
+                try {
+                    DatabaseClient.getFoodRemaningLogDao().create(entry);
+                } catch (SQLException ignore) {ignore.printStackTrace();} //Lets hope this doesn't happen. :) 🤞
+                break;
             default:
                 throw new RuntimeException("Unknown command");
         }

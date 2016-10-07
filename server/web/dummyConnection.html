@@ -37,17 +37,42 @@
                             console.log(payload);
                     }
                 };
-                $('#send-notification-button').click(function () {
-                    if(!socketOpen)
-                        return;
+                $('#notification-1').click(function () {
                     socket.send(JSON.stringify({
                         command : "max_food_notification"
                     }));
                 });
-            })
+
+                $('#notification-2').click(function () {
+                    socket.send(JSON.stringify({
+                        command : "food_timeout_notification"
+                    }));
+                });
+
+                $('#notification-3').click(function () {
+                    socket.send(JSON.stringify({
+                        command : "log_weight",
+                        weight : parseInt(Math.random() * 100) + 1
+                    }));
+                });
+
+            });
         </script>
+        <style>
+            body > div {
+                margin-bottom: 30px;
+            }
+        </style>
     </head>
     <body>
-        <button id="send-notification-button">Send Notification</button>
+        <div>
+            <button id="notification-1">Max Food</button>
+        </div>
+        <div>
+            <button id="notification-2">Timeout</button>
+        </div>
+        <div>
+            <button id="notification-3">Log weight</button>
+        </div>
     </body>
 </html>
