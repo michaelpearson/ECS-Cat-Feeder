@@ -1,8 +1,7 @@
 var pages = window.pages || {};
 pages.activity = {
-    renderCompleteCallback : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
-        this.renderCompleteCallback = renderCompleteCallback;
+        renderCompleteCallback();
         $('#activity-page.page').css({
             display : 'block'
         });

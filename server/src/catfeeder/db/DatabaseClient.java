@@ -1,7 +1,7 @@
 package catfeeder.db;
 
-import catfeeder.util.Passwords;
 import catfeeder.model.*;
+import catfeeder.util.Passwords;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -41,6 +41,7 @@ public class DatabaseClient {
                 TableUtils.createTable(connectionSource, FeederUserConnection.class);
                 TableUtils.createTable(connectionSource, Notification.class);
                 TableUtils.createTable(connectionSource, FoodRemainingLog.class);
+                TableUtils.createTable(connectionSource, NotificationRegistrations.class);
 
                 CatFeeder cf = new CatFeeder();
                 //This is the id of the esp we have
@@ -136,7 +137,12 @@ public class DatabaseClient {
         return DaoManager.createDao(connectionSource, Notification.class);
     }
 
-    public static Dao<FoodRemainingLog, Integer> getFoodRemaningLogDao() throws SQLException {
+    public static Dao<FoodRemainingLog, Integer> getFoodRemainingLogDao() throws SQLException {
         return DaoManager.createDao(connectionSource, FoodRemainingLog.class);
     }
+
+    public static Dao<NotificationRegistrations, String> getNotificationRegistrationsDao() throws SQLException {
+        return DaoManager.createDao(connectionSource, NotificationRegistrations.class);
+    }
+
 }

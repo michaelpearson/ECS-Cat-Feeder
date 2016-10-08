@@ -9,15 +9,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "")
 public class UserResponse extends GeneralResponse {
     @XmlElement
-    private String email;
-    @XmlElement(defaultValue = "")
-    private String name;
+    private User user;
 
     public UserResponse() {}
 
     public UserResponse(User u) {
-        this.email = u.getEmail();
-        this.name = u.getName();
+        this.user = u;
         this.success = true;
     }
 }

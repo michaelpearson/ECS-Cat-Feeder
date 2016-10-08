@@ -1,25 +1,22 @@
 package catfeeder.api;
 
 import catfeeder.api.annotations.Insecure;
-import catfeeder.model.CatFeeder;
-import catfeeder.model.FeederUserConnection;
-import catfeeder.model.response.catfeeder.CatFeederResponse;
-import catfeeder.util.Passwords;
 import catfeeder.api.annotations.Secured;
 import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
+import catfeeder.model.CatFeeder;
+import catfeeder.model.FeederUserConnection;
 import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.user.UserResponse;
+import catfeeder.util.Passwords;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.DatabaseConnection;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.List;
 
 @Secured
 @Path("/user")

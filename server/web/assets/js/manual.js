@@ -9,10 +9,9 @@ pages.manual = {
     weightTimer : 0,
     tagItemTemplate : '<div class="form-group">\n    <label class="col-sm-2 control-label">Tag</label>\n    <div class="input-group">\n        <span class="input-group-addon tag-uid"></span>\n        <input type="text" class="form-control tag-name" aria-label="New tag name" title="New tag name">\n        <div class="input-group-btn">\n            <button class="btn btn-warning auth">Set as authorised</button>\n            <button class="btn btn-primary save">Save</button>\n        </div>\n    </div>\n</div>',
     foundTags : [],
-    renderCompleteCallback : null,
     renderPage : function (pageArguments, renderCompleteCallback) {
         this.initControls();
-        this.renderCompleteCallback = renderCompleteCallback;
+        renderCompleteCallback();
         $('#manual-control-page.page').css({
             display : 'block'
         });

@@ -51,6 +51,7 @@ public class Bootstrap {
         server.getServerConfiguration().addHttpHandler(staticHandler);
 
         server.start();
+
         //Block forever
         Thread.currentThread().join();
     }

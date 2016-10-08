@@ -27,6 +27,8 @@ pages.dashboard = {
             this.renderCompleteCallback = null;
         }
 
+        this.logTableEl.children().remove();
+
         for(var a = 0; a < log.logEntries.length;a++) {
             var date = $('<td>' + moment(log.logEntries[a].eventGeneratedAt).fromNow() + '</td>');
             var type = $('<td>' + log.logEntries[a].eventType + '</td>');
