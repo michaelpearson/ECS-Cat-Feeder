@@ -16,9 +16,9 @@ public class NotificationService {
     }
 
     public void sendNotification(String message, String subject, LogEntry logEntry) {
-        feeder.getOwners().stream().forEach(owner -> {
+        feeder.getOwners().forEach(owner -> {
             try {
-                Notification n =  NotificationBuilderFactory.getInstance()
+                Notification n = NotificationBuilderFactory.getInstance()
                         .setMessageBody(message)
                         .setMessageSubject(subject)
                         .setLogEntry(logEntry)
@@ -33,8 +33,7 @@ public class NotificationService {
 
     private void dispatchNotification(Notification notification) {
         User u = notification.getUser();
-        u.getNotificationTypes().stream().forEach(type -> type.getSendStrategy().sendNotification(notification));
-        System.out.println("Dispatched notification");
+        u.getNotificationTypes().forEach(type -> type.getSendStrategy().sendNotification(notification));
     }
 
 }

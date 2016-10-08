@@ -6,7 +6,6 @@ import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
 import catfeeder.model.CatFeeder;
 import catfeeder.model.FeederUserConnection;
-import catfeeder.model.NotificationRegistrations;
 import catfeeder.model.User;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.user.UserResponse;
@@ -18,7 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import java.sql.SQLException;
-import java.util.List;
 
 @Secured
 @Path("/user")
@@ -33,31 +31,6 @@ public class UserEndpoint {
         User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
         return new UserResponse(u);
     }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/notifications/registerPush")
-    public GeneralResponse saveRegistrationId(@FormParam("registrationId") String registrationId) throws SQLException {
-        User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        Dao<NotificationRegistrations, String> dao = DatabaseClient.getNotificationRegistrationsDao();
-        dao.createOrUpdate(new NotificationRegistrations(registrationId, u));
-        return new GeneralResponse(true);
-    }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/notifications/savePreferences")
-    public GeneralResponse saveNotificationPreferences(@FormParam("types[]") List<Integer> types) throws SQLException {
-        User u = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
-        u.removeAllNotificationMethods();
-        for(int type : types) {
-            u.addNotificationMethod(User.NotificationType.fromId(type));
-        }
-        DatabaseClient.getUserDao().update(u);
-        return new GeneralResponse(true);
-    }
-
-
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)

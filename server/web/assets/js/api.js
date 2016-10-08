@@ -309,8 +309,9 @@ function saveRegistrationId(registrationId, successCallback, failCallback, final
 function saveNotificationPreferences(types, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/user/notifications/savePreferences', {
         method : 'post',
+        contentType : 'application/x-www-form-urlencoded',
         data : {
-            types : types || []
+            types : types || ''
         },
         beforeSend : addRequestHeader,
         success : successHandler(successCallback, failCallback),

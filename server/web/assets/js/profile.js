@@ -72,10 +72,10 @@ pages.profile = {
         updateProfileInformation(name, password, function () {
             this.renderCompleteCallback();
             $('#user-name').text(name);
-        }, function (response) {
+        }.bind(this), function (response) {
             console.error("Could not update profile information; " + response.message);
             this.renderCompleteCallback();
-        });
+        }.bind(this));
     },
     saveNotificationSettings : function () {
         var elements = $('.notification-checkbox');

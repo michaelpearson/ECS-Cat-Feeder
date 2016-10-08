@@ -20,7 +20,7 @@ var app = {
             display : 'none'
         });
         var profileInfo = getProfileInformation(function (response) {
-            $('#user-name').text(response.name);
+            $('#user-name').text(response.user.name);
         }, function () {
             window.location.href = "/";
         });
