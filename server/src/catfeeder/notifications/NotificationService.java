@@ -22,6 +22,7 @@ public class NotificationService {
                         .setMessageBody(message)
                         .setMessageSubject(subject)
                         .setLogEntry(logEntry)
+                        .setImage(logEntry.getEventType().getImage() != null ? logEntry.getEventType().getImage().getUrl() : null)
                         .setRecipient(owner.getUser())
                         .build();
                 dispatchNotification(n);

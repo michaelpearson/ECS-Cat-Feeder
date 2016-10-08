@@ -69,6 +69,8 @@ public class User {
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private ArrayList<NotificationType> preferredNotificationTypes;
 
+    public User() {}
+
     public String getEmail() {
         return email;
     }

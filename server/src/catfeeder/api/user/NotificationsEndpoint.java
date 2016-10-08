@@ -11,7 +11,6 @@ import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.notifications.NotificationListResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.query.In;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

@@ -42,15 +42,37 @@ public class Notification {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private LogEntry logEntry;
 
+    @XmlElement
+    @DatabaseField
+    private String image;
+
+    public enum CommonNotificationImages {
+        TIMEOUT("/assets/images/timeout.png"),
+        FULL("/assets/images/full.png"),
+        DISCONNECTED("/assets/images/disconnected.png"),
+        CONNECTED("/assets/images/connected.png");
+
+        private final String imageUrl;
+
+        CommonNotificationImages(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        public String getUrl() {
+            return imageUrl;
+        }
+    }
+
     public Notification() {}
 
-    public Notification(String notificationBody, User user, String subject, LogEntry logEntry) {
+    public Notification(String notificationBody, User user, String subject, String image, LogEntry logEntry) {
         this.notificationBody = notificationBody;
         this.user = user;
         this.subject = subject;
         this.date = new Date();
         this.sent = false;
         this.seen = false;
+        this.image = image;
         this.logEntry = logEntry;
     }
 

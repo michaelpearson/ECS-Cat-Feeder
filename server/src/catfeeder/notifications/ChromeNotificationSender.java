@@ -4,7 +4,6 @@ import catfeeder.db.DatabaseClient;
 import catfeeder.model.Notification;
 import catfeeder.model.NotificationRegistrations;
 import catfeeder.util.SendNotificationPush;
-import com.sendgrid.*;
 
 import java.io.IOException;
 import java.sql.SQLException;

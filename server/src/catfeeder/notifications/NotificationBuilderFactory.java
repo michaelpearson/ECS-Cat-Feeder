@@ -14,14 +14,15 @@ public class NotificationBuilderFactory {
         NotificationBuilder setMessageSubject(String subject);
         NotificationBuilder setRecipient(User user);
         NotificationBuilder setLogEntry(LogEntry logEntry);
+        NotificationBuilder setImage(String image);
         Notification build() throws RuntimeException, SQLException;
     }
 
     public static class NotificationBuilderImpl implements NotificationBuilder {
-
-        String message, subject;
+        private String message, subject;
         protected User user;
-        LogEntry logEntry;
+        private LogEntry logEntry;
+        private String image;
 
         public NotificationBuilder setMessageBody(String message) {
             this.message = message;
@@ -38,14 +39,20 @@ public class NotificationBuilderFactory {
             return this;
         }
 
-        @Override
         public NotificationBuilder setLogEntry(LogEntry logEntry) {
             this.logEntry = logEntry;
             return this;
         }
 
+        @Override
+        public NotificationBuilder setImage(String image) {
+            this.image = image;
+            return this;
+        }
+
+
         public Notification build() throws RuntimeException, SQLException {
-            Notification notification = new Notification(message, user, subject, logEntry);
+            Notification notification = new Notification(message, user, subject, image, logEntry);
             DatabaseClient.getNotificationDao().create(notification);
             return notification;
         }

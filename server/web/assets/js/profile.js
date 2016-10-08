@@ -31,7 +31,6 @@ pages.profile = {
                 switch(el) {
                     default:
                     case 0:
-                        console.log(email);
                         email.checked = true;
                         break;
                     case 1:

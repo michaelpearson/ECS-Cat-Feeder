@@ -37,21 +37,23 @@ public class LogEntry {
     private EventType eventType;
 
     public enum EventType {
-        ScheduledFoodDelivery(0, "Scheduled delivery"),
-        FoodDelivery(1, "One off delivery"),
-        Disconnection(2, "Device disconnected"),
-        Connection(3, "Device connected"),
-        DoorsOpen(4, "Door opened"),
-        UnauthorizedAccessAttempt(5, "Unauthorized access attempt"),
-        FoodDeliveryTimeout(6, "Delivery timed out"),
-        MaxWeightReached(7, "Maximum weight in bowl reached");
+        ScheduledFoodDelivery(0, "Scheduled delivery", null),
+        FoodDelivery(1, "One off delivery", null),
+        Disconnection(2, "Device disconnected", Notification.CommonNotificationImages.DISCONNECTED),
+        Connection(3, "Device connected", Notification.CommonNotificationImages.CONNECTED),
+        DoorsOpen(4, "Door opened", null),
+        UnauthorizedAccessAttempt(5, "Unauthorized access attempt", null),
+        FoodDeliveryTimeout(6, "Delivery timed out", Notification.CommonNotificationImages.TIMEOUT),
+        MaxWeightReached(7, "Maximum weight in bowl reached", Notification.CommonNotificationImages.FULL);
 
         private String jsonString;
         private int eventId;
+        private final Notification.CommonNotificationImages image;
 
-        EventType(int eventId, String value) {
+        EventType(int eventId, String value, Notification.CommonNotificationImages image) {
             this.jsonString = value;
             this.eventId = eventId;
+            this.image = image;
         }
 
         public static EventType fromEventId(int eventId) {
@@ -65,6 +67,10 @@ public class LogEntry {
         @JsonValue
         public String getEventName() {
             return jsonString;
+        }
+
+        public Notification.CommonNotificationImages getImage() {
+            return image;
         }
     }
 
