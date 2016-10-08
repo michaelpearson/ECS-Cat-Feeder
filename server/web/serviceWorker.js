@@ -1,5 +1,5 @@
 self.addEventListener('push', function(event) {
-    self.registration.pushManager.getSubscription().then((subscription) => {
+    event.waitUntil(self.registration.pushManager.getSubscription().then((subscription) => {
         var endpoint = subscription.endpoint.split('/');
         endpoint = endpoint[endpoint.length - 1];
         return fetch('/api/user/notifications?registration=' + endpoint);
@@ -10,7 +10,7 @@ self.addEventListener('push', function(event) {
         for(var a = 0;a < notifications.unseenNotifications.length;a++) {
             showNotification(notifications.unseenNotifications[a]);
         }
-    });
+    }));
 });
 
 function showNotification(notification) {
