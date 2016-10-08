@@ -61,7 +61,7 @@ public class NotificationsEndpoint {
         }
         QueryBuilder<Notification, Integer> queryBuilder = notificationDao.queryBuilder();
         queryBuilder.where().eq("user_id", registration.getUser());
-        queryBuilder.where().eq("seen", false);
+        queryBuilder.limit(1L);
         queryBuilder.orderBy("date", false);
         List<Notification> unseenNotifications = notificationDao.query(queryBuilder.prepare());
 
