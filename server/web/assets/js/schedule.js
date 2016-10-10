@@ -120,6 +120,14 @@ pages.schedule = {
             }.bind(this));
         }.bind(this));
 
+        $('#schedule-recurring').change(function () {
+            if(!this.checked) {
+                $('.recurring-options').hide();
+            } else {
+                $('.recurring-options').show();
+            }
+        }).change();
+
         $(document).click(function (event) {
             if(!$.contains(this.schedulePanel[0], event.toElement)) {
                 this.highlightDay(null);
