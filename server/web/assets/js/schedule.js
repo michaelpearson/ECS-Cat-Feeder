@@ -60,7 +60,9 @@ pages.schedule = {
         });
 
 
-        $('#schedule-recurring')[0].checked = data.recurring || false;
+        var recurringCheckboxEl = $('#schedule-recurring');
+        recurringCheckboxEl[0].checked = data.recurring || false;
+        recurringCheckboxEl.change();
 
         $('#schedule-days-of-week').find('input[type=checkbox]').each(function (index, element) {
             element.checked = data.daysOfWeek[index];
@@ -126,7 +128,7 @@ pages.schedule = {
             } else {
                 $('.recurring-options').show();
             }
-        }).change();
+        });
 
         $(document).click(function (event) {
             if(!$.contains(this.schedulePanel[0], event.toElement)) {
