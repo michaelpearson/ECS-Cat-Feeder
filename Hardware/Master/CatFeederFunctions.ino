@@ -38,7 +38,7 @@ void catFeederLoop() {
     checkCard();
     checkCardLastRun = millis();
   }
-  if(millis() - lastLogRun > LOG_WEIGHT_PERIOD) {
+  if (millis() - lastLogRun > LOG_WEIGHT_PERIOD) {
     sendLogWeightCommand(getWeight());
     lastLogRun = millis();
   }
@@ -86,12 +86,20 @@ void deliverFoodLoop() {
     }
   }
 
+  if (shouldDeliverFood) {
+    for (a = 0; a < NUMBER_OF_FEEDERS; a++) {
+      Serial.printf("Food %d, amount: %d\n", a, foodToDeliver[a]);
+    }
+  }
+
   if (!shouldDeliverFood) {
     if (deliveringFood) {
       deliveringFood = false;
       stopAllConveyers();
     }
     return;
+  } else if (shouldDeliverFood && !deliveringFood) {
+    lastWeight = getWeight();
   }
 
   int weight = getWeight();
@@ -169,13 +177,13 @@ void openDoors(bool open) {
   switch (learningMode) {
     case 0:
     default:
-      position = open ? 180 : 0;
+      position = open ? 85 : 5;
       break;
     case 1:
-      position = open ? 180 : 170;
+      position = open ? 85 : 40;
       break;
     case 2:
-      position = open ? 180 : 120;
+      position = open ? 85 : 60;
       break;
   }
 

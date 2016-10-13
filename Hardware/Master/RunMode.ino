@@ -1,8 +1,8 @@
-//#define SERVER_CONNECTION "catfeeder.herokuapp.com"
-//#define SERVER_PORT 80
+#define SERVER_CONNECTION "catfeeder.herokuapp.com"
+#define SERVER_PORT 80
 
-#define SERVER_CONNECTION "10.140.80.10"
-#define SERVER_PORT 8080
+//#define SERVER_CONNECTION "10.140.80.10"
+//#define SERVER_PORT 8080
 
 #define COMMAND_DELIVER_FOOD          1
 #define COMMAND_GET_CARD              2
