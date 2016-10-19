@@ -47,12 +47,15 @@ void catFeederLoop() {
 
 int getWeight() {
   int weight = (scale.read() * SCALE) + getGramOffset();
-  Serial.print("Weight: ");
-  Serial.println(weight);
+  //Serial.print("Weight: ");
+  //Serial.println(weight);
   return weight;
 }
 
 void checkCard() {
+  if (deliveringFood) {
+    return;
+  }
   uint32_t id;
   bool present;
   getCardInfo(&id, &present);
@@ -87,18 +90,14 @@ void deliverFoodLoop() {
   }
 
   if (shouldDeliverFood) {
-    for (a = 0; a < NUMBER_OF_FEEDERS; a++) {
-      Serial.printf("Food %d, amount: %d\n", a, foodToDeliver[a]);
+    for (int b = 0; b < NUMBER_OF_FEEDERS; b++) {
+      Serial.printf("Food %d, amount: %d\n", b, foodToDeliver[b]);
     }
-  }
-
-  if (!shouldDeliverFood) {
-    if (deliveringFood) {
-      deliveringFood = false;
-      stopAllConveyers();
-    }
+  } else {
     return;
-  } else if (shouldDeliverFood && !deliveringFood) {
+  }
+ 
+  if (shouldDeliverFood && !deliveringFood) {
     lastWeight = getWeight();
   }
 
@@ -106,11 +105,20 @@ void deliverFoodLoop() {
   foodToDeliver[a] -= weight - lastWeight;
   lastWeight = weight;
 
+  if (foodToDeliver[a] <= 0) {
+    foodToDeliver[a] = 0;
+    stopAllConveyers();
+    return;
+  }
+
   if (weight >= maxAmountOfFood) {
     if (deliveringFood) {
       stopAllConveyers();
       sendMaxFoodNotification();
       deliveringFood = false;
+      for(int b = 0;b < NUMBER_OF_FEEDERS;b++) {
+        foodToDeliver[b] = 0;
+      }
       return;
     }
   }

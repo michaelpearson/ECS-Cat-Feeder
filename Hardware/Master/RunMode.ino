@@ -69,7 +69,7 @@ void socketEvent(WStype_t type, uint8_t * payload, size_t lenght) {
       break;
     case WStype_TEXT:
       {
-        Serial.printf("Received command: %s\n", payload);
+        //Serial.printf("Received command: %s\n", payload);
         JsonObject& root = jsonBuffer.parseObject((char *)payload);
         executeInstruction(root);
       }
@@ -112,7 +112,7 @@ void executeInstruction(JsonObject& payload) {
       }
     case COMMAND_READ_WEIGHT:
       {
-        Serial.println("Read weight");
+        //Serial.println("Read weight");
         int weight = getWeight();
         JsonObject& root = responseBuffer.createObject();
         root["weight"] = weight;

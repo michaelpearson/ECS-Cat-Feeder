@@ -15,6 +15,8 @@ void setup() {
   setupServos();
 }
 
+int position = 0;
+
 void receiveEvent(int howMany) {
   switch (Wire.read()) {
     //Run motor
@@ -30,13 +32,14 @@ void receiveEvent(int howMany) {
       break;
     //Open the doors
     case 0x03:
-      openDoors(Wire.read());
+      position = Wire.read();
       break;
   }
 }
 
 void loop() {
   readerLoop();
+  openDoors(position);
   delay(10);
 }
 
