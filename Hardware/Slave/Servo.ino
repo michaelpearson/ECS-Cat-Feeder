@@ -11,8 +11,6 @@ void setupServos() {
 void openDoors(int position) {
   door1.attach(A0);
   door2.attach(A1);
-  Serial.print("Moving to: ");
-  Serial.println(position);
   int a = oldPosition;
   for(;a < position;a++) {
     setPosition(a);
@@ -26,9 +24,8 @@ void openDoors(int position) {
 }
 
 void setPosition(int position) {
-  Serial.println(position);
   door1.write(position);
-  door2.write(position+5);
+  door2.write(position);
   delay(15);
 }
 

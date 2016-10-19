@@ -96,27 +96,39 @@ void deliverFoodLoop() {
   } else {
     return;
   }
- 
-  if (shouldDeliverFood && !deliveringFood) {
-    lastWeight = getWeight();
-  }
 
   int weight = getWeight();
-  foodToDeliver[a] -= weight - lastWeight;
-  lastWeight = weight;
+  if (shouldDeliverFood && !deliveringFood) {
+    Serial.println("Resetting last weight");
+    lastWeight = weight;
+  }
 
+
+  foodToDeliver[a] -= weight - lastWeight;
+  
+  Serial.print("Change in weight: ");
+  Serial.print(weight - lastWeight);
+  Serial.print(" Remaning: ");
+  Serial.println(foodToDeliver[a]);
+
+  lastWeight = weight;
+  
   if (foodToDeliver[a] <= 0) {
+    Serial.println("Complete!");
+    deliveringFood = false;
     foodToDeliver[a] = 0;
     stopAllConveyers();
     return;
   }
 
   if (weight >= maxAmountOfFood) {
+    Serial.println("Over max!");
+    Serial.println(maxAmountOfFood);
     if (deliveringFood) {
       stopAllConveyers();
       sendMaxFoodNotification();
       deliveringFood = false;
-      for(int b = 0;b < NUMBER_OF_FEEDERS;b++) {
+      for (int b = 0; b < NUMBER_OF_FEEDERS; b++) {
         foodToDeliver[b] = 0;
       }
       return;
@@ -150,8 +162,9 @@ void runAllConveyers() {
   }
 }
 
-void deliverFood(int gramAmount, int foodType, int maxAmountOfFood) {
+void deliverFood(int gramAmount, int foodType, int max) {
   Serial.printf("Deliver %d grams of food %d\n", gramAmount, foodType);
+  maxAmountOfFood = max;
   if (!(foodType >= 0 && foodType < 2)) {
     return;
   }
