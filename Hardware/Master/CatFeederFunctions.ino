@@ -38,7 +38,7 @@ void catFeederLoop() {
     checkCard();
     checkCardLastRun = millis();
   }
-  if(millis() - lastLogRun > LOG_WEIGHT_PERIOD) {
+  if (millis() - lastLogRun > LOG_WEIGHT_PERIOD) {
     sendLogWeightCommand(getWeight());
     lastLogRun = millis();
   }
@@ -47,12 +47,15 @@ void catFeederLoop() {
 
 int getWeight() {
   int weight = (scale.read() * SCALE) + getGramOffset();
-  Serial.print("Weight: ");
-  Serial.println(weight);
+  //Serial.print("Weight: ");
+  //Serial.println(weight);
   return weight;
 }
 
 void checkCard() {
+  if (deliveringFood) {
+    return;
+  }
   uint32_t id;
   bool present;
   getCardInfo(&id, &present);
@@ -86,23 +89,48 @@ void deliverFoodLoop() {
     }
   }
 
-  if (!shouldDeliverFood) {
-    if (deliveringFood) {
-      deliveringFood = false;
-      stopAllConveyers();
+  if (shouldDeliverFood) {
+    for (int b = 0; b < NUMBER_OF_FEEDERS; b++) {
+      Serial.printf("Food %d, amount: %d\n", b, foodToDeliver[b]);
     }
+  } else {
     return;
   }
 
   int weight = getWeight();
+  if (shouldDeliverFood && !deliveringFood) {
+    Serial.println("Resetting last weight");
+    lastWeight = weight;
+  }
+
+
   foodToDeliver[a] -= weight - lastWeight;
+  
+  Serial.print("Change in weight: ");
+  Serial.print(weight - lastWeight);
+  Serial.print(" Remaning: ");
+  Serial.println(foodToDeliver[a]);
+
   lastWeight = weight;
+  
+  if (foodToDeliver[a] <= 0) {
+    Serial.println("Complete!");
+    deliveringFood = false;
+    foodToDeliver[a] = 0;
+    stopAllConveyers();
+    return;
+  }
 
   if (weight >= maxAmountOfFood) {
+    Serial.println("Over max!");
+    Serial.println(maxAmountOfFood);
     if (deliveringFood) {
       stopAllConveyers();
       sendMaxFoodNotification();
       deliveringFood = false;
+      for (int b = 0; b < NUMBER_OF_FEEDERS; b++) {
+        foodToDeliver[b] = 0;
+      }
       return;
     }
   }
@@ -134,8 +162,9 @@ void runAllConveyers() {
   }
 }
 
-void deliverFood(int gramAmount, int foodType, int maxAmountOfFood) {
+void deliverFood(int gramAmount, int foodType, int max) {
   Serial.printf("Deliver %d grams of food %d\n", gramAmount, foodType);
+  maxAmountOfFood = max;
   if (!(foodType >= 0 && foodType < 2)) {
     return;
   }
@@ -169,13 +198,13 @@ void openDoors(bool open) {
   switch (learningMode) {
     case 0:
     default:
-      position = open ? 180 : 0;
+      position = open ? 85 : 5;
       break;
     case 1:
-      position = open ? 180 : 170;
+      position = open ? 85 : 40;
       break;
     case 2:
-      position = open ? 180 : 120;
+      position = open ? 85 : 60;
       break;
   }
 

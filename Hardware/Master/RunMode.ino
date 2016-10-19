@@ -1,8 +1,8 @@
-//#define SERVER_CONNECTION "catfeeder.herokuapp.com"
-//#define SERVER_PORT 80
+#define SERVER_CONNECTION "catfeeder.herokuapp.com"
+#define SERVER_PORT 80
 
-#define SERVER_CONNECTION "10.140.80.10"
-#define SERVER_PORT 8080
+//#define SERVER_CONNECTION "10.140.80.10"
+//#define SERVER_PORT 8080
 
 #define COMMAND_DELIVER_FOOD          1
 #define COMMAND_GET_CARD              2
@@ -51,7 +51,7 @@ void runModeSetup() {
 void runModeLoop() {
   socket.loop();
   catFeederLoop();
-  delay(100);
+  delay(10);
 }
 
 void socketEvent(WStype_t type, uint8_t * payload, size_t lenght) {
@@ -69,7 +69,7 @@ void socketEvent(WStype_t type, uint8_t * payload, size_t lenght) {
       break;
     case WStype_TEXT:
       {
-        Serial.printf("Received command: %s\n", payload);
+        //Serial.printf("Received command: %s\n", payload);
         JsonObject& root = jsonBuffer.parseObject((char *)payload);
         executeInstruction(root);
       }
@@ -112,7 +112,7 @@ void executeInstruction(JsonObject& payload) {
       }
     case COMMAND_READ_WEIGHT:
       {
-        Serial.println("Read weight");
+        //Serial.println("Read weight");
         int weight = getWeight();
         JsonObject& root = responseBuffer.createObject();
         root["weight"] = weight;

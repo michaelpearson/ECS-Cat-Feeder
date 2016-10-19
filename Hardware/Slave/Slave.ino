@@ -10,10 +10,12 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Init...");
 
-  stepperSetup();
+  motorsSetup();
   readerSetup();
   setupServos();
 }
+
+int position = 0;
 
 void receiveEvent(int howMany) {
   switch (Wire.read()) {
@@ -22,7 +24,7 @@ void receiveEvent(int howMany) {
       {
         uint8_t index = Wire.read();
         bool run = Wire.read() == 0x01;
-        setStepperRunning(index, run);
+        setMotorsRunning(index, run);
       }
       break;
     //Request card data (this is the only read command at the moment so we dont need to store the command)
@@ -30,13 +32,16 @@ void receiveEvent(int howMany) {
       break;
     //Open the doors
     case 0x03:
-      openDoors(Wire.read());
+      position = Wire.read();
+      Serial.println(position);
       break;
   }
 }
 
 void loop() {
   readerLoop();
+  openDoors(position);
+  motorLoop();
   delay(10);
 }
 
