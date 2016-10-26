@@ -113,6 +113,9 @@ public class User {
     }
 
     public List<NotificationType> getNotificationTypes() {
+        if(preferredNotificationTypes == null) {
+            return new ArrayList<>();
+        }
         return preferredNotificationTypes;
     }
 
