@@ -130,6 +130,8 @@ public class User {
     }
 
     public void removeAllNotificationMethods() {
-        preferredNotificationTypes.clear();
+        if(preferredNotificationTypes != null) {
+            preferredNotificationTypes.clear();
+        }
     }
 }
