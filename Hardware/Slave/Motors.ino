@@ -2,7 +2,7 @@
 
 int motorPins[] = {2, 3};
 bool motors[] = {false, false};
-int loopTime = 30;
+int loopTime = 10;
 bool loopState = false;
 
 void motorsSetup() {
@@ -17,7 +17,7 @@ void motorLoop() {
   loopTime--;
   if(loopTime == 0) {
     loopState = !loopState;
-    loopTime = loopState ? 5 : 60; //N iterations at 10ms per iteration = 300ms
+    loopTime = loopState ? 1 : 20; //N iterations at 10ms per iteration = 300ms
   }
   
   for(int a = 0;a < MOTOR_COUNT;a++) {

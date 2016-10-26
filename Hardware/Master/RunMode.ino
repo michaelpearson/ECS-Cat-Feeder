@@ -167,8 +167,8 @@ void sendMaxFoodNotification() {
 }
 
 void sendTimeoutNotification(int foodIndex) {
-  StaticJsonBuffer<50> jsonBuffer;
-  char buff[50];
+  StaticJsonBuffer<100> jsonBuffer;
+  char buff[100];
   JsonObject&  root = jsonBuffer.createObject();
   root["command"] = "food_timeout_notification";
   root["food_index"] = foodIndex;
