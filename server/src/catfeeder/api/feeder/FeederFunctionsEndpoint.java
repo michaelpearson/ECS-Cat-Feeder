@@ -5,10 +5,7 @@ import catfeeder.api.filters.LoggedInSecurityContext;
 import catfeeder.db.DatabaseClient;
 import catfeeder.feeder.CatFeederConnection;
 import catfeeder.feeder.CatfeederSocketApplication;
-import catfeeder.model.CatFeeder;
-import catfeeder.model.FoodType;
-import catfeeder.model.LearnStage;
-import catfeeder.model.User;
+import catfeeder.model.*;
 import catfeeder.model.response.GeneralResponse;
 import catfeeder.model.response.catfeeder.status.WeightResponse;
 import com.j256.ormlite.dao.Dao;
@@ -134,6 +131,25 @@ public class FeederFunctionsEndpoint {
             throw new ServiceUnavailableException();
         }
         connection.run(run);
+        return new GeneralResponse(true);
+    }
+
+    @POST
+    @Path("/wipe")
+    @Produces(MediaType.APPLICATION_JSON)
+    public GeneralResponse wipe(@PathParam("feederId") int feederId) throws SQLException {
+        User user = ((LoggedInSecurityContext.UserPrincipal)context.getUserPrincipal()).getUser();
+        Dao<CatFeeder, Integer> feederDao = DatabaseClient.getFeederDao();
+        CatFeeder cf = feederDao.queryForId(feederId);
+        if(cf == null || !user.doesUserOwnCatfeeder(cf)) {
+            throw new NotFoundException();
+        }
+        CatFeederConnection connection = CatfeederSocketApplication.getCatfeederConnection(cf.getHardwareId());
+        if(connection == null) {
+            throw new ServiceUnavailableException();
+        }
+        connection.wipeConfig();
+
         return new GeneralResponse(true);
     }
 }

@@ -285,6 +285,15 @@ function runConveyors(feederHardwareId, run, successCallback, failCallback, fina
     });
 }
 
+function wipeConfig(feederHardwareId, successCallback, failCallback, finallyCallback) {
+    return $.ajax('/api/feeder/' + feederHardwareId + '/wipe', {
+        method : 'post',
+        beforeSend : addRequestHeader,
+        success : successHandler(successCallback, failCallback),
+        complete : finallyCallback || function () {}
+    });
+}
+
 function getWeightGraph(feederHardwareId, successCallback, failCallback, finallyCallback) {
     return $.ajax('/api/feeder/' + feederHardwareId + '/status/weightGraph', {
         method : 'get',
