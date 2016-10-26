@@ -160,12 +160,25 @@ pages.schedule = {
             daysOfWeek.push(days[i]);
         });
         var recurring = $('#schedule-recurring')[0].checked;
-        var startDate = $('#schedule-start-date').val();
-        var endDate = $('#schedule-end-date').val();
+        var startDate = moment($('#schedule-start-date').val());
+        var endDate = moment($('#schedule-end-date').val());
         var notes = $('#schedule-notes').val();
         var amount = parseInt($('#schedule-amount').val());
         var feederId = app.getCurrentFeederId();
         var type = $('#schedule-food-type').val();
+
+        var format = "YYYY-MM-DDTHH:mm";
+        if(startDate.isValid()) {
+            startDate = startDate.format(format);
+        } else {
+            startDate = "";
+        }
+
+        if(endDate.isValid()) {
+            endDate = endDate.format(format);
+        } else {
+            endDate = "";
+        }
 
         return {
             feederId : feederId,

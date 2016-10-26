@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -136,9 +137,11 @@ public class ScheduleEndpoint {
         try {
             s.setStartDate(htmlDateFormat.parse(startDate));
             if(endDate != null && !endDate.equals("")) {
+                System.out.printf("End date: %s\n", endDate);
                 s.setEndDate(htmlDateFormat.parse(endDate));
             }
         } catch (ParseException e) {
+            e.printStackTrace();
             throw new BadRequestException("Invalid date");
         }
 
