@@ -102,5 +102,5 @@ void handleSave() {
 
 void handleRedirect() {
   server.sendHeader("Location", "http://192.168.1.1/setup");
-  server.send(301, "text/plain", "Redirecting...");
+  server.send(302, "text/plain", "Redirecting...");
 }

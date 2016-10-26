@@ -79,6 +79,8 @@ public class CatFeederConnection {
         } catch (SQLException e) {
             e.printStackTrace();
             socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         this.feeder = feeder;
         updateAlarm();
