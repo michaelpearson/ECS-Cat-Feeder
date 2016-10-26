@@ -167,17 +167,16 @@ pages.schedule = {
         var feederId = app.getCurrentFeederId();
         var type = $('#schedule-food-type').val();
 
-        var format = "YYYY-MM-DDTHH:mm";
         if(startDate.isValid()) {
-            startDate = startDate.format(format);
+            startDate = startDate.toDate().getTime();
         } else {
-            startDate = "";
+            startDate = 0;
         }
 
         if(endDate.isValid()) {
-            endDate = endDate.format(format);
+            endDate = endDate.toDate().getTime();
         } else {
-            endDate = "";
+            endDate = 0;
         }
 
         return {

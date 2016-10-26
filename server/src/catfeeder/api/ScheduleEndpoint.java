@@ -84,8 +84,8 @@ public class ScheduleEndpoint {
                                            @FormParam("feederId") int feederId,
                                            @FormParam("recurring") boolean recurring,
                                            @FormParam("daysOfWeek[]") List<String> daysOfWeekString,
-                                           @FormParam("startDate") String startDate,
-                                           @FormParam("endDate") String endDate,
+                                           @FormParam("startDate") long startDate,
+                                           @FormParam("endDate") long endDate,
                                            @FormParam("amountOfFood") int amount,
                                            @FormParam("foodType") int type,
                                            @FormParam("notes") String notes
@@ -120,8 +120,8 @@ public class ScheduleEndpoint {
                                    FoodType foodType,
                                    int amount,
                                    String notes,
-                                   String startDate,
-                                   String endDate,
+                                   long startDate,
+                                   long endDate,
                                    List<String> daysOfWeekString) {
 
         if(s == null) {
@@ -134,16 +134,12 @@ public class ScheduleEndpoint {
         s.setNotes(notes);
         s.setDaysOfWeek(decodeDaysOfWeek(daysOfWeekString));
 
-        try {
-            s.setStartDate(htmlDateFormat.parse(startDate));
-            if(endDate != null && !endDate.equals("")) {
-                System.out.printf("End date: %s\n", endDate);
-                s.setEndDate(htmlDateFormat.parse(endDate));
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new BadRequestException("Invalid date");
+        s.setStartDate(new Date(startDate));
+        if(endDate > 0) {
+            System.out.printf("End date: %s\n", endDate);
+            s.setEndDate(new Date(endDate));
         }
+
 
         return s;
     }
@@ -153,8 +149,8 @@ public class ScheduleEndpoint {
     public ScheduleResponse scheduleNewDelivery(@FormParam("feederId") int feederId,
                                                    @FormParam("recurring") boolean recurring,
                                                    @FormParam("daysOfWeek[]") List<String> daysOfWeekString,
-                                                   @FormParam("startDate") String startDate,
-                                                   @FormParam("endDate") String endDate,
+                                                   @FormParam("startDate") long startDate,
+                                                   @FormParam("endDate") long endDate,
                                                    @FormParam("amountOfFood") int amount,
                                                    @FormParam("foodType") int type,
                                                    @FormParam("notes") String notes
