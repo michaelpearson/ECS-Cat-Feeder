@@ -1,7 +1,7 @@
 #define SERVER_CONNECTION "catfeeder.herokuapp.com"
 #define SERVER_PORT 80
 
-//#define SERVER_CONNECTION "10.140.80.10"
+//#define SERVER_CONNECTION "10.140.103.244"
 //#define SERVER_PORT 8080
 
 #define COMMAND_DELIVER_FOOD          1
@@ -12,6 +12,7 @@
 #define COMMAND_RUN_CONVEYOR          6
 #define COMMAND_STOP_CONVEYOR         7
 #define COMMAND_SET_LEARNING_MODE     8
+#define COMMAND_WIPE                  9
 
 WebSocketsClient socket;
 
@@ -147,6 +148,11 @@ void executeInstruction(JsonObject& payload) {
       setLearningMode(mode);
       break;
     }
+    case COMMAND_WIPE:
+    {
+      Serial.println("Wiping");
+      setConfigValid(false);
+    }
 
   }
 }
@@ -161,8 +167,8 @@ void sendMaxFoodNotification() {
 }
 
 void sendTimeoutNotification(int foodIndex) {
-  StaticJsonBuffer<50> jsonBuffer;
-  char buff[50];
+  StaticJsonBuffer<100> jsonBuffer;
+  char buff[100];
   JsonObject&  root = jsonBuffer.createObject();
   root["command"] = "food_timeout_notification";
   root["food_index"] = foodIndex;

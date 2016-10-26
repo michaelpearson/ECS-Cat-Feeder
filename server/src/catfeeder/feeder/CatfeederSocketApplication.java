@@ -45,8 +45,9 @@ public class CatfeederSocketApplication extends WebSocketApplication {
                 catFeeders.values().stream().filter(c -> c.getFeederHardwareId() == feederId).forEach(c -> c.getWebSocket().close());
                 catFeeders.put(socket, new CatFeederConnection(socket, (int)feederId));
             }
-        } catch (ParseException | SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            socket.close();
         }
     }
 

@@ -1,0 +1,12 @@
+truncate cat_feeders;
+truncate chrome_notification_registrations;
+truncate event_log;
+truncate feeder_user_connection;
+truncate food_delivery;
+truncate food_remaining_log;
+truncate notifications;
+truncate schedule;
+TRUNCATE  scheduled_food_delivery;
+TRUNCATE tag;
+truncate tokens;
+TRUNCATE users;

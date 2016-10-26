@@ -20,7 +20,7 @@ pages.profile = {
             this.passwordElement.val("");
             this.emailElement.val(response.user.email);
             this.nameElement.val(response.user.name);
-            var notificationTypes = response.user.preferredNotificationTypes;
+            var notificationTypes = response.user.preferredNotificationTypes || [];
 
 
             var elements = $('.notification-checkbox');

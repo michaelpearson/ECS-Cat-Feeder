@@ -113,6 +113,9 @@ public class User {
     }
 
     public List<NotificationType> getNotificationTypes() {
+        if(preferredNotificationTypes == null) {
+            return new ArrayList<>();
+        }
         return preferredNotificationTypes;
     }
 
@@ -127,6 +130,8 @@ public class User {
     }
 
     public void removeAllNotificationMethods() {
-        preferredNotificationTypes.clear();
+        if(preferredNotificationTypes != null) {
+            preferredNotificationTypes.clear();
+        }
     }
 }

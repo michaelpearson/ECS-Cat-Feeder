@@ -50,7 +50,8 @@ public class CatFeederConnection {
         TareSensor(5),
         RunConveyors(6),
         StopConveyors(7),
-        SetMode(8);
+        SetMode(8),
+        Wipe(9);
 
         private int commandId;
 
@@ -78,6 +79,8 @@ public class CatFeederConnection {
         } catch (SQLException e) {
             e.printStackTrace();
             socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         this.feeder = feeder;
         updateAlarm();
@@ -227,6 +230,12 @@ public class CatFeederConnection {
             item.execute(this);
         }
         scheduleManager = null;
+    }
+
+    public void wipeConfig() {
+        JSONObject payload = new JSONObject();
+        payload.put("command", Commands.Wipe.getCommandId());
+        socket.send(payload.toJSONString());
     }
 
 }
